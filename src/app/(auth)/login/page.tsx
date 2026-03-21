@@ -22,7 +22,12 @@ export default function LoginPage() {
 
   const dispatch = useDispatch<AppDispatch>()
   const router = useRouter()
-  const { loading, error } = useSelector((state: RootState) => state.auth)
+  const { loading, error, token } = useSelector((state: RootState) => state.auth)
+
+  if (token) {
+    router.replace("/home")
+    return null
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
