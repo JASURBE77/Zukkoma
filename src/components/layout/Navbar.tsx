@@ -33,7 +33,7 @@ export default function Header() {
 
   const fullName = user ? `${user.name} ${user.surname}` : ""
   const initials = user ? `${user.name[0]}${user.surname[0]}`.toUpperCase() : "?"
-  const your_balance = user ? `${Math.floor(user.course_price).toLocaleString('uz-UZ')}` : 0
+  const your_balance = user?.course_price != null ? `${Math.floor(user.course_price).toLocaleString('uz-UZ')}` : "0"
 
   return (
     <header className="sticky top-0 z-30 w-full border-b bg-white">
