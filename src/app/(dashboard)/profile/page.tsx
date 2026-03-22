@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
+import { motion } from "framer-motion"
 
 const ProfilePage = () => {
   const dispatch = useDispatch<AppDispatch>()
@@ -49,11 +50,25 @@ const ProfilePage = () => {
     )
   }
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  }
+  const item = {
+    hidden: { opacity: 0, y: 24 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } }
+  }
+
   return (
-    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-700">
+    <motion.div
+      className="max-w-6xl mx-auto space-y-8"
+      variants={container}
+      initial="hidden"
+      animate="show"
+    >
 
       {/* Header */}
-      <div className="relative">
+      <motion.div variants={item} className="relative">
         <div className="h-48 md:h-64 w-full bg-gradient-to-r from-blue-600 to-indigo-700 rounded-[2.5rem] shadow-lg overflow-hidden relative">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl" />
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-400/20 rounded-full -ml-10 -mb-10 blur-2xl" />
@@ -88,9 +103,9 @@ const ProfilePage = () => {
             <Settings className="w-4 h-4" /> Sozlamalar
           </Button>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="pt-20 grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <motion.div variants={item} className="pt-20 grid grid-cols-1 lg:grid-cols-3 gap-8">
 
         {/* Chap: Ma'lumotlar */}
         <div className="space-y-6">
@@ -205,8 +220,8 @@ const ProfilePage = () => {
             </TabsContent>
           </Tabs>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }
 

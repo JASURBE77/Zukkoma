@@ -22,6 +22,12 @@ import {
   submitPracticeLink,
 } from "@/store/slice/examSlice"
 
+import dayjs from "dayjs"
+import "dayjs/locale/uz"
+
+dayjs.locale("uz")
+
+import { motion, AnimatePresence } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -43,10 +49,7 @@ const STATUS_BADGE = {
 } as const
 
 function formatDate(ts: number) {
-  return new Date(ts).toLocaleDateString("uz-UZ", {
-    day: "2-digit", month: "2-digit", year: "numeric",
-    hour: "2-digit", minute: "2-digit",
-  })
+  return dayjs(ts).format("DD.MM.YYYY HH:mm")
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -116,7 +119,12 @@ export default function ExamPage() {
   // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      className="space-y-6"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+    >
       {/* Header */}
       <div>
         <h1 className="text-2xl font-black text-slate-900 dark:text-white">Imtihonlar</h1>
@@ -135,13 +143,19 @@ export default function ExamPage() {
 
       {/* Cards */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {list.map((session) => {
+        {list.map((session, index) => {
           const status   = STATUS_BADGE[session.status] ?? STATUS_BADGE.pending
           const isPractice = session.examId?.type === "practice"
           const isBusy   = startingId === session._id && actionLoading
 
           return (
-            <Card key={session._id} className="flex flex-col">
+            <motion.div
+              key={session._id}
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: index * 0.07, ease: "easeOut" }}
+            >
+            <Card className="flex flex-col h-full">
               <CardHeader>
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-3">
@@ -239,9 +253,10 @@ export default function ExamPage() {
                 )}
               </CardFooter>
             </Card>
+            </motion.div>
           )
         })}
       </div>
-    </div>
+    </motion.div>
   )
 }

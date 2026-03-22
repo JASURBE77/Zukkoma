@@ -12,7 +12,7 @@ export default function MainLayout({
 }) {
   return (
     <ProtectedRoute>
-      <div className="flex  gap-5 min-h-screen">
+      <div className="flex min-h-screen">
         <Sidebar />
 
         <div className="flex-1 flex flex-col bg-slate-50/50 dark:bg-slate-950">

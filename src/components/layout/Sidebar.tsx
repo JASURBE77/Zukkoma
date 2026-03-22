@@ -32,19 +32,13 @@ export default function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="hidden lg:flex h-screen w-72 flex-col border-r bg-white dark:bg-slate-950 dark:border-slate-800 sticky top-0">
+    <aside className="hidden  lg:flex h-screen w-72 flex-col border-r bg-white dark:bg-slate-950 dark:border-slate-800 sticky top-0">
       
-      <div className="p-6">
+      <div className="pl-8">
         <Link href="/" className="flex items-center gap-3 group">
-        
-<Image className="w-14" src={Logo} alt="zukkoma logo" />
+        <h1 className="text-3xl">ZUKKOMA</h1>
+<Image className="w-20" src={Logo} alt="zukkoma logo" />
     
-          <div className="flex flex-col">
-            <span className="text-lg font-black tracking-tight text-slate-900 dark:text-white leading-none">
-              <span className="text-blue-600">Zukko</span>ma
-            </span>
-            <span className="text-[10px] font-bold text-slate-400 uppercase mt-1 tracking-widest">v2.4.0 Pro</span>
-          </div>
         </Link>
       </div>
 
@@ -87,16 +81,7 @@ export default function Sidebar() {
 
       {/* 3. Pastki qism: Reklama yoki Logout */}
       <div className="p-4 mt-auto">
-        <div className="rounded-2xl bg-slate-900 p-4 dark:bg-blue-600 shadow-xl overflow-hidden relative group">
-            {/* Bezak */}
-            <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10 blur-2xl group-hover:scale-150 transition-transform duration-500" />
-            
-            <p className="relative z-10 text-xs font-bold text-blue-200 uppercase tracking-wider">Yangilanish</p>
-            <p className="relative z-10 mt-1 text-sm font-medium text-white">Barcha imkoniyatlarni oching</p>
-            <Button size="sm" className="relative z-10 mt-3 w-full bg-white text-slate-900 hover:bg-blue-50 font-bold rounded-lg border-none shadow-none text-xs">
-              Upgrade Pro
-            </Button>
-        </div>
+  
 
         <button className="mt-4 flex w-full items-center gap-3 px-4 py-3 text-slate-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all font-bold text-sm">
           <LogOut className="h-5 w-5" />

@@ -1,14 +1,18 @@
+"use client"
+
 import Banner from '@/components/layout/home/Banner'
-import Navbar from '@/components/layout/Navbar'
-import Sidebar from '@/components/layout/Sidebar'
 import React from 'react'
+import { motion } from 'framer-motion'
 
 const page = () => {
   return (
-    <div>
-        <Banner />
-        Home
-    </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+    >
+      <Banner />
+    </motion.div>
   )
 }
 

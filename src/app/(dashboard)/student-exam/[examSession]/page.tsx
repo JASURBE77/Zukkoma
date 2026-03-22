@@ -12,6 +12,7 @@ import { fetchQuestions, postAnswer, finishExam, resetExam, checkStudentExamDone
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import { motion, AnimatePresence } from "framer-motion"
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -104,7 +105,12 @@ export default function StudentExamPage() {
 
   if (isFinished && score !== null) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
+      <motion.div
+        className="flex min-h-[60vh] items-center justify-center"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+      >
         <Card className="w-full max-w-sm text-center">
           <CardHeader className="items-center pb-2 pt-8">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-100 dark:bg-green-500/10">
@@ -124,7 +130,7 @@ export default function StudentExamPage() {
             </Button>
           </CardContent>
         </Card>
-      </div>
+      </motion.div>
     )
   }
 
@@ -157,7 +163,12 @@ export default function StudentExamPage() {
   // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
+    <motion.div
+      className="mx-auto max-w-2xl space-y-6"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+    >
       {/* Progress */}
       <div className="space-y-2">
         <div className="flex items-center justify-between text-sm font-semibold text-slate-500">
@@ -173,37 +184,50 @@ export default function StudentExamPage() {
       </div>
 
       {/* Question card */}
-      {question && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base font-bold leading-relaxed text-slate-900 dark:text-white">
-              {question.question}
-            </CardTitle>
-            {question.description && (
-              <div
-                className="mt-2 text-sm text-slate-600 dark:text-slate-400 [&_img]:max-w-full [&_img]:rounded-lg"
-                dangerouslySetInnerHTML={{ __html: question.description }}
-              />
-            )}
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {question.answers.map((answer) => (
-              <button
-                key={answer._id}
-                onClick={() => setSelectedAnswer(answer._id)}
-                className={cn(
-                  "w-full rounded-xl border px-4 py-3 text-left text-sm font-medium transition-all",
-                  selectedAnswer === answer._id
-                    ? "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400"
-                    : "border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:bg-blue-50/50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
+      <AnimatePresence mode="wait">
+        {question && (
+          <motion.div
+            key={`${page}-${currentIndex}`}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -40 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base font-bold leading-relaxed text-slate-900 dark:text-white">
+                  {question.question}
+                </CardTitle>
+                {question.description && (
+                  <div
+                    className="mt-2 text-sm text-slate-600 dark:text-slate-400 [&_img]:max-w-full [&_img]:rounded-lg"
+                    dangerouslySetInnerHTML={{ __html: question.description }}
+                  />
                 )}
-              >
-                {answer.value}
-              </button>
-            ))}
-          </CardContent>
-        </Card>
-      )}
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {question.answers.map((answer, aIndex) => (
+                  <motion.button
+                    key={answer._id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2, delay: aIndex * 0.04 }}
+                    onClick={() => setSelectedAnswer(answer._id)}
+                    className={cn(
+                      "w-full rounded-xl border px-4 py-3 text-left text-sm font-medium transition-all",
+                      selectedAnswer === answer._id
+                        ? "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400"
+                        : "border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:bg-blue-50/50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
+                    )}
+                  >
+                    {answer.value}
+                  </motion.button>
+                ))}
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Action buttons */}
       <div className="flex justify-end gap-3">
@@ -230,6 +254,6 @@ export default function StudentExamPage() {
           </Button>
         )}
       </div>
-    </div>
+    </motion.div>
   )
 }

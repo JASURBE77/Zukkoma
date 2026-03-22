@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowLeft, Loader2, Trophy, CheckCircle2, XCircle, ClipboardList } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { motion } from "framer-motion"
 
 export default function ExamHistoryPage() {
   const dispatch      = useDispatch<AppDispatch>()
@@ -28,7 +29,12 @@ export default function ExamHistoryPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      className="space-y-6"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+    >
       {/* Header */}
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="sm" onClick={() => router.push("/exams")} className="gap-2 text-slate-500">
@@ -51,14 +57,20 @@ export default function ExamHistoryPage() {
 
       {/* List */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {historyList.map((item) => {
+        {historyList.map((item, index) => {
           const percentage = item.totalQuestions > 0
             ? Math.round((item.correctAnswers / item.totalQuestions) * 100)
             : 0
           const isPassed = percentage >= 60
 
           return (
-            <Card key={item._id} className="overflow-hidden">
+            <motion.div
+              key={item._id}
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: index * 0.07, ease: "easeOut" }}
+            >
+            <Card className="overflow-hidden">
               <div className={cn("h-1.5 w-full", isPassed ? "bg-green-500" : "bg-red-500")} />
               <CardContent className="pt-5 pb-5 space-y-4">
                 {/* Title + score */}
@@ -133,9 +145,10 @@ export default function ExamHistoryPage() {
                 </div>
               </CardContent>
             </Card>
+            </motion.div>
           )
         })}
       </div>
-    </div>
+    </motion.div>
   )
 }

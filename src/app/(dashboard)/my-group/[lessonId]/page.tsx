@@ -5,6 +5,7 @@ import { useSelector } from "react-redux"
 import { RootState } from "@/store/store"
 import { ArrowLeft, CheckCircle2, Circle } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { motion } from "framer-motion"
 
 export default function LessonPage() {
   const { lessonId } = useParams()
@@ -27,7 +28,12 @@ export default function LessonPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 animate-in fade-in duration-500">
+    <motion.div
+      className="max-w-3xl mx-auto space-y-6"
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+    >
       <Button
         variant="outline"
         onClick={() => router.back()}
@@ -36,7 +42,12 @@ export default function LessonPage() {
         <ArrowLeft className="w-4 h-4" /> Orqaga
       </Button>
 
-      <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl p-8 space-y-6">
+      <motion.div
+        className="bg-white rounded-[2rem] border border-slate-100 shadow-xl p-8 space-y-6"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, delay: 0.1, ease: "easeOut" }}
+      >
         <div className="flex items-start justify-between gap-4">
           <h1 className="text-2xl font-black text-slate-900">{lesson.title}</h1>
           <span
@@ -61,7 +72,7 @@ export default function LessonPage() {
           className="prose prose-slate max-w-none text-slate-700 leading-relaxed"
           dangerouslySetInnerHTML={{ __html: lesson.content }}
         />
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }
