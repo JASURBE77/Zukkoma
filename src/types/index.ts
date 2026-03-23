@@ -112,3 +112,61 @@ export interface ExamHistoryItem {
   title?: string
   createdAt?: string | number
 }
+
+// Home page types
+export interface HomeProfile {
+  fullName: string
+  wallet: number
+  isActive: boolean
+  groupName: string
+}
+
+export interface HomeStats {
+  attendancePercentage: number
+  totalLessons: number
+  presentCount: number
+}
+
+export interface HomeAttendanceItem {
+  date: string
+  status: "present" | "absent" | "late" | "reasoned"
+  comment: string
+}
+
+export interface HomeProgress {
+  methodologyName: string
+  lastLessonOrder: number
+  completedLessonsCount: number
+  nextLesson: {
+    title: string
+    order: number
+  }
+}
+
+export interface HomeData {
+  profile: HomeProfile
+  stats: HomeStats
+  attendance: HomeAttendanceItem[]
+  currentProgress: HomeProgress
+}
+
+// Attendance page types
+export interface AttendanceItem {
+  _id: string
+  date: string
+  comment: string
+  status: "present" | "absent" | "late" | "reasoned"
+}
+
+export interface AttendanceSummary {
+  present: number
+  absent: number
+  late: number
+  reasoned: number
+}
+
+export interface AttendanceData {
+  month: string
+  attendance: AttendanceItem[]
+  summary: AttendanceSummary
+}

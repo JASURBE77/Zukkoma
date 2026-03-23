@@ -5,6 +5,8 @@ import userReducer from "./slice/userSlice"
 import lessonReducer from "./slice/lessonSlice"
 import groupReducer from "./slice/groupSlice"
 import examReducer from "./slice/examSlice"
+import homeReducer from "./slice/homeSlice"
+import attendanceReducer from "./slice/attendanceSlice"
 import storage from "redux-persist/lib/storage"
 import { 
   persistReducer, 
@@ -31,6 +33,8 @@ export const store = configureStore({
     lessons: lessonReducer,
     group: groupReducer,
     exam: examReducer,
+    home: homeReducer,
+    attendance: attendanceReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
