@@ -15,8 +15,27 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Zukkoma",
-  description: "Zukkoma - bu studentlar va oqituvchilar uchun LMS platforma ",
+  title: {
+    default: "Zukkoma — O'quv markazi platformasi",
+    template: "%s | Zukkoma",
+  },
+  description: "Zukkoma — o'quvchilar uchun zamonaviy LMS platforma. Davomat, imtihonlar, darslar va ko'proq.",
+  keywords: ["zukkoma", "lms", "o'quv markazi", "davomat", "imtihon", "darslar"],
+  authors: [{ name: "Zukkoma" }],
+  creator: "Zukkoma",
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "website",
+    locale: "uz_UZ",
+    siteName: "Zukkoma",
+    title: "Zukkoma — O'quv markazi platformasi",
+    description: "O'quvchilar uchun zamonaviy LMS platforma. Davomat, imtihonlar, darslar va ko'proq.",
+  },
+  twitter: {
+    card: "summary",
+    title: "Zukkoma — O'quv markazi platformasi",
+    description: "O'quvchilar uchun zamonaviy LMS platforma.",
+  },
 };
 
 export default function RootLayout({
@@ -25,7 +44,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="uz">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

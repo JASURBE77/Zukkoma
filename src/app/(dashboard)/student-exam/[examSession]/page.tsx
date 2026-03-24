@@ -21,7 +21,7 @@ export default function StudentExamPage() {
   const router       = useRouter()
   const { examSession } = useParams<{ examSession: string }>()
 
-  const { questions, totalPages, questionsLoading, actionLoading, score, isFinished, error } =
+  const { questions, totalPages, totalQuestions, questionsLoading, actionLoading, score, isFinished, error } =
     useSelector((state: RootState) => state.exam)
 
   const [page,           setPage]           = useState(0)
@@ -157,8 +157,8 @@ export default function StudentExamPage() {
   }
 
   const question = questions[currentIndex]
-  const totalAnswered = page * questions.length + currentIndex
-  const totalQuestions = totalPages * questions.length
+  const pageSize = questions.length > 0 ? questions.length : 1
+  const totalAnswered = page * pageSize + currentIndex
 
   // ── Render ─────────────────────────────────────────────────────────────────
 

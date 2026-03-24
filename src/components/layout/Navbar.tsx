@@ -13,7 +13,6 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useSelector, useDispatch } from "react-redux"
 import { RootState, AppDispatch } from "@/store/store"
-import { fetchHomeData } from "@/store/slice/homeSlice"
 import { logout } from "@/store/slice/authSlice"
 import { persistor } from "@/store/store"
 import { useRouter } from "next/navigation"
@@ -25,10 +24,6 @@ export default function Header() {
   const dispatch = useDispatch<AppDispatch>()
   const router = useRouter()
   const { data, loading } = useSelector((state: RootState) => state.home)
-
-  React.useEffect(() => {
-    if (!data) dispatch(fetchHomeData())
-  }, [dispatch, data])
 
   const handleLogout = async () => {
     dispatch(logout())
@@ -47,7 +42,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-30 w-full border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md">
-      <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-2 sm:gap-4">
 
         {/* Chap: Desktop — ism, Mobile — logo */}
         <div className="flex items-center gap-3">
@@ -57,22 +52,6 @@ export default function Header() {
             <span className="text-lg font-black text-slate-900 dark:text-white tracking-tight">ZUKKOMA</span>
           </Link>
 
-          {/* Desktop ism */}
-          <div className="hidden lg:flex flex-col">
-            {loading ? (
-              <div className="space-y-1.5">
-                <div className="h-5 w-40 bg-slate-100 dark:bg-slate-800 rounded-lg animate-pulse" />
-                <div className="h-3.5 w-24 bg-slate-100 dark:bg-slate-800 rounded-lg animate-pulse" />
-              </div>
-            ) : (
-              <>
-                <span className="text-lg font-black text-slate-900 dark:text-white leading-tight">{fullName}</span>
-                {groupName && (
-                  <span className="text-xs font-bold text-slate-400">{groupName}</span>
-                )}
-              </>
-            )}
-          </div>
         </div>
 
         {/* O'ng: hamyon, bell, avatar */}
@@ -113,7 +92,7 @@ export default function Header() {
                   <span className="text-xs font-black text-slate-900 dark:text-white leading-tight max-w-[100px] truncate">
                     {fullName || "—"}
                   </span>
-                  <span className="text-[10px] text-slate-400 font-medium">Student</span>
+                  <span className="text-[10px] text-slate-400 font-medium">O'quvchi</span>
                 </div>
               </button>
             </DropdownMenuTrigger>

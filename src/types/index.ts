@@ -29,12 +29,34 @@ export interface User {
   phone_number?: string
 }
 
+export interface UpdateUserPayload {
+  id: string
+  name?: string
+  surname?: string
+  phone_number?: string
+  age?: string
+  avatar?: string
+  level?: string
+  login?: string
+  password?: string
+}
+
 export interface GroupMember {
   _id: string
   name: string
   surname: string
   age: string
   isActive: boolean
+}
+
+export interface MemberProfile {
+  _id: string
+  name: string
+  surname: string
+  age: string
+  role: string
+  isActive: boolean
+  wallet: number
 }
 
 export interface Lesson {
@@ -70,6 +92,13 @@ export interface ExamSessionExam {
   link?: string | null
 }
 
+export interface ExamSessionStudentExam {
+  _id: string
+  status: "started" | "finished"
+  startedAt?: string
+  finishedAt?: string
+}
+
 export interface ExamSession {
   _id: string
   examId: ExamSessionExam
@@ -77,7 +106,7 @@ export interface ExamSession {
   startDate: number
   endDate: number
   status: "pending" | "active" | "finished"
-  studentExam: string | null
+  studentExam: ExamSessionStudentExam | null
 }
 
 export interface QuestionAnswer {
@@ -101,15 +130,44 @@ export interface ExamResult {
   totalQuestions: number
   sessionId: string
   title?: string
+  status?: string
 }
 
 export interface ExamHistoryItem {
   _id: string
+  title: string
+  startedAt?: string
+  finishedAt?: string
+}
+
+export interface ExamHistoryResult {
+  questionText: string
+  maxBall: number
+  gatheredBall: number
+  description?: string
+  allOptions: { id: string; text: string; isCorrect: boolean }[]
+  selectedAnswerIds: string[]
+}
+
+export interface ExamHistoryDetail {
+  info: {
+    student: { _id: string; name: string; surname: string }
+    examTitle: string
+    status: string
+    startedAt: string
+    finishedAt?: string
+  }
+  results: ExamHistoryResult[]
+}
+
+export interface StudentExam {
+  _id: string
   sessionId: string
+  studentId: string
   totalScore: number
   correctAnswers: number
   totalQuestions: number
-  title?: string
+  isFinished: boolean
   createdAt?: string | number
 }
 

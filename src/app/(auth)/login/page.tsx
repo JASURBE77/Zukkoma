@@ -64,9 +64,9 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div className="flex items-center justify-center relative p-8 lg:p-16 bg-white dark:bg-slate-900">
-          <div className="w-full max-w-sm space-y-8">
-            <Image src={Logo} alt="zukkoma logo" className="w-30 absolute top-0 right-10" />
+        <div className="flex items-center justify-center relative p-6 sm:p-8 lg:p-16 bg-white dark:bg-slate-900">
+          <div className="w-full max-w-sm space-y-6 sm:space-y-8">
+            <Image src={Logo} alt="zukkoma logo" width={48} height={48} className="absolute top-4 right-6 w-12 h-12 rounded-xl object-cover" />
             <div className="space-y-2 text-center lg:text-left">
               <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
                 Kirish
@@ -80,12 +80,12 @@ export default function LoginPage() {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="login" className="text-xs uppercase tracking-widest text-slate-400 font-bold ml-1">
-                    Login
+                    Foydalanuvchi nomi
                   </Label>
                   <Input
                     id="login"
                     type="text"
-                    placeholder="login"
+                    placeholder="Foydalanuvchi nomingiz"
                     value={login}
                     onChange={(e) => setLogin(e.target.value)}
                     required

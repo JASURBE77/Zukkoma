@@ -83,8 +83,8 @@ export default function ExamPage() {
     }
   }
 
-  function handleViewResult(_sessionId: string) {
-    router.push("/exams/history")
+  function handleViewResult(studentExamId: string) {
+    router.push(`/exams/history/${studentExamId}`)
   }
 
   async function handlePracticeSubmit(sessionId: string) {
@@ -223,7 +223,7 @@ export default function ExamPage() {
                     variant="outline"
                     className="w-full gap-2"
                     disabled={isBusy}
-                    onClick={() => handleViewResult(session._id)}
+                    onClick={() => handleViewResult(session.studentExam!._id)}
                   >
                     {isBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trophy className="h-4 w-4 text-yellow-500" />}
                     Natijani ko'rish
@@ -239,16 +239,12 @@ export default function ExamPage() {
                     onClick={() => handleStart(session._id)}
                   >
                     {isBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCcw className="h-4 w-4" />}
-                    Davom ettirish
+                    Boshlash
                   </Button>
                 ) : (
-                  <Button
-                    className="w-full gap-2 bg-blue-600 hover:bg-blue-700 text-white"
-                    disabled={isBusy}
-                    onClick={() => handleStart(session._id)}
-                  >
-                    {isBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
-                    Boshlash
+                  <Button variant="outline" className="w-full gap-2" disabled>
+                    <CalendarClock className="h-4 w-4" />
+                    Kutilmoqda
                   </Button>
                 )}
               </CardFooter>

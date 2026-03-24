@@ -1,4 +1,4 @@
-import { GroupMember } from "@/types"
+import { GroupMember, MemberProfile } from "@/types"
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { RootState } from "../store"
 
@@ -6,6 +6,9 @@ interface GroupStore {
   members: GroupMember[]
   loading: boolean
   error: string | null
+  memberProfile: MemberProfile | null
+  memberLoading: boolean
+  memberError: string | null
 }
 
 export const fetchGroupMembers = createAsyncThunk<
@@ -31,10 +34,36 @@ export const fetchGroupMembers = createAsyncThunk<
   }
 )
 
+export const fetchMemberById = createAsyncThunk<
+  MemberProfile,
+  string,
+  { state: RootState; rejectValue: string }
+>(
+  "group/fetchMemberById",
+  async (userId, { getState, rejectWithValue }) => {
+    const token = getState().auth.token
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      return rejectWithValue(err.message || "Foydalanuvchi ma'lumotini olishda xatolik")
+    }
+
+    return await res.json()
+  }
+)
+
 const initialState: GroupStore = {
   members: [],
   loading: false,
-  error: null
+  error: null,
+  memberProfile: null,
+  memberLoading: false,
+  memberError: null,
 }
 
 const groupSlice = createSlice({
@@ -54,6 +83,19 @@ const groupSlice = createSlice({
       .addCase(fetchGroupMembers.rejected, (state, action) => {
         state.loading = false
         state.error = action.payload ?? "Xatolik yuz berdi"
+      })
+      .addCase(fetchMemberById.pending, (state) => {
+        state.memberLoading = true
+        state.memberError = null
+        state.memberProfile = null
+      })
+      .addCase(fetchMemberById.fulfilled, (state, action: PayloadAction<MemberProfile>) => {
+        state.memberLoading = false
+        state.memberProfile = action.payload
+      })
+      .addCase(fetchMemberById.rejected, (state, action) => {
+        state.memberLoading = false
+        state.memberError = action.payload ?? "Xatolik yuz berdi"
       })
   }
 })

@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { RootState } from "../store"
-import { ExamSession, ExamResult, ExamHistoryItem, Question } from "@/types"
+import { ExamSession, ExamResult, StudentExam, Question } from "@/types"
 
 // ─── State ────────────────────────────────────────────────────────────────────
 
@@ -11,11 +11,13 @@ interface ExamStore {
   examResult: ExamResult | null
   resultLoading: boolean
 
-  historyList: ExamHistoryItem[]
-  historyLoading: boolean
+  studentExam: StudentExam | null
+  studentExamLoading: boolean
 
+  currentExamId: string | null
   questions: Question[]
   totalPages: number
+  totalQuestions: number
   questionsLoading: boolean
 
   score: string | null
@@ -32,11 +34,13 @@ const initialState: ExamStore = {
   examResult: null,
   resultLoading: false,
 
-  historyList: [],
-  historyLoading: false,
+  studentExam: null,
+  studentExamLoading: false,
 
+  currentExamId: null,
   questions: [],
   totalPages: 1,
+  totalQuestions: 0,
   questionsLoading: false,
 
   score: null,
@@ -133,7 +137,7 @@ export const submitPracticeLink = createAsyncThunk<
 })
 
 export const fetchQuestions = createAsyncThunk<
-  { questions: Question[]; totalPages: number },
+  { questions: Question[]; totalPages: number; totalQuestions: number; examId: string | null },
   { examSession: string; page: number },
   { state: RootState; rejectValue: string }
 >("exam/fetchQuestions", async ({ examSession, page }, { getState, rejectWithValue }) => {
@@ -147,9 +151,12 @@ export const fetchQuestions = createAsyncThunk<
     return rejectWithValue(err.message || "Savollarni olishda xatolik")
   }
   const data = await res.json()
+  const questions: Question[] = Array.isArray(data.data) ? data.data : []
   return {
-    questions: Array.isArray(data.data) ? data.data : [],
+    questions,
     totalPages: data.totalPages ?? 1,
+    totalQuestions: data.totalQuestions ?? 0,
+    examId: questions[0]?.examId ?? null,
   }
 })
 
@@ -189,26 +196,6 @@ export const finishExam = createAsyncThunk<
   return (data.totalScore?.toFixed(1) ?? "0") as string
 })
 
-export const fetchExamHistory = createAsyncThunk<
-  ExamHistoryItem[],
-  void,
-  { state: RootState; rejectValue: string }
->("exam/fetchHistory", async (_, { getState, rejectWithValue }) => {
-  const token = getState().auth.token
-  const res = await fetch(`${BASE}/student-exam/history`, {
-    headers: authHeaders(token),
-  })
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}))
-    return rejectWithValue(err.message || "Tarixni olishda xatolik")
-  }
-  const data = await res.json()
-  if (Array.isArray(data)) return data
-  if (Array.isArray(data.data)) return data.data
-  if (Array.isArray(data.content)) return data.content
-  return []
-})
-
 export const checkStudentExamDone = createAsyncThunk<
   ExamResult | null,
   string,
@@ -221,6 +208,22 @@ export const checkStudentExamDone = createAsyncThunk<
   if (!res.ok) return null
   const data = await res.json()
   return data ?? null
+})
+
+export const fetchStudentExam = createAsyncThunk<
+  StudentExam,
+  void,
+  { state: RootState; rejectValue: string }
+>("exam/fetchStudentExam", async (_, { getState, rejectWithValue }) => {
+  const token = getState().auth.token
+  const res = await fetch(`${BASE}/student-exam/exam`, {
+    headers: authHeaders(token),
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    return rejectWithValue(err.message || "Imtihon ma'lumotini olishda xatolik")
+  }
+  return await res.json()
 })
 
 // ─── Slice ────────────────────────────────────────────────────────────────────
@@ -303,6 +306,8 @@ const examSlice = createSlice({
         state.questionsLoading = false
         state.questions = action.payload.questions
         state.totalPages = action.payload.totalPages
+        state.totalQuestions = action.payload.totalQuestions
+        if (action.payload.examId) state.currentExamId = action.payload.examId
       })
       .addCase(fetchQuestions.rejected, (state, action) => {
         state.questionsLoading = false
@@ -331,22 +336,27 @@ const examSlice = createSlice({
         state.error = action.payload ?? "Xatolik yuz berdi"
       })
 
-    // fetchExamHistory
-    builder
-      .addCase(fetchExamHistory.pending, (state) => { state.historyLoading = true })
-      .addCase(fetchExamHistory.fulfilled, (state, action: PayloadAction<ExamHistoryItem[]>) => {
-        state.historyLoading = false
-        state.historyList = action.payload
-      })
-      .addCase(fetchExamHistory.rejected, (state) => { state.historyLoading = false })
-
-    // checkStudentExamDone — on fulfilled, if result exists mark as finished
+    // checkStudentExamDone — on fulfilled, only mark as finished if status is "finished"
     builder
       .addCase(checkStudentExamDone.fulfilled, (state, action: PayloadAction<ExamResult | null>) => {
-        if (action.payload) {
+        if (action.payload && action.payload.status === "finished") {
           state.score = action.payload.totalScore.toFixed(1)
           state.isFinished = true
         }
+      })
+
+    // fetchStudentExam
+    builder
+      .addCase(fetchStudentExam.pending, (state) => {
+        state.studentExamLoading = true
+        state.studentExam = null
+      })
+      .addCase(fetchStudentExam.fulfilled, (state, action: PayloadAction<StudentExam>) => {
+        state.studentExamLoading = false
+        state.studentExam = action.payload
+      })
+      .addCase(fetchStudentExam.rejected, (state) => {
+        state.studentExamLoading = false
       })
   },
 })

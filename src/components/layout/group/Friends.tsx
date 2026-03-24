@@ -2,13 +2,16 @@
 
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import { useRouter } from "next/navigation"
 import { AppDispatch, RootState } from "@/store/store"
 import { fetchGroupMembers } from "@/store/slice/groupSlice"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { ChevronRight } from "lucide-react"
 
 export default function Friends() {
   const dispatch = useDispatch<AppDispatch>()
+  const router = useRouter()
   const { members, loading, error } = useSelector((state: RootState) => state.group)
 
   useEffect(() => {
@@ -51,7 +54,8 @@ export default function Friends() {
             return (
               <div
                 key={member._id}
-                className="flex items-center gap-4 bg-white border border-slate-100 rounded-2xl px-4 py-3 shadow-sm hover:shadow-md transition-shadow"
+                onClick={() => router.push(`/my-group/member/${member._id}`)}
+                className="flex items-center gap-4 bg-white border border-slate-100 rounded-2xl px-4 py-3 shadow-sm hover:shadow-md hover:border-blue-100 transition-all cursor-pointer"
               >
                 <Avatar className="h-12 w-12 rounded-xl shrink-0">
                   <AvatarFallback className="rounded-xl bg-blue-100 text-blue-600 font-black text-sm">
@@ -66,15 +70,18 @@ export default function Friends() {
                   <p className="text-xs text-slate-400">{member.age}</p>
                 </div>
 
-                <Badge
-                  className={
-                    member.isActive
-                      ? "bg-emerald-50 text-emerald-600 border-none text-xs font-bold"
-                      : "bg-slate-100 text-slate-400 border-none text-xs font-bold"
-                  }
-                >
-                  {member.isActive ? "Faol" : "Nofaol"}
-                </Badge>
+                <div className="flex items-center gap-2 shrink-0">
+                  <Badge
+                    className={
+                      member.isActive
+                        ? "bg-emerald-50 text-emerald-600 border-none text-xs font-bold"
+                        : "bg-slate-100 text-slate-400 border-none text-xs font-bold"
+                    }
+                  >
+                    {member.isActive ? "Faol" : "Nofaol"}
+                  </Badge>
+                  <ChevronRight className="w-4 h-4 text-slate-300" />
+                </div>
               </div>
             )
           })}

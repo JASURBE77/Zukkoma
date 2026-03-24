@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, Users, FolderKanban, ClipboardList, CalendarDays } from "lucide-react"
+import { LayoutDashboard, Users, User, ClipboardList, CalendarDays } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const navItems = [
@@ -10,7 +10,7 @@ const navItems = [
   { name: "Guruhim",     href: "/my-group",   icon: Users           },
   { name: "Davomat",     href: "/attendance", icon: CalendarDays    },
   { name: "Imtihonlar",  href: "/exams",      icon: ClipboardList   },
-  { name: "Profil",      href: "/profile",    icon: FolderKanban    },
+  { name: "Profil",      href: "/profile",    icon: User            },
 ]
 
 export default function NavigationMobile() {
@@ -40,7 +40,7 @@ export default function NavigationMobile() {
               </div>
               <span
                 className={cn(
-                  "text-[9px] font-bold transition-colors leading-none",
+                  "text-[10px] font-bold transition-colors leading-none",
                   isActive ? "text-blue-600" : "text-slate-400"
                 )}
               >

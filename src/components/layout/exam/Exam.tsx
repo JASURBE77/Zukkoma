@@ -2,7 +2,7 @@ import React from 'react'
 
 const Exam = () => {
   return (
-    <div>Exam</div>
+    <div>Imtihon</div>
   )
 }
 

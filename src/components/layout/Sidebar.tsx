@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation"
 import {
   LayoutDashboard,
   Users,
-  FolderKanban,
+  User,
   LogOut,
   ChevronRight,
   CalendarDays,
@@ -30,7 +30,7 @@ const menuItems = [
       { name: "Mening guruhim",href: "/my-group",   icon: Users           },
       { name: "Davomat",       href: "/attendance", icon: CalendarDays    },
       { name: "Imtihonlar",    href: "/exams",      icon: ClipboardList   },
-      { name: "Profil",        href: "/profile",    icon: FolderKanban    },
+      { name: "Profil",        href: "/profile",    icon: User            },
     ]
   },
 ]
@@ -57,7 +57,7 @@ export default function Sidebar() {
     : "?"
 
   return (
-    <aside className="hidden lg:flex h-screen w-64 xl:w-72 flex-col border-r border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 sticky top-0">
+    <aside className="hidden lg:flex h-screen w-64 xl:w-72 flex-col border-r border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 sticky top-0 shrink-0">
 
       {/* Logo */}
       <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800">

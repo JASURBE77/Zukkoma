@@ -1,40 +1,39 @@
-// store/index.ts
 import { configureStore } from "@reduxjs/toolkit"
 import authReducer from "./slice/authSlice"
 import userReducer from "./slice/userSlice"
 import lessonReducer from "./slice/lessonSlice"
 import groupReducer from "./slice/groupSlice"
 import examReducer from "./slice/examSlice"
+import historyReducer from "./slice/historySlice"
 import homeReducer from "./slice/homeSlice"
 import attendanceReducer from "./slice/attendanceSlice"
 import storage from "redux-persist/lib/storage"
-import { 
-  persistReducer, 
+import {
+  persistReducer,
   persistStore,
   FLUSH,
   REHYDRATE,
   PAUSE,
   PERSIST,
   PURGE,
-  REGISTER, 
+  REGISTER,
 } from "redux-persist"
 
-const persistConfig = {
+const authPersistConfig = {
   key: "auth",
-  storage
+  storage,
 }
-
-const persistedReducer = persistReducer(persistConfig, authReducer)
 
 export const store = configureStore({
   reducer: {
-    auth: persistedReducer,
-    user: userReducer,
-    lessons: lessonReducer,
-    group: groupReducer,
-    exam: examReducer,
-    home: homeReducer,
+    auth:       persistReducer(authPersistConfig, authReducer) as unknown as typeof authReducer,
+    user:       userReducer,
+    home:       homeReducer,
     attendance: attendanceReducer,
+    lessons:    lessonReducer,
+    group:      groupReducer,
+    exam:       examReducer,
+    history:    historyReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
