@@ -1,6 +1,8 @@
 import { GroupMember, MemberProfile } from "@/types"
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { RootState } from "../store"
+import axios from "axios"
+import axiosInstance from "@/lib/axiosInstance"
 
 interface GroupStore {
   members: GroupMember[]
@@ -17,20 +19,16 @@ export const fetchGroupMembers = createAsyncThunk<
   { state: RootState; rejectValue: string }
 >(
   "group/fetchGroupMembers",
-  async (_, { getState, rejectWithValue }) => {
-    const token = getState().auth.token
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/students/my-group`, {
-      headers: {
-        Authorization: `Bearer ${token}`
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get<GroupMember[]>("/students/my-group")
+      return res.data
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(error.response?.data?.message || "Guruhdoshlarni olishda xatolik")
       }
-    })
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}))
-      return rejectWithValue(err.message || "Guruhdoshlarni olishda xatolik")
+      return rejectWithValue("Guruhdoshlarni olishda xatolik")
     }
-
-    return await res.json()
   }
 )
 
@@ -40,20 +38,16 @@ export const fetchMemberById = createAsyncThunk<
   { state: RootState; rejectValue: string }
 >(
   "group/fetchMemberById",
-  async (userId, { getState, rejectWithValue }) => {
-    const token = getState().auth.token
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
+  async (userId, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get<MemberProfile>(`/users/${userId}`)
+      return res.data
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(error.response?.data?.message || "Foydalanuvchi ma'lumotini olishda xatolik")
       }
-    })
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}))
-      return rejectWithValue(err.message || "Foydalanuvchi ma'lumotini olishda xatolik")
+      return rejectWithValue("Foydalanuvchi ma'lumotini olishda xatolik")
     }
-
-    return await res.json()
   }
 )
 

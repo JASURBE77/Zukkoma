@@ -106,7 +106,6 @@ export default function AttendancePage() {
         </div>
       </div>
 
-      {/* Summary kartalar */}
       {data && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {summaryCards.map(card => (

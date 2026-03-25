@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { RootState } from "../store"
 import { ExamSession, ExamResult, StudentExam, Question } from "@/types"
+import axios from "axios"
+import axiosInstance from "@/lib/axiosInstance"
 
 // ─── State ────────────────────────────────────────────────────────────────────
 
@@ -50,89 +52,72 @@ const initialState: ExamStore = {
   error: null,
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function authHeaders(token: string | null) {
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  }
-}
-
-const BASE = process.env.NEXT_PUBLIC_API_URL
-
 // ─── Thunks ───────────────────────────────────────────────────────────────────
 
 export const fetchExamSessions = createAsyncThunk<
   ExamSession[],
   void,
   { state: RootState; rejectValue: string }
->("exam/fetchSessions", async (_, { getState, rejectWithValue }) => {
-  const token = getState().auth.token
-  const res = await fetch(`${BASE}/exam-session/group`, {
-    headers: authHeaders(token),
-  })
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}))
-    return rejectWithValue(err.message || "Imtihonlarni olishda xatolik")
+>("exam/fetchSessions", async (_, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.get("/exam-session/group")
+    const data = res.data
+    if (Array.isArray(data)) return data
+    if (Array.isArray(data.data)) return data.data
+    if (Array.isArray(data.content)) return data.content
+    return []
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.response?.data?.message || "Imtihonlarni olishda xatolik")
+    }
+    return rejectWithValue("Imtihonlarni olishda xatolik")
   }
-  const data = await res.json()
-  // API { data: [...] } yoki { content: [...] } yoki to'g'ridan-to'g'ri [...] qaytarishi mumkin
-  if (Array.isArray(data)) return data
-  if (Array.isArray(data.data)) return data.data
-  if (Array.isArray(data.content)) return data.content
-  return []
 })
 
 export const startExam = createAsyncThunk<
   string,
   string,
   { state: RootState; rejectValue: string }
->("exam/start", async (sessionId, { getState, rejectWithValue }) => {
-  const token = getState().auth.token
-  const res = await fetch(`${BASE}/student-exam/start`, {
-    method: "POST",
-    headers: authHeaders(token),
-    body: JSON.stringify({ sessionId }),
-  })
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}))
-    return rejectWithValue(err.message || "Imtihonni boshlashda xatolik")
+>("exam/start", async (sessionId, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.post("/student-exam/start", { sessionId })
+    return res.data.content.examSession as string
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.response?.data?.message || "Imtihonni boshlashda xatolik")
+    }
+    return rejectWithValue("Imtihonni boshlashda xatolik")
   }
-  const data = await res.json()
-  return data.content.examSession as string
 })
 
 export const fetchExamResult = createAsyncThunk<
   ExamResult,
   string,
   { state: RootState; rejectValue: string }
->("exam/fetchResult", async (sessionId, { getState, rejectWithValue }) => {
-  const token = getState().auth.token
-  const res = await fetch(`${BASE}/student-exam/status?sessionId=${sessionId}`, {
-    headers: authHeaders(token),
-  })
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}))
-    return rejectWithValue(err.message || "Natijani olishda xatolik")
+>("exam/fetchResult", async (sessionId, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.get<ExamResult>(`/student-exam/status?sessionId=${sessionId}`)
+    return res.data
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.response?.data?.message || "Natijani olishda xatolik")
+    }
+    return rejectWithValue("Natijani olishda xatolik")
   }
-  return res.json()
 })
 
 export const submitPracticeLink = createAsyncThunk<
   void,
   { sessionId: string; link: string },
   { state: RootState; rejectValue: string }
->("exam/submitPracticeLink", async ({ sessionId, link }, { getState, rejectWithValue }) => {
-  const token = getState().auth.token
-  const res = await fetch(`${BASE}/exam-session/practice/submit`, {
-    method: "POST",
-    headers: authHeaders(token),
-    body: JSON.stringify({ sessionId, link }),
-  })
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}))
-    return rejectWithValue(err.message || "Yuborishda xatolik yuz berdi")
+>("exam/submitPracticeLink", async ({ sessionId, link }, { rejectWithValue }) => {
+  try {
+    await axiosInstance.post("/exam-session/practice/submit", { sessionId, link })
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.response?.data?.message || "Yuborishda xatolik yuz berdi")
+    }
+    return rejectWithValue("Yuborishda xatolik yuz berdi")
   }
 })
 
@@ -140,23 +125,22 @@ export const fetchQuestions = createAsyncThunk<
   { questions: Question[]; totalPages: number; totalQuestions: number; examId: string | null },
   { examSession: string; page: number },
   { state: RootState; rejectValue: string }
->("exam/fetchQuestions", async ({ examSession, page }, { getState, rejectWithValue }) => {
-  const token = getState().auth.token
-  const res = await fetch(
-    `${BASE}/question/exams/${examSession}/questions?page=${page}`,
-    { headers: authHeaders(token) }
-  )
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}))
-    return rejectWithValue(err.message || "Savollarni olishda xatolik")
-  }
-  const data = await res.json()
-  const questions: Question[] = Array.isArray(data.data) ? data.data : []
-  return {
-    questions,
-    totalPages: data.totalPages ?? 1,
-    totalQuestions: data.totalQuestions ?? 0,
-    examId: questions[0]?.examId ?? null,
+>("exam/fetchQuestions", async ({ examSession, page }, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.get(`/question/exams/${examSession}/questions?page=${page}`)
+    const data = res.data
+    const questions: Question[] = Array.isArray(data.data) ? data.data : []
+    return {
+      questions,
+      totalPages: data.totalPages ?? 1,
+      totalQuestions: data.totalQuestions ?? 0,
+      examId: questions[0]?.examId ?? null,
+    }
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.response?.data?.message || "Savollarni olishda xatolik")
+    }
+    return rejectWithValue("Savollarni olishda xatolik")
   }
 })
 
@@ -164,16 +148,14 @@ export const postAnswer = createAsyncThunk<
   void,
   { sessionId: string; questionId: string; selectedAnswerId: string },
   { state: RootState; rejectValue: string }
->("exam/postAnswer", async (payload, { getState, rejectWithValue }) => {
-  const token = getState().auth.token
-  const res = await fetch(`${BASE}/student-exam/answer`, {
-    method: "POST",
-    headers: authHeaders(token),
-    body: JSON.stringify(payload),
-  })
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}))
-    return rejectWithValue(err.message || "Javob yuborishda xatolik")
+>("exam/postAnswer", async (payload, { rejectWithValue }) => {
+  try {
+    await axiosInstance.post("/student-exam/answer", payload)
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.response?.data?.message || "Javob yuborishda xatolik")
+    }
+    return rejectWithValue("Javob yuborishda xatolik")
   }
 })
 
@@ -181,49 +163,45 @@ export const finishExam = createAsyncThunk<
   string,
   string,
   { state: RootState; rejectValue: string }
->("exam/finish", async (sessionId, { getState, rejectWithValue }) => {
-  const token = getState().auth.token
-  const res = await fetch(`${BASE}/student-exam/finish`, {
-    method: "POST",
-    headers: authHeaders(token),
-    body: JSON.stringify({ sessionId }),
-  })
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}))
-    return rejectWithValue(err.message || "Imtihonni yakunlashda xatolik")
+>("exam/finish", async (sessionId, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.post("/student-exam/finish", { sessionId })
+    return (res.data.totalScore?.toFixed(1) ?? "0") as string
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.response?.data?.message || "Imtihonni yakunlashda xatolik")
+    }
+    return rejectWithValue("Imtihonni yakunlashda xatolik")
   }
-  const data = await res.json()
-  return (data.totalScore?.toFixed(1) ?? "0") as string
 })
 
 export const checkStudentExamDone = createAsyncThunk<
   ExamResult | null,
   string,
   { state: RootState; rejectValue: string }
->("exam/checkDone", async (sessionId, { getState }) => {
-  const token = getState().auth.token
-  const res = await fetch(`${BASE}/student-exam/status?sessionId=${sessionId}`, {
-    headers: authHeaders(token),
-  })
-  if (!res.ok) return null
-  const data = await res.json()
-  return data ?? null
+>("exam/checkDone", async (sessionId) => {
+  try {
+    const res = await axiosInstance.get(`/student-exam/status?sessionId=${sessionId}`)
+    return res.data ?? null
+  } catch {
+    return null
+  }
 })
 
 export const fetchStudentExam = createAsyncThunk<
   StudentExam,
   void,
   { state: RootState; rejectValue: string }
->("exam/fetchStudentExam", async (_, { getState, rejectWithValue }) => {
-  const token = getState().auth.token
-  const res = await fetch(`${BASE}/student-exam/exam`, {
-    headers: authHeaders(token),
-  })
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}))
-    return rejectWithValue(err.message || "Imtihon ma'lumotini olishda xatolik")
+>("exam/fetchStudentExam", async (_, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.get<StudentExam>("/student-exam/exam")
+    return res.data
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.response?.data?.message || "Imtihon ma'lumotini olishda xatolik")
+    }
+    return rejectWithValue("Imtihon ma'lumotini olishda xatolik")
   }
-  return await res.json()
 })
 
 // ─── Slice ────────────────────────────────────────────────────────────────────
@@ -248,7 +226,6 @@ const examSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // fetchExamSessions
     builder
       .addCase(fetchExamSessions.pending, (state) => {
         state.sessionsLoading = true
@@ -263,7 +240,6 @@ const examSlice = createSlice({
         state.error = action.payload ?? "Xatolik yuz berdi"
       })
 
-    // startExam
     builder
       .addCase(startExam.pending, (state) => { state.actionLoading = true })
       .addCase(startExam.fulfilled, (state) => { state.actionLoading = false })
@@ -272,7 +248,6 @@ const examSlice = createSlice({
         state.error = action.payload ?? "Xatolik yuz berdi"
       })
 
-    // fetchExamResult
     builder
       .addCase(fetchExamResult.pending, (state) => {
         state.resultLoading = true
@@ -287,7 +262,6 @@ const examSlice = createSlice({
         state.error = action.payload ?? "Xatolik yuz berdi"
       })
 
-    // submitPracticeLink
     builder
       .addCase(submitPracticeLink.pending, (state) => { state.actionLoading = true })
       .addCase(submitPracticeLink.fulfilled, (state) => { state.actionLoading = false })
@@ -296,7 +270,6 @@ const examSlice = createSlice({
         state.error = action.payload ?? "Xatolik yuz berdi"
       })
 
-    // fetchQuestions
     builder
       .addCase(fetchQuestions.pending, (state) => {
         state.questionsLoading = true
@@ -314,7 +287,6 @@ const examSlice = createSlice({
         state.error = action.payload ?? "Xatolik yuz berdi"
       })
 
-    // postAnswer
     builder
       .addCase(postAnswer.pending, (state) => { state.actionLoading = true })
       .addCase(postAnswer.fulfilled, (state) => { state.actionLoading = false })
@@ -323,7 +295,6 @@ const examSlice = createSlice({
         state.error = action.payload ?? "Xatolik yuz berdi"
       })
 
-    // finishExam
     builder
       .addCase(finishExam.pending, (state) => { state.actionLoading = true })
       .addCase(finishExam.fulfilled, (state, action: PayloadAction<string>) => {
@@ -336,7 +307,6 @@ const examSlice = createSlice({
         state.error = action.payload ?? "Xatolik yuz berdi"
       })
 
-    // checkStudentExamDone — on fulfilled, only mark as finished if status is "finished"
     builder
       .addCase(checkStudentExamDone.fulfilled, (state, action: PayloadAction<ExamResult | null>) => {
         if (action.payload && action.payload.status === "finished") {
@@ -345,7 +315,6 @@ const examSlice = createSlice({
         }
       })
 
-    // fetchStudentExam
     builder
       .addCase(fetchStudentExam.pending, (state) => {
         state.studentExamLoading = true

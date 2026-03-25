@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { RootState } from "../store"
 import { ExamHistoryItem, ExamHistoryDetail } from "@/types"
+import axios from "axios"
+import axiosInstance from "@/lib/axiosInstance"
 
 // ─── State ────────────────────────────────────────────────────────────────────
 
@@ -24,70 +26,55 @@ const initialState: HistoryStore = {
   error: null,
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function authHeaders(token: string | null) {
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  }
-}
-
-const BASE = process.env.NEXT_PUBLIC_API_URL
-
 // ─── Thunks ───────────────────────────────────────────────────────────────────
 
 export const fetchExamHistory = createAsyncThunk<
   ExamHistoryItem[],
   void,
   { state: RootState; rejectValue: string }
->("history/fetchList", async (_, { getState, rejectWithValue }) => {
-  const token = getState().auth.token
-  const res = await fetch(`${BASE}/exam-session/group`, {
-    headers: authHeaders(token),
-  })
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}))
-    return rejectWithValue(err.message || "Sessiyalarni olishda xatolik")
+>("history/fetchList", async (_, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.get("/exam-session/group")
+    const data = res.data
+    type RawSession = {
+      examId: { title?: string }
+      studentExam: { _id: string; status: string; startedAt?: string; finishedAt?: string } | null
+    }
+    const sessions: RawSession[] =
+      Array.isArray(data) ? data
+      : Array.isArray(data.data) ? data.data
+      : Array.isArray(data.content) ? data.content
+      : []
+    return sessions
+      .filter(s => s.studentExam?.status === "finished")
+      .map(s => ({
+        _id: s.studentExam!._id,
+        title: s.examId?.title ?? "Imtihon",
+        startedAt: s.studentExam!.startedAt,
+        finishedAt: s.studentExam!.finishedAt,
+      }))
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.response?.data?.message || "Sessiyalarni olishda xatolik")
+    }
+    return rejectWithValue("Sessiyalarni olishda xatolik")
   }
-  const data = await res.json()
-  type RawSession = {
-    examId: { title?: string }
-    studentExam: { _id: string; status: string; startedAt?: string; finishedAt?: string } | null
-  }
-  const sessions: RawSession[] =
-    Array.isArray(data) ? data
-    : Array.isArray(data.data) ? data.data
-    : Array.isArray(data.content) ? data.content
-    : []
-  return sessions
-    .filter(s => s.studentExam?.status === "finished")
-    .map(s => ({
-      _id: s.studentExam!._id,
-      title: s.examId?.title ?? "Imtihon",
-      startedAt: s.studentExam!.startedAt,
-      finishedAt: s.studentExam!.finishedAt,
-    }))
 })
 
 export const fetchExamHistoryById = createAsyncThunk<
   ExamHistoryDetail,
   string,
   { state: RootState; rejectValue: string }
->("history/fetchById", async (examId, { getState, rejectWithValue }) => {
-
-  const token = getState().auth.token
-  const res = await fetch(`${BASE}/student-exam/history/${examId}`, {
-    headers: authHeaders(token),
-  })
-  if (!res.ok) {
-
-    
-    const err = await res.json().catch(() => ({}))
-    return rejectWithValue(err.message || "Imtihon tarixini olishda xatolik")
-
+>("history/fetchById", async (examId, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.get<ExamHistoryDetail>(`/student-exam/history/${examId}`)
+    return res.data
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.response?.data?.message || "Imtihon tarixini olishda xatolik")
+    }
+    return rejectWithValue("Imtihon tarixini olishda xatolik")
   }
-  return await res.json()
 })
 
 // ─── Slice ────────────────────────────────────────────────────────────────────
@@ -97,7 +84,6 @@ const historySlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // fetchExamHistory
     builder
       .addCase(fetchExamHistory.pending, (state) => {
         state.historyLoading = true
@@ -112,7 +98,6 @@ const historySlice = createSlice({
         state.error = action.payload ?? "Xatolik yuz berdi"
       })
 
-    // fetchExamHistoryById
     builder
       .addCase(fetchExamHistoryById.pending, (state) => {
         state.historyDetailLoading = true

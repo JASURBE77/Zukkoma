@@ -278,20 +278,6 @@ const ProfilePage = () => {
                       />
                     </div>
                   </div>
-
-                  <div className="flex justify-end pt-2">
-                    <Button
-                      onClick={handleProfileSave}
-                      disabled={updateLoading}
-                      className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl gap-2 shadow-lg shadow-blue-500/25 transition-all active:scale-[0.98]"
-                    >
-                      {updateLoading
-                        ? <Loader2 className="w-4 h-4 animate-spin" />
-                        : <Save className="w-4 h-4" />
-                      }
-                      {updateLoading ? "Saqlanmoqda..." : "Saqlash"}
-                    </Button>
-                  </div>
                 </CardContent>
               </Card>
             </TabsContent>

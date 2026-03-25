@@ -1,6 +1,8 @@
 import { UpdateUserPayload, User } from "@/types"
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { RootState } from "../store"
+import axios from "axios"
+import axiosInstance from "@/lib/axiosInstance"
 
 interface UserStore {
   user: User | null
@@ -14,16 +16,16 @@ interface UserStore {
 
 export const fetchMe = createAsyncThunk<User, void, { state: RootState; rejectValue: string }>(
   "user/fetchMe",
-  async (_, { getState, rejectWithValue }) => {
-    const token = getState().auth.token
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}))
-      return rejectWithValue(err.message || "Ma'lumot olishda xatolik")
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get<User>("/users/me")
+      return res.data
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(error.response?.data?.message || "Ma'lumot olishda xatolik")
+      }
+      return rejectWithValue("Ma'lumot olishda xatolik")
     }
-    return await res.json()
   },
   {
     condition: (_, { getState }) => {
@@ -37,47 +39,32 @@ export const fetchMe = createAsyncThunk<User, void, { state: RootState; rejectVa
 
 export const updateUser = createAsyncThunk<User, UpdateUserPayload, { state: RootState; rejectValue: string }>(
   "user/updateUser",
-  async ({ id, ...body }, { getState, rejectWithValue }) => {
-    const token = getState().auth.token
-
-    // bo'sh qiymatlarni yubormaymiz
+  async ({ id, ...body }, { rejectWithValue }) => {
     const cleanBody = Object.fromEntries(
       Object.entries(body).filter(([, v]) => v !== undefined && v !== "")
     )
-
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/update/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify(cleanBody)
-    })
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}))
-      return rejectWithValue(err.message || "Ma'lumotlarni yangilashda xatolik")
+    try {
+      const res = await axiosInstance.put(`/users/update/${id}`, cleanBody)
+      return res.data.user ?? res.data
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(error.response?.data?.message || "Ma'lumotlarni yangilashda xatolik")
+      }
+      return rejectWithValue("Ma'lumotlarni yangilashda xatolik")
     }
-    const data = await res.json()
-    // backend { message, user } qaytaradi
-    return data.user ?? data
   }
 )
 
 export const updatePassword = createAsyncThunk<void, string, { state: RootState; rejectValue: string }>(
   "user/updatePassword",
-  async (password, { getState, rejectWithValue }) => {
-    const token = getState().auth.token
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/update-password`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({ password })
-    })
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}))
-      return rejectWithValue(err.message || "Parolni o'zgartirishda xatolik")
+  async (password, { rejectWithValue }) => {
+    try {
+      await axiosInstance.put("/users/update-password", { password })
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(error.response?.data?.message || "Parolni o'zgartirishda xatolik")
+      }
+      return rejectWithValue("Parolni o'zgartirishda xatolik")
     }
   }
 )
@@ -102,7 +89,6 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // fetchMe
       .addCase(fetchMe.pending, (state) => {
         state.loading = true
         state.error = null
@@ -116,7 +102,6 @@ const userSlice = createSlice({
         state.error = action.payload ?? "Xatolik yuz berdi"
       })
 
-      // updateUser
       .addCase(updateUser.pending, (state) => {
         state.updateLoading = true
         state.updateError = null
@@ -130,7 +115,6 @@ const userSlice = createSlice({
         state.updateError = action.payload ?? "Xatolik yuz berdi"
       })
 
-      // updatePassword
       .addCase(updatePassword.pending, (state) => {
         state.passwordLoading = true
         state.passwordError = null

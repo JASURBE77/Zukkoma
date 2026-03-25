@@ -1,6 +1,8 @@
 import { HomeData } from "@/types"
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { RootState } from "../store"
+import axios from "axios"
+import axiosInstance from "@/lib/axiosInstance"
 
 const CACHE_TTL = 5 * 60 * 1000 // 5 daqiqa
 
@@ -13,16 +15,16 @@ interface HomeStore {
 
 export const fetchHomeData = createAsyncThunk<HomeData, void, { state: RootState; rejectValue: string }>(
   "home/fetchHomeData",
-  async (_, { getState, rejectWithValue }) => {
-    const token = getState().auth.token
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/main`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}))
-      return rejectWithValue(err.message || "Ma'lumot olishda xatolik")
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get<HomeData>("/main")
+      return res.data
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(error.response?.data?.message || "Ma'lumot olishda xatolik")
+      }
+      return rejectWithValue("Ma'lumot olishda xatolik")
     }
-    return await res.json()
   },
   {
     condition: (_, { getState }) => {

@@ -1,24 +1,20 @@
 import { AuthStore, Login, LoginResponse } from "@/types"
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
+import axios from "axios"
+import axiosInstance from "@/lib/axiosInstance"
 
 export const loginUser = createAsyncThunk<LoginResponse, Login, { rejectValue: string }>(
   "auth/loginUser",
   async (data: Login, { rejectWithValue }) => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    })
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}))
-      return rejectWithValue(err.message || "Login failed")
+    try {
+      const res = await axiosInstance.post<LoginResponse>("/users/login", data)
+      return res.data
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(error.response?.data?.message || "Login failed")
+      }
+      return rejectWithValue("Login failed")
     }
-
-    const result: LoginResponse = await res.json()
-    return result
   }
 )
 

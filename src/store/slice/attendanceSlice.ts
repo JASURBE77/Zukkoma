@@ -1,9 +1,11 @@
-
 import { AttendanceData } from "@/types"
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { RootState } from "../store"
+import axios from "axios"
+import axiosInstance from "@/lib/axiosInstance"
 
-const CACHE_TTL = 5 * 60 * 1000 
+const CACHE_TTL = 5 * 60 * 1000
+
 interface AttendanceStore {
   data: AttendanceData | null
   loading: boolean
@@ -13,16 +15,16 @@ interface AttendanceStore {
 
 export const fetchAttendance = createAsyncThunk<AttendanceData, void, { state: RootState; rejectValue: string }>(
   "attendance/fetchAttendance",
-  async (_, { getState, rejectWithValue }) => {
-    const token = getState().auth.token
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/main/attendance`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}))
-      return rejectWithValue(err.message || "Davomat ma'lumotlarini olishda xatolik")
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get<AttendanceData>("/main/attendance")
+      return res.data
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(error.response?.data?.message || "Davomat ma'lumotlarini olishda xatolik")
+      }
+      return rejectWithValue("Davomat ma'lumotlarini olishda xatolik")
     }
-    return await res.json()
   },
   {
     condition: (_, { getState }) => {

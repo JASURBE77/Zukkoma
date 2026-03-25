@@ -1,6 +1,8 @@
 import { LessonStatusResponse } from "@/types"
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { RootState } from "../store"
+import axios from "axios"
+import axiosInstance from "@/lib/axiosInstance"
 
 interface LessonStore {
   data: LessonStatusResponse | null
@@ -14,23 +16,16 @@ export const fetchLessonStatus = createAsyncThunk<
   { state: RootState; rejectValue: string }
 >(
   "lessons/fetchLessonStatus",
-  async (groupId: string, { getState, rejectWithValue }) => {
-    const token = getState().auth.token
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/group-lessons/lesson-status/${groupId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+  async (groupId: string, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get<LessonStatusResponse>(`/group-lessons/lesson-status/${groupId}`)
+      return res.data
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(error.response?.data?.message || "Darslarni olishda xatolik")
       }
-    )
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}))
-      return rejectWithValue(err.message || "Darslarni olishda xatolik")
+      return rejectWithValue("Darslarni olishda xatolik")
     }
-
-    return await res.json()
   }
 )
 

@@ -1,33 +1,28 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { AppDispatch, RootState } from "@/store/store"
+import { useDispatch } from "react-redux"
+import { AppDispatch } from "@/store/store"
 import { fetchHomeData } from "@/store/slice/homeSlice"
 import Image from "next/image"
 import Logo from "../../assets/zukkoma.jpg"
 
 export default function PageLoader({ children }: { children: React.ReactNode }) {
   const dispatch = useDispatch<AppDispatch>()
-  const { data, loading } = useSelector((state: RootState) => state.home)
 
-  // visible=true → loader ko'rinadi, false → yo'qoladi
   const [visible, setVisible] = useState(true)
-  // fading=true → opacity 0 ga o'tadi
   const [fading, setFading] = useState(false)
 
   useEffect(() => {
-    dispatch(fetchHomeData())
-  }, [dispatch])
+    let t: ReturnType<typeof setTimeout>
 
-  useEffect(() => {
-    // data keldi yoki fetch yo'q (cached) → fade out boshlaydi
-    if (!loading) {
+    dispatch(fetchHomeData()).finally(() => {
       setFading(true)
-      const t = setTimeout(() => setVisible(false), 500)
-      return () => clearTimeout(t)
-    }
-  }, [loading])
+      t = setTimeout(() => setVisible(false), 500)
+    })
+
+    return () => clearTimeout(t)
+  }, [dispatch])
 
   return (
     <>
