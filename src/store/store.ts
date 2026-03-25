@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit"
+import { injectStore } from "@/lib/axiosInstance"
 import authReducer from "./slice/authSlice"
 import userReducer from "./slice/userSlice"
 import lessonReducer from "./slice/lessonSlice"
@@ -44,5 +45,6 @@ export const store = configureStore({
 })
 
 export const persistor = persistStore(store)
+injectStore(store)
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
