@@ -130,7 +130,7 @@ export default function AttendancePage() {
               const date = new Date(item.date)
               return (
                 <motion.div
-                  key={item._id}
+                  key={item.id}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.04, duration: 0.25 }}

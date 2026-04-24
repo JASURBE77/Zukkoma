@@ -18,12 +18,12 @@ export default function Lessons() {
   useEffect(() => {
     if (!user) {
       dispatch(fetchMe()).then((res) => {
-        if (fetchMe.fulfilled.match(res) && res.payload.group?._id) {
-          dispatch(fetchLessonStatus(res.payload.group._id))
+        if (fetchMe.fulfilled.match(res) && res.payload.group?.id) {
+          dispatch(fetchLessonStatus(res.payload.group.id))
         }
       })
-    } else if (user.group?._id) {
-      dispatch(fetchLessonStatus(user.group._id))
+    } else if (user.group?.id) {
+      dispatch(fetchLessonStatus(user.group.id))
     }
   }, [dispatch, user])
 
@@ -54,13 +54,13 @@ export default function Lessons() {
   return (
     <div className="p-6 space-y-4">
       {data.methodologies.map((methodology, mIndex) => {
-        const isOpen = openIds.includes(methodology._id)
+        const isOpen = openIds.includes(methodology.id)
         const completedCount = methodology.lessons.filter((l) => l.isCompleted).length
         const totalCount = methodology.lessons.length
 
         return (
           <motion.div
-            key={methodology._id}
+            key={methodology.id}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: mIndex * 0.07, ease: "easeOut" }}
@@ -68,7 +68,7 @@ export default function Lessons() {
           >
             {/* Header */}
             <button
-              onClick={() => toggleOpen(methodology._id)}
+              onClick={() => toggleOpen(methodology.id)}
               className="w-full flex items-center justify-between p-5 hover:bg-slate-50 transition-colors"
             >
               <div className="flex items-center gap-4">
@@ -119,12 +119,12 @@ export default function Lessons() {
                   <div className="p-4 space-y-2">
                     {methodology.lessons.map((lesson, lIndex) => (
                       <motion.button
-                        key={lesson._id}
+                        key={lesson.id}
                         initial={{ opacity: 0, x: -16 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.25, delay: lIndex * 0.05 }}
                         disabled={!lesson.isCompleted}
-                        onClick={() => lesson.isCompleted && router.push(`/my-group/${lesson._id}`)}
+                        onClick={() => lesson.isCompleted && router.push(`/my-group/${lesson.id}`)}
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-colors ${
                           lesson.isCompleted
                             ? "bg-emerald-50 border-emerald-100 hover:bg-emerald-100 cursor-pointer hover:shadow-sm"

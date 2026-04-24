@@ -146,11 +146,11 @@ export default function ExamPage() {
         {list.map((session, index) => {
           const status   = STATUS_BADGE[session.status] ?? STATUS_BADGE.pending
           const isPractice = session.examId?.type === "practice"
-          const isBusy   = startingId === session._id && actionLoading
+          const isBusy   = startingId === session.id && actionLoading
 
           return (
             <motion.div
-              key={session._id}
+              key={session.id}
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: index * 0.07, ease: "easeOut" }}
@@ -195,17 +195,17 @@ export default function ExamPage() {
                   <div className="flex gap-2">
                     <Input
                       placeholder="Havola kiriting..."
-                      value={practiceLinks[session._id] ?? ""}
+                      value={practiceLinks[session.id] ?? ""}
                       onChange={(e) =>
-                        setPracticeLinks((prev) => ({ ...prev, [session._id]: e.target.value }))
+                        setPracticeLinks((prev) => ({ ...prev, [session.id]: e.target.value }))
                       }
                       className="h-9 text-sm"
                     />
                     <Button
                       size="icon"
                       variant="outline"
-                      disabled={isBusy || !practiceLinks[session._id]?.trim()}
-                      onClick={() => handlePracticeSubmit(session._id)}
+                      disabled={isBusy || !practiceLinks[session.id]?.trim()}
+                      onClick={() => handlePracticeSubmit(session.id)}
                     >
                       {isBusy
                         ? <Loader2 className="h-4 w-4 animate-spin" />
@@ -223,7 +223,7 @@ export default function ExamPage() {
                     variant="outline"
                     className="w-full gap-2"
                     disabled={isBusy}
-                    onClick={() => handleViewResult(session.studentExam!._id)}
+                    onClick={() => handleViewResult(session.studentExam!.id)}
                   >
                     {isBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trophy className="h-4 w-4 text-yellow-500" />}
                     Natijani ko'rish
@@ -236,7 +236,7 @@ export default function ExamPage() {
                   <Button
                     className="w-full gap-2"
                     disabled={isBusy}
-                    onClick={() => handleStart(session._id)}
+                    onClick={() => handleStart(session.id)}
                   >
                     {isBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCcw className="h-4 w-4" />}
                     Boshlash

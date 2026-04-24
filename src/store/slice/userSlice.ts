@@ -18,7 +18,7 @@ export const fetchMe = createAsyncThunk<User, void, { state: RootState; rejectVa
   "user/fetchMe",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.get<User>("/users/me")
+      const res = await axiosInstance.get<User>("/auth/me")
       return res.data
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {

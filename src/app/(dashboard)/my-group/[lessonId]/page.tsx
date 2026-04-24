@@ -14,7 +14,7 @@ export default function LessonPage() {
 
   const lesson = data?.methodologies
     .flatMap((m) => m.lessons)
-    .find((l) => l._id === lessonId)
+    .find((l) => l.id === lessonId)
 
   if (!lesson) {
     return (

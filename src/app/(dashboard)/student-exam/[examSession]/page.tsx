@@ -61,7 +61,7 @@ export default function StudentExamPage() {
     if (!question) return
 
     const result = await dispatch(
-      postAnswer({ sessionId: examSession, questionId: question._id, selectedAnswerId: selectedAnswer })
+      postAnswer({ sessionId: examSession, questionId: question.id, selectedAnswerId: selectedAnswer })
     )
 
     if (postAnswer.rejected.match(result)) {
@@ -89,7 +89,7 @@ export default function StudentExamPage() {
       const question = questions[currentIndex]
       if (question) {
         await dispatch(
-          postAnswer({ sessionId: examSession, questionId: question._id, selectedAnswerId: selectedAnswer })
+          postAnswer({ sessionId: examSession, questionId: question.id, selectedAnswerId: selectedAnswer })
         )
       }
     }
@@ -208,14 +208,14 @@ export default function StudentExamPage() {
               <CardContent className="space-y-3">
                 {question.answers.map((answer, aIndex) => (
                   <motion.button
-                    key={answer._id}
+                    key={answer.id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.2, delay: aIndex * 0.04 }}
-                    onClick={() => setSelectedAnswer(answer._id)}
+                    onClick={() => setSelectedAnswer(answer.id)}
                     className={cn(
                       "w-full rounded-xl border px-4 py-3 text-left text-sm font-medium transition-all",
-                      selectedAnswer === answer._id
+                      selectedAnswer === answer.id
                         ? "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400"
                         : "border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:bg-blue-50/50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
                     )}

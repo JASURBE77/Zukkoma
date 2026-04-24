@@ -58,14 +58,14 @@ export default function ExamHistoryPage() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {historyList.map((item, index) => (
           <motion.div
-            key={item._id}
+            key={item.id}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: index * 0.07, ease: "easeOut" }}
           >
             <Card
               className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
-              onClick={() => router.push(`/exams/history/${item._id}`)}
+              onClick={() => router.push(`/exams/history/${item.id}`)}
             >
               <div className="h-1.5 w-full bg-green-500" />
               <CardContent className="pt-5 pb-5 space-y-4">

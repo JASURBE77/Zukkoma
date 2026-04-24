@@ -38,7 +38,7 @@ export const fetchExamHistory = createAsyncThunk<
     const data = res.data
     type RawSession = {
       examId: { title?: string }
-      studentExam: { _id: string; status: string; startedAt?: string; finishedAt?: string } | null
+      studentExam: { id: string; status: string; startedAt?: string; finishedAt?: string } | null
     }
     const sessions: RawSession[] =
       Array.isArray(data) ? data
@@ -48,7 +48,7 @@ export const fetchExamHistory = createAsyncThunk<
     return sessions
       .filter(s => s.studentExam?.status === "finished")
       .map(s => ({
-        _id: s.studentExam!._id,
+        id: s.studentExam!.id,
         title: s.examId?.title ?? "Imtihon",
         startedAt: s.studentExam!.startedAt,
         finishedAt: s.studentExam!.finishedAt,

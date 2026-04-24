@@ -103,7 +103,7 @@ const ProfilePage = () => {
 
   const handleProfileSave = async () => {
     if (!user) return
-    const result = await dispatch(updateUser({ id: user._id, ...form }))
+    const result = await dispatch(updateUser({ id: user.id, ...form }))
     if (updateUser.fulfilled.match(result)) {
       toast.success("Profil muvaffaqiyatli yangilandi!")
     }

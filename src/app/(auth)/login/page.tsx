@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -24,10 +24,9 @@ export default function LoginPage() {
   const router = useRouter()
   const { loading, error, token } = useSelector((state: RootState) => state.auth)
 
-  if (token) {
-    router.replace("/home")
-    return null
-  }
+  useEffect(() => {
+    if (token) router.replace("/home")
+  }, [token, router])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()

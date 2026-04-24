@@ -53,8 +53,8 @@ export default function Friends() {
             const initials = `${member.name?.[0] ?? ""}${member.surname?.[0] ?? ""}`.toUpperCase()
             return (
               <div
-                key={member._id}
-                onClick={() => router.push(`/my-group/member/${member._id}`)}
+                key={member.id}
+                onClick={() => router.push(`/my-group/member/${member.id}`)}
                 className="flex items-center gap-4 bg-white border border-slate-100 rounded-2xl px-4 py-3 shadow-sm hover:shadow-md hover:border-blue-100 transition-all cursor-pointer"
               >
                 <Avatar className="h-12 w-12 rounded-xl shrink-0">
