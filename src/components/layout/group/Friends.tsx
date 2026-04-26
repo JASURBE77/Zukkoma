@@ -8,7 +8,8 @@ import { fetchGroupMembers } from "@/store/slice/groupSlice"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { ChevronRight } from "lucide-react"
-
+import Strike from "@/assets/fire-svgrepo-com.svg"
+import Image from "next/image"
 export default function Friends() {
   const dispatch = useDispatch<AppDispatch>()
   const router = useRouter()
@@ -70,6 +71,11 @@ export default function Friends() {
                   <p className="text-xs text-slate-400">{member.age}</p>
                 </div>
 
+                <div className="flex gap-2 p-2 border-1 rounded-[10px]">
+                  <Image src={Strike} alt="Strike Icon" className="w-4 h-4" />
+                   <span className="text-xs text-slate-500">{member.strike ? ` ${member.strike}` : 0}</span>
+                </div>
+
                 <div className="flex items-center gap-2 shrink-0">
                   <Badge
                     className={
@@ -80,6 +86,8 @@ export default function Friends() {
                   >
                     {member.isActive ? "Faol" : "Nofaol"}
                   </Badge>
+
+                 
                   <ChevronRight className="w-4 h-4 text-slate-300" />
                 </div>
               </div>

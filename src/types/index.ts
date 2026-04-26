@@ -45,7 +45,8 @@ export interface GroupMember {
   id: string
   name: string
   surname: string
-  age: string
+  age: string,
+  strike: number,
   isActive: boolean
 }
 
