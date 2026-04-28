@@ -4,8 +4,6 @@ import { ExamSession, ExamResult, StudentExam, Question } from "@/types"
 import axios from "axios"
 import axiosInstance from "@/lib/axiosInstance"
 
-// ─── State ────────────────────────────────────────────────────────────────────
-
 interface ExamStore {
   sessions: ExamSession[]
   sessionsLoading: boolean

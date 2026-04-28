@@ -23,8 +23,21 @@ axiosInstance.interceptors.request.use((config) => {
   return config
 })
 
+function transformId(data: unknown): unknown {
+  if (Array.isArray(data)) return data.map(transformId)
+  if (data !== null && typeof data === "object") {
+    return Object.fromEntries(
+      Object.entries(data as object).map(([k, v]) => [k === "_id" ? "id" : k, transformId(v)])
+    )
+  }
+  return data
+}
+
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    response.data = transformId(response.data)
+    return response
+  },
   (error) => {
     if (error.response?.status === 401) {
       _store?.dispatch({ type: "auth/logout" })

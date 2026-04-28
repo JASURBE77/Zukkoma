@@ -12,7 +12,7 @@ module.exports = {
   ],
 
   plugins: [
-    // Qisqa import yo'llari: '@/components/...' yoki '@store/...'
+ 
     [
       'module-resolver',
       {
@@ -28,7 +28,7 @@ module.exports = {
       },
     ],
 
-    // async/await va boshqa zamonaviy JS ni optimallashtirib, bundle hajmini kamaytiradi
+   
     [
       '@babel/plugin-transform-runtime',
       {
