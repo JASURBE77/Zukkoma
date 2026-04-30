@@ -19,7 +19,7 @@ export default function ExamHistoryDetailPage() {
   const { examId } = useParams<{ examId: string }>()
   const dispatch = useDispatch<AppDispatch>()
   const router = useRouter()
-  const { historyDetail, historyDetailLoading } = useSelector((state: RootState) => state.history)
+  const { historyDetail, historyDetailLoading, error } = useSelector((state: RootState) => state.history)
 
   useEffect(() => {
     if (examId) dispatch(fetchExamHistoryById(examId))
@@ -41,7 +41,9 @@ export default function ExamHistoryDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
         <AlertCircle className="w-10 h-10 text-red-400" />
-        <p className="text-slate-500 font-medium">Ma'lumot topilmadi</p>
+        <p className="text-slate-500 font-medium text-center max-w-xs">
+          {error ?? "Ma'lumot topilmadi"}
+        </p>
         <Button variant="outline" onClick={() => router.back()} className="gap-2 rounded-xl">
           <ArrowLeft className="w-4 h-4" /> Orqaga
         </Button>

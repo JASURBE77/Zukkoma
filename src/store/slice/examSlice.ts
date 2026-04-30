@@ -14,7 +14,7 @@ interface ExamStore {
   studentExam: StudentExam | null
   studentExamLoading: boolean
 
-  currentExamId: string | null
+  currentExamId: number | null
   questions: Question[]
   totalPages: number
   totalQuestions: number
@@ -73,13 +73,14 @@ export const fetchExamSessions = createAsyncThunk<
 })
 
 export const startExam = createAsyncThunk<
-  string,
-  string,
+  string | number,
+  number | string,
   { state: RootState; rejectValue: string }
 >("exam/start", async (sessionId, { rejectWithValue }) => {
   try {
     const res = await axiosInstance.post("/student-exam/start", { sessionId })
-    return res.data.content.examSession as string
+    const content = res.data?.content
+    return content?.examSessionId ?? content?.id ?? sessionId
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       return rejectWithValue(error.response?.data?.message || "Imtihonni boshlashda xatolik")
@@ -106,7 +107,7 @@ export const fetchExamResult = createAsyncThunk<
 
 export const submitPracticeLink = createAsyncThunk<
   void,
-  { sessionId: string; link: string },
+  { sessionId: number; link: string },
   { state: RootState; rejectValue: string }
 >("exam/submitPracticeLink", async ({ sessionId, link }, { rejectWithValue }) => {
   try {
@@ -120,7 +121,7 @@ export const submitPracticeLink = createAsyncThunk<
 })
 
 export const fetchQuestions = createAsyncThunk<
-  { questions: Question[]; totalPages: number; totalQuestions: number; examId: string | null },
+  { questions: Question[]; totalPages: number; totalQuestions: number; examId: number | null },
   { examSession: string; page: number },
   { state: RootState; rejectValue: string }
 >("exam/fetchQuestions", async ({ examSession, page }, { rejectWithValue }) => {
@@ -144,7 +145,7 @@ export const fetchQuestions = createAsyncThunk<
 
 export const postAnswer = createAsyncThunk<
   void,
-  { sessionId: string; questionId: string; selectedAnswerId: string },
+  { sessionId: number | string; questionId: number; selectedAnswerId: number | string },
   { state: RootState; rejectValue: string }
 >("exam/postAnswer", async (payload, { rejectWithValue }) => {
   try {
@@ -159,7 +160,7 @@ export const postAnswer = createAsyncThunk<
 
 export const finishExam = createAsyncThunk<
   string,
-  string,
+  number | string,
   { state: RootState; rejectValue: string }
 >("exam/finish", async (sessionId, { rejectWithValue }) => {
   try {

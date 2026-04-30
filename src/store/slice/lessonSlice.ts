@@ -12,11 +12,11 @@ interface LessonStore {
 
 export const fetchLessonStatus = createAsyncThunk<
   LessonStatusResponse,
-  string,
+  number,
   { state: RootState; rejectValue: string }
 >(
   "lessons/fetchLessonStatus",
-  async (groupId: string, { rejectWithValue }) => {
+  async (groupId: number, { rejectWithValue }) => {
     try {
       const res = await axiosInstance.get<LessonStatusResponse>(`/group-lessons/lesson-status/${groupId}`)
       return res.data

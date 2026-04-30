@@ -13,21 +13,21 @@ export default function Lessons() {
   const router = useRouter()
   const { data, loading, error } = useSelector((state: RootState) => state.lessons)
   const { user } = useSelector((state: RootState) => state.user)
-  const [openIds, setOpenIds] = useState<string[]>([])
+  const [openIds, setOpenIds] = useState<number[]>([])
 
   useEffect(() => {
     if (!user) {
       dispatch(fetchMe()).then((res) => {
-        if (fetchMe.fulfilled.match(res) && res.payload.group?.id) {
-          dispatch(fetchLessonStatus(res.payload.group.id))
+        if (fetchMe.fulfilled.match(res) && res.payload.groupId) {
+          dispatch(fetchLessonStatus(res.payload.groupId))
         }
       })
-    } else if (user.group?.id) {
-      dispatch(fetchLessonStatus(user.group.id))
+    } else if (user.groupId) {
+      dispatch(fetchLessonStatus(user.groupId))
     }
   }, [dispatch, user])
 
-  const toggleOpen = (id: string) => {
+  const toggleOpen = (id: number) => {
     setOpenIds((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     )

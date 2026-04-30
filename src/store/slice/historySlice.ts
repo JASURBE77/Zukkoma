@@ -37,8 +37,8 @@ export const fetchExamHistory = createAsyncThunk<
     const res = await axiosInstance.get("/exam-session/group")
     const data = res.data
     type RawSession = {
-      examId: { title?: string }
-      studentExam: { id: string; status: string; startedAt?: string; finishedAt?: string } | null
+      exam: { title?: string }
+      studentExam: { id: number; status: string; startedAt?: string; finishedAt?: string } | null
     }
     const sessions: RawSession[] =
       Array.isArray(data) ? data
@@ -49,7 +49,7 @@ export const fetchExamHistory = createAsyncThunk<
       .filter(s => s.studentExam?.status === "finished")
       .map(s => ({
         id: s.studentExam!.id,
-        title: s.examId?.title ?? "Imtihon",
+        title: s.exam?.title ?? "Imtihon",
         startedAt: s.studentExam!.startedAt,
         finishedAt: s.studentExam!.finishedAt,
       }))

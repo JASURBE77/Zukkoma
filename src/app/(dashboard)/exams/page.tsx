@@ -48,8 +48,8 @@ const STATUS_BADGE = {
   finished: { label: "Yakunlangan", variant: "secondary" },
 } as const
 
-function formatDate(ts: number) {
-  return dayjs(ts).format("DD.MM.YYYY HH:mm")
+function formatDate(ts: number | string) {
+  return dayjs(Number(ts)).format("DD.MM.YYYY HH:mm")
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -61,8 +61,8 @@ export default function ExamPage() {
   const { sessions, sessionsLoading, actionLoading } =
     useSelector((state: RootState) => state.exam)
 
-  const [startingId,    setStartingId]    = useState<string | null>(null)
-  const [practiceLinks, setPracticeLinks] = useState<Record<string, string>>({})
+  const [startingId,    setStartingId]    = useState<number | null>(null)
+  const [practiceLinks, setPracticeLinks] = useState<Record<number, string>>({})
 
   useEffect(() => {
     dispatch(fetchExamSessions())
@@ -70,7 +70,7 @@ export default function ExamPage() {
 
   // ── Handlers ───────────────────────────────────────────────────────────────
 
-  async function handleStart(sessionId: string) {
+  async function handleStart(sessionId: number) {
     setStartingId(sessionId)
     const result = await dispatch(startExam(sessionId))
     setStartingId(null)
@@ -83,11 +83,11 @@ export default function ExamPage() {
     }
   }
 
-  function handleViewResult(studentExamId: string) {
+  function handleViewResult(studentExamId: number) {
     router.push(`/exams/history/${studentExamId}`)
   }
 
-  async function handlePracticeSubmit(sessionId: string) {
+  async function handlePracticeSubmit(sessionId: number) {
     const link = practiceLinks[sessionId]?.trim()
     if (!link) return
 
@@ -145,7 +145,7 @@ export default function ExamPage() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {list.map((session, index) => {
           const status   = STATUS_BADGE[session.status] ?? STATUS_BADGE.pending
-          const isPractice = session.examId?.type === "practice"
+          const isPractice = session.exam?.type === "practice"
           const isBusy   = startingId === session.id && actionLoading
 
           return (
@@ -166,7 +166,7 @@ export default function ExamPage() {
                       }
                     </div>
                     <CardTitle className="font-bold text-slate-900 dark:text-white">
-                      {session.examId?.title ?? "Imtihon"}
+                      {session.exam?.title ?? "Imtihon"}
                     </CardTitle>
                   </div>
                   <Badge variant={status.variant}>{status.label}</Badge>
@@ -181,9 +181,9 @@ export default function ExamPage() {
                     <CalendarClock className="h-3.5 w-3.5" />
                     Tugash: {formatDate(session.endDate)}
                   </span>
-                  {session.examId?.ball && (
+                  {session.exam?.ball && (
                     <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
-                      Maksimal ball: {session.examId.ball}
+                      Maksimal ball: {session.exam.ball}
                     </span>
                   )}
                 </CardDescription>
@@ -218,7 +218,7 @@ export default function ExamPage() {
 
               {/* Action */}
               <CardFooter className="mt-auto">
-                {session.studentExam !== null ? (
+                {session.studentExam?.status === "finished" ? (
                   <Button
                     variant="outline"
                     className="w-full gap-2"
@@ -227,6 +227,15 @@ export default function ExamPage() {
                   >
                     {isBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trophy className="h-4 w-4 text-yellow-500" />}
                     Natijani ko'rish
+                  </Button>
+                ) : session.studentExam?.status === "started" ? (
+                  <Button
+                    className="w-full gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+                    disabled={isBusy}
+                    onClick={() => router.push(`/student-exam/${session.id}`)}
+                  >
+                    {isBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCcw className="h-4 w-4" />}
+                    Davom etish
                   </Button>
                 ) : session.status === "finished" ? (
                   <Button variant="outline" className="w-full gap-2" disabled>

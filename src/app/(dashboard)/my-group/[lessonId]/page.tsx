@@ -1,20 +1,47 @@
 "use client"
 
+import { useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { useSelector } from "react-redux"
-import { RootState } from "@/store/store"
-import { ArrowLeft, CheckCircle2, Circle } from "lucide-react"
+import { useDispatch, useSelector } from "react-redux"
+import { AppDispatch, RootState } from "@/store/store"
+import { fetchLessonStatus } from "@/store/slice/lessonSlice"
+import { fetchMe } from "@/store/slice/userSlice"
+import { ArrowLeft, CheckCircle2, Circle, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 
 export default function LessonPage() {
   const { lessonId } = useParams()
   const router = useRouter()
-  const { data } = useSelector((state: RootState) => state.lessons)
+  const dispatch = useDispatch<AppDispatch>()
+  const { data, loading } = useSelector((state: RootState) => state.lessons)
+  const { user } = useSelector((state: RootState) => state.user)
+
+  useEffect(() => {
+    if (!data) {
+      if (!user) {
+        dispatch(fetchMe()).then((res) => {
+          if (fetchMe.fulfilled.match(res) && res.payload.groupId) {
+            dispatch(fetchLessonStatus(res.payload.groupId))
+          }
+        })
+      } else if (user.groupId) {
+        dispatch(fetchLessonStatus(user.groupId))
+      }
+    }
+  }, [data, user, dispatch])
 
   const lesson = data?.methodologies
     .flatMap((m) => m.lessons)
-    .find((l) => l.id === lessonId)
+    .find((l) => l.id === Number(lessonId))
+
+  if (loading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      </div>
+    )
+  }
 
   if (!lesson) {
     return (

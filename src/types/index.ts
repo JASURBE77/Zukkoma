@@ -11,26 +11,25 @@ export interface Login {
 }
 
 export interface User {
-  id: string
+  id: number
   name: string
   surname: string
   age: string
   role: string
   login: string
   isActive: boolean
-  group: { id: string; name: string }
-  organizationId: string
-  branch_id: string
-  totalLessons: number
-  completedLessons: number
-  pendingLessons: number
-  joinDate: string
-  course_price?: number
+  groupId: number | null
+  groupName: string | null
+  organizationId: number
+  branchId: number | null
+  wallet?: string
+  strike?: number
   phone_number?: string
+  parent_phone_number?: string
 }
 
 export interface UpdateUserPayload {
-  id: string
+  id: number
   name?: string
   surname?: string
   phone_number?: string
@@ -42,7 +41,7 @@ export interface UpdateUserPayload {
 }
 
 export interface GroupMember {
-  id: string
+  id: number
   name: string
   surname: string
   age: string,
@@ -51,7 +50,7 @@ export interface GroupMember {
 }
 
 export interface MemberProfile {
-  id: string
+  id: number
   name: string
   surname: string
   age: string
@@ -61,7 +60,7 @@ export interface MemberProfile {
 }
 
 export interface Lesson {
-  id: string
+  id: number
   title: string
   content: string
   order: number
@@ -69,7 +68,7 @@ export interface Lesson {
 }
 
 export interface Methodology {
-  id: string
+  id: number
   name: string
   order: number
   lessons: Lesson[]
@@ -86,7 +85,7 @@ export interface LoginResponse {
 }
 
 export interface ExamSessionExam {
-  id: string
+  id: number
   title: string
   type: string
   ball: number
@@ -94,31 +93,33 @@ export interface ExamSessionExam {
 }
 
 export interface ExamSessionStudentExam {
-  id: string
+  id: number
   status: "started" | "finished"
   startedAt?: string
   finishedAt?: string
 }
 
 export interface ExamSession {
-  id: string
-  examId: ExamSessionExam
-  groupId: { id: string; groupName: string }
-  startDate: number
-  endDate: number
+  id: number
+  examId: number
+  exam: ExamSessionExam
+  groupId: number
+  group: { id: number; groupName: string }
+  startDate: number | string
+  endDate: number | string
   status: "pending" | "active" | "finished"
   studentExam: ExamSessionStudentExam | null
 }
 
 export interface QuestionAnswer {
-  id: string
+  id?: number
   value: string
   correct: boolean
 }
 
 export interface Question {
-  id: string
-  examId: string
+  id: number
+  examId: number
   question: string
   ball: number
   description?: string
@@ -129,13 +130,13 @@ export interface ExamResult {
   totalScore: number
   correctAnswers: number
   totalQuestions: number
-  sessionId: string
+  sessionId: number
   title?: string
   status?: string
 }
 
 export interface ExamHistoryItem {
-  id: string
+  id: number
   title: string
   startedAt?: string
   finishedAt?: string
@@ -146,13 +147,13 @@ export interface ExamHistoryResult {
   maxBall: number
   gatheredBall: number
   description?: string
-  allOptions: { id: string; text: string; isCorrect: boolean }[]
-  selectedAnswerIds: string[]
+  allOptions: { id: number; text: string; isCorrect: boolean }[]
+  selectedAnswerIds: number[]
 }
 
 export interface ExamHistoryDetail {
   info: {
-    student: { id: string; name: string; surname: string }
+    student: { id: number; name: string; surname: string }
     examTitle: string
     status: string
     startedAt: string
@@ -162,9 +163,9 @@ export interface ExamHistoryDetail {
 }
 
 export interface StudentExam {
-  id: string
-  sessionId: string
-  studentId: string
+  id: number
+  sessionId: number
+  studentId: number
   totalScore: number
   correctAnswers: number
   totalQuestions: number
@@ -178,6 +179,7 @@ export interface HomeProfile {
   wallet: number
   isActive: boolean
   groupName: string
+  strike?: number
 }
 
 export interface HomeStats {
@@ -211,7 +213,7 @@ export interface HomeData {
 
 // Attendance page types
 export interface AttendanceItem {
-  id: string
+  id?: number
   date: string
   comment: string
   status: "present" | "absent" | "late" | "reasoned"

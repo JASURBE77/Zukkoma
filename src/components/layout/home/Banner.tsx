@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import React, { useState, useEffect } from 'react'
 import Taqvim from "../../../assets/ramazon_taqvimi_2026.jpg"
+import FireIcon from "../../../assets/fire-svgrepo-com.svg"
 import { Timer as TimerIcon, Wallet, Users, BookOpen, TrendingUp, CheckCircle2, XCircle, Clock, ChevronRight } from "lucide-react"
 import { Button } from '@/components/ui/button'
 import { useSelector } from 'react-redux'
@@ -190,6 +191,15 @@ const Banner = () => {
                 {data.profile.isActive ? "Faol talaba" : "Nofaol"}
               </span>
             </div>
+
+            {(data.profile.strike ?? 0) > 0 && (
+              <div className="flex items-center gap-2 bg-orange-50 dark:bg-orange-500/10 border border-orange-100 dark:border-orange-500/20 rounded-xl p-3">
+                <Image src={FireIcon} alt="" className="w-4 h-4" />
+                <span className="text-sm font-bold text-orange-700 dark:text-orange-400">
+                  {data.profile.strike} kunlik streak
+                </span>
+              </div>
+            )}
           </div>
 
           {/* So'nggi davomatlar */}

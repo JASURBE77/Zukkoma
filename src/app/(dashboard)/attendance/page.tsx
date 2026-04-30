@@ -6,6 +6,10 @@ import { AppDispatch, RootState } from '@/store/store'
 import { fetchAttendance } from '@/store/slice/attendanceSlice'
 import { motion } from 'framer-motion'
 import { CheckCircle2, XCircle, Clock, AlertCircle, CalendarDays } from 'lucide-react'
+import dayjs from 'dayjs'
+import 'dayjs/locale/uz'
+
+dayjs.locale('uz')
 
 const statusConfig = {
   present:  { label: "Keldi",    bg: "bg-emerald-50 dark:bg-emerald-500/10",  text: "text-emerald-700 dark:text-emerald-400",  border: "border-emerald-100 dark:border-emerald-500/20", icon: CheckCircle2 },
@@ -127,10 +131,10 @@ export default function AttendancePage() {
             {data.attendance.map((item, i) => {
               const cfg = statusConfig[item.status] ?? statusConfig.absent
               const Icon = cfg.icon
-              const date = new Date(item.date)
+              const d = dayjs(item.date)
               return (
                 <motion.div
-                  key={item.id}
+                  key={item.date}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.04, duration: 0.25 }}
@@ -139,16 +143,16 @@ export default function AttendancePage() {
                   <div className="flex items-center gap-4">
                     <div className="text-center w-10">
                       <p className="text-xl font-black text-slate-900 dark:text-white leading-none">
-                        {date.getDate()}
+                        {d.format('D')}
                       </p>
                       <p className="text-[10px] uppercase font-bold text-slate-400">
-                        {date.toLocaleDateString("uz-UZ", { weekday: "short" })}
+                        {d.format('ddd')}
                       </p>
                     </div>
                     <div className="w-px h-8 bg-slate-100 dark:bg-slate-800" />
                     <div>
                       <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                        {date.toLocaleDateString("uz-UZ", { day: "2-digit", month: "long", year: "numeric" })}
+                        {d.format('D-MMMM, YYYY')}
                       </p>
                       {item.comment && (
                         <p className="text-xs text-slate-400 mt-0.5">{item.comment}</p>
