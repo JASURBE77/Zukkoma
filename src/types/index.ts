@@ -144,11 +144,11 @@ export interface ExamHistoryItem {
 
 export interface ExamHistoryResult {
   questionText: string
-  maxBall: number
-  gatheredBall: number
-  description?: string
+  maxBall: number | string
+  gatheredBall: number | string
+  description?: string | null
   allOptions: { id: number; text: string; isCorrect: boolean }[]
-  selectedAnswerIds: number[]
+  selectedAnswerIds?: number[]
 }
 
 export interface ExamHistoryDetail {

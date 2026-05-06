@@ -9,10 +9,10 @@ import {
   ClipboardList,
   Link2,
   Loader2,
-  Play,
   RotateCcw,
   Trophy,
   CalendarClock,
+  RefreshCcw,
 } from "lucide-react"
 
 import { AppDispatch, RootState } from "@/store/store"
@@ -104,9 +104,9 @@ export default function ExamPage() {
     }
   }
 
-  // ── Loading ────────────────────────────────────────────────────────────────
+  // ── Loading (faqat birinchi yuklashda to'liq ekran) ───────────────────────
 
-  if (sessionsLoading) {
+  if (sessions.length === 0 && sessionsLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
@@ -126,11 +126,26 @@ export default function ExamPage() {
       transition={{ duration: 0.4, ease: "easeOut" }}
     >
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white">Imtihonlar</h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          Barcha mavjud imtihon va amaliyot topshiriqlari
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-black text-slate-900 dark:text-white">Imtihonlar</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            Barcha mavjud imtihon va amaliyot topshiriqlari
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          size="icon"
+          disabled={sessionsLoading}
+          onClick={() => dispatch(fetchExamSessions())}
+          className="h-10 w-10 rounded-xl shrink-0"
+          title="Yangilash"
+        >
+          {sessionsLoading
+            ? <Loader2 className="h-4 w-4 animate-spin" />
+            : <RefreshCcw className="h-4 w-4" />
+          }
+        </Button>
       </div>
 
       {/* Empty */}

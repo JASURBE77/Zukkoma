@@ -12,6 +12,9 @@ interface UserStore {
   updateError: string | null
   passwordLoading: boolean
   passwordError: string | null
+  otpLoading: boolean
+  otpSent: boolean
+  otpError: string | null
 }
 
 export const fetchMe = createAsyncThunk<User, void, { state: RootState; rejectValue: string }>(
@@ -55,11 +58,25 @@ export const updateUser = createAsyncThunk<User, UpdateUserPayload, { state: Roo
   }
 )
 
-export const updatePassword = createAsyncThunk<void, string, { state: RootState; rejectValue: string }>(
-  "user/updatePassword",
-  async (password, { rejectWithValue }) => {
+export const sendOtp = createAsyncThunk<void, void, { state: RootState; rejectValue: string }>(
+  "user/sendOtp",
+  async (_, { rejectWithValue }) => {
     try {
-      await axiosInstance.put("/users/update-password", { password })
+      await axiosInstance.post("/auth/send-otp")
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(error.response?.data?.message || "OTP yuborishda xatolik")
+      }
+      return rejectWithValue("OTP yuborishda xatolik")
+    }
+  }
+)
+
+export const updatePassword = createAsyncThunk<void, { otp: string; newPassword: string }, { state: RootState; rejectValue: string }>(
+  "user/updatePassword",
+  async ({ otp, newPassword }, { rejectWithValue }) => {
+    try {
+      await axiosInstance.put("/users/update-password", { password: newPassword, otp })
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         return rejectWithValue(error.response?.data?.message || "Parolni o'zgartirishda xatolik")
@@ -77,6 +94,9 @@ const initialState: UserStore = {
   updateError: null,
   passwordLoading: false,
   passwordError: null,
+  otpLoading: false,
+  otpSent: false,
+  otpError: null,
 }
 
 const userSlice = createSlice({
@@ -85,7 +105,12 @@ const userSlice = createSlice({
   reducers: {
     clearUpdateError: (state) => {
       state.updateError = null
-    }
+    },
+    clearOtpState: (state) => {
+      state.otpSent = false
+      state.otpError = null
+      state.otpLoading = false
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -115,12 +140,27 @@ const userSlice = createSlice({
         state.updateError = action.payload ?? "Xatolik yuz berdi"
       })
 
+      .addCase(sendOtp.pending, (state) => {
+        state.otpLoading = true
+        state.otpError = null
+        state.otpSent = false
+      })
+      .addCase(sendOtp.fulfilled, (state) => {
+        state.otpLoading = false
+        state.otpSent = true
+      })
+      .addCase(sendOtp.rejected, (state, action) => {
+        state.otpLoading = false
+        state.otpError = action.payload ?? "Xatolik yuz berdi"
+      })
+
       .addCase(updatePassword.pending, (state) => {
         state.passwordLoading = true
         state.passwordError = null
       })
       .addCase(updatePassword.fulfilled, (state) => {
         state.passwordLoading = false
+        state.otpSent = false
       })
       .addCase(updatePassword.rejected, (state, action) => {
         state.passwordLoading = false
@@ -129,5 +169,5 @@ const userSlice = createSlice({
   }
 })
 
-export const { clearUpdateError } = userSlice.actions
+export const { clearUpdateError, clearOtpState } = userSlice.actions
 export default userSlice.reducer

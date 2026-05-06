@@ -51,8 +51,8 @@ export default function ExamHistoryDetailPage() {
     )
   }
 
-  const totalGathered = historyDetail.results.reduce((s, r) => s + r.gatheredBall, 0)
-  const totalMax      = historyDetail.results.reduce((s, r) => s + r.maxBall, 0)
+  const totalGathered = historyDetail.results.reduce((s, r) => s + Number(r.gatheredBall), 0)
+  const totalMax      = historyDetail.results.reduce((s, r) => s + Number(r.maxBall), 0)
   const percentage    = totalMax > 0 ? Math.round((totalGathered / totalMax) * 100) : 0
   const isPassed      = percentage >= 60
 
@@ -99,13 +99,13 @@ export default function ExamHistoryDetailPage() {
               <div className="grid grid-cols-3 gap-3 pt-2">
                 <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-3 text-center">
                   <p className="text-2xl font-black text-slate-900 dark:text-white">
-                    {totalGathered}
+                    {Math.round(totalGathered)}
                   </p>
                   <p className="text-xs text-slate-400 font-medium">Ball</p>
                 </div>
                 <div className="bg-green-50 dark:bg-green-500/10 rounded-2xl p-3 text-center">
                   <p className="text-2xl font-black text-green-700 dark:text-green-400">
-                    {totalMax}
+                    {Math.round(totalMax)}
                   </p>
                   <p className="text-xs text-slate-400 font-medium">Maks ball</p>
                 </div>
@@ -154,9 +154,10 @@ export default function ExamHistoryDetailPage() {
           </CardHeader>
           <CardContent className="space-y-3 pb-6">
             {historyDetail.results.map((result, i) => {
-              const isCorrect = result.gatheredBall === result.maxBall
-              const selectedOption = result.allOptions.find(o => result.selectedAnswerIds.includes(o.id))
-              const correctOption  = result.allOptions.find(o => o.isCorrect)
+              const isCorrect = Number(result.gatheredBall) > 0
+              const correctOption = result.allOptions.find(o => o.isCorrect)
+              // Backend selectedAnswerIds qaytarmaydi — to'g'ri bo'lsa correct option ko'rsatiladi
+              const selectedOption = isCorrect ? correctOption : undefined
               return (
                 <motion.div
                   key={i}
@@ -194,7 +195,7 @@ export default function ExamHistoryDetailPage() {
                         To'g'ri: {correctOption?.text ?? "—"}
                       </p>
                     )}
-                    <p className="text-xs text-slate-400">{result.gatheredBall} / {result.maxBall} ball</p>
+                    <p className="text-xs text-slate-400">{Math.round(Number(result.gatheredBall))} / {Math.round(Number(result.maxBall))} ball</p>
                   </div>
                 </motion.div>
               )

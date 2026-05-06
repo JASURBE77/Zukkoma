@@ -3,11 +3,11 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "@/store/store"
-import { fetchMe, updateUser, updatePassword, clearUpdateError } from "@/store/slice/userSlice"
+import { fetchMe, sendOtp, updatePassword, clearOtpState } from "@/store/slice/userSlice"
 import {
-  Phone, ShieldCheck, Bell, Camera,
+  Phone, ShieldCheck, Camera,
   CheckCircle2, Briefcase, User as UserIcon,
-  Save, Eye, EyeOff, Loader2
+  Eye, EyeOff, Loader2, Mail, ArrowLeft
 } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -60,65 +60,56 @@ function ProfileSkeleton() {
 
 const ProfilePage = () => {
   const dispatch = useDispatch<AppDispatch>()
-  const { user, loading, error, updateLoading, updateError, passwordLoading, passwordError } = useSelector((state: RootState) => state.user)
+  const { user, loading, error, passwordLoading, passwordError, otpLoading, otpError } =
+    useSelector((state: RootState) => state.user)
 
-  // Profil form state
-  const [form, setForm] = useState({
-    name: "", surname: "", age: "", phone_number: "", login: ""
-  })
-
-  // Parol form state
   const [passwords, setPasswords] = useState({ newPassword: "", confirm: "" })
   const [showNew, setShowNew] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
+  const [otpStep, setOtpStep] = useState<1 | 2>(1)
+  const [otpCode, setOtpCode] = useState("")
 
   useEffect(() => {
     dispatch(fetchMe())
   }, [dispatch])
 
-  // user kelganda formni to'ldirish
-  useEffect(() => {
-    if (user) {
-      setForm({
-        name:         user.name         ?? "",
-        surname:      user.surname       ?? "",
-        age:          user.age          ?? "",
-        phone_number: user.phone_number ?? "",
-        login:        user.login        ?? "",
-      })
-    }
-  }, [user])
-
-  // updateError toast
-  useEffect(() => {
-    if (updateError) {
-      toast.error(updateError)
-      dispatch(clearUpdateError())
-    }
-  }, [updateError, dispatch])
-
   useEffect(() => {
     if (passwordError) toast.error(passwordError)
   }, [passwordError])
 
-  const handleProfileSave = async () => {
-    if (!user) return
-    const result = await dispatch(updateUser({ id: user.id, ...form }))
-    if (updateUser.fulfilled.match(result)) {
-      toast.success("Profil muvaffaqiyatli yangilandi!")
-    }
-  }
+  useEffect(() => {
+    if (otpError) toast.error(otpError)
+  }, [otpError])
 
-  const handlePasswordSave = async () => {
+  const handleSendOtp = async () => {
     if (!passwords.newPassword) return toast.error("Yangi parol kiriting")
     if (passwords.newPassword.length < 6) return toast.error("Parol kamida 6 ta belgi bo'lishi kerak")
     if (passwords.newPassword !== passwords.confirm) return toast.error("Parollar mos kelmadi")
 
-    const result = await dispatch(updatePassword(passwords.newPassword))
+    const result = await dispatch(sendOtp())
+    if (sendOtp.fulfilled.match(result)) {
+      setOtpStep(2)
+      toast.success("Tasdiqlash kodi emailingizga yuborildi!")
+    }
+  }
+
+  const handlePasswordSave = async () => {
+    if (!otpCode || otpCode.length !== 4) return toast.error("4 xonali kodni kiriting")
+
+    const result = await dispatch(updatePassword({ otp: otpCode, newPassword: passwords.newPassword }))
     if (updatePassword.fulfilled.match(result)) {
       toast.success("Parol muvaffaqiyatli o'zgartirildi!")
       setPasswords({ newPassword: "", confirm: "" })
+      setOtpCode("")
+      setOtpStep(1)
+      dispatch(clearOtpState())
     }
+  }
+
+  const handleBackToPasswordForm = () => {
+    setOtpStep(1)
+    setOtpCode("")
+    dispatch(clearOtpState())
   }
 
   const initials = user
@@ -134,6 +125,15 @@ const ProfilePage = () => {
       </div>
     )
   }
+
+  const infoFields = [
+    { label: "Ism", value: user?.name },
+    { label: "Familiya", value: user?.surname },
+    { label: "Yosh", value: user?.age },
+    { label: "Telefon", value: user?.phone_number },
+    { label: "Foydalanuvchi nomi", value: user?.login, full: true },
+    { label: "Guruh", value: user?.groupName ?? "—", full: true },
+  ]
 
   return (
     <motion.div
@@ -151,7 +151,7 @@ const ProfilePage = () => {
 
         <div className="absolute -bottom-14 left-4 sm:left-8 flex flex-row items-end gap-3 sm:gap-4">
           <div className="relative group">
-            <Avatar className="h-20 w-20 sm:h-36 sm:w-36  ">
+            <Avatar className="h-20 w-20 sm:h-36 sm:w-36">
               <AvatarFallback className="text-3xl sm:text-4xl bg-blue-100 text-blue-600 font-black">
                 {initials}
               </AvatarFallback>
@@ -185,7 +185,7 @@ const ProfilePage = () => {
         <div className="space-y-4">
           <Card className="rounded-[2rem] border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none">
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-black">Ma'lumotlar</CardTitle>
+              <CardTitle className="text-lg font-black">Ma&apos;lumotlar</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center gap-3 text-slate-600 dark:text-slate-400 text-sm">
@@ -220,77 +220,25 @@ const ProfilePage = () => {
               <TabsTrigger value="security" className="flex-1 sm:flex-none rounded-xl px-3 sm:px-6 font-bold text-xs sm:text-sm data-[state=active]:bg-white dark:data-[state=active]:bg-slate-900 data-[state=active]:shadow-sm">
                 Xavfsizlik
               </TabsTrigger>
-            
             </TabsList>
 
-            {/* ── Profil tab ── */}
+            {/* ── Profil tab (read-only) ── */}
             <TabsContent value="account">
               <Card className="rounded-[2rem] border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none">
                 <CardHeader>
                   <CardTitle className="font-black">Shaxsiy ma&apos;lumotlar</CardTitle>
-                  <CardDescription>O&apos;zgarishlarni saqlash uchun &quot;Saqlash&quot; tugmasini bosing</CardDescription>
+                  <CardDescription>Ma&apos;lumotlarni faqat administrator o&apos;zgartira oladi</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label className="font-bold text-slate-500">Ism</Label>
-                      <Input
-                        value={form.name}
-                        onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
-                        className="rounded-xl h-12"
-                        placeholder="Ismingiz"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="font-bold text-slate-500">Familiya</Label>
-                      <Input
-                        value={form.surname}
-                        onChange={e => setForm(p => ({ ...p, surname: e.target.value }))}
-                        className="rounded-xl h-12"
-                        placeholder="Familiyangiz"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="font-bold text-slate-500">Yosh</Label>
-                      <Input
-                        value={form.age}
-                        onChange={e => setForm(p => ({ ...p, age: e.target.value }))}
-                        className="rounded-xl h-12"
-                        placeholder="Yoshingiz"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="font-bold text-slate-500">Telefon</Label>
-                      <Input
-                        value={form.phone_number}
-                        onChange={e => setForm(p => ({ ...p, phone_number: e.target.value }))}
-                        className="rounded-xl h-12"
-                        placeholder="+998901234567"
-                      />
-                    </div>
-                    <div className="space-y-2 sm:col-span-2">
-                      <Label className="font-bold text-slate-500">Foydalanuvchi nomi</Label>
-                      <Input
-                        value={form.login}
-                        onChange={e => setForm(p => ({ ...p, login: e.target.value }))}
-                        className="rounded-xl h-12"
-                        placeholder="Foydalanuvchi nomingiz"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end pt-2">
-                    <Button
-                      onClick={handleProfileSave}
-                      disabled={updateLoading}
-                      className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl gap-2 shadow-lg shadow-blue-500/25 transition-all active:scale-[0.98] disabled:opacity-50"
-                    >
-                      {updateLoading
-                        ? <Loader2 className="w-4 h-4 animate-spin" />
-                        : <Save className="w-4 h-4" />
-                      }
-                      {updateLoading ? "Saqlanmoqda..." : "Saqlash"}
-                    </Button>
+                    {infoFields.map(({ label, value, full }) => (
+                      <div key={label} className={`space-y-1.5 ${full ? "sm:col-span-2" : ""}`}>
+                        <Label className="font-bold text-slate-500 text-xs">{label}</Label>
+                        <div className="h-12 px-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center text-sm font-medium text-slate-700 dark:text-slate-300">
+                          {value ?? "—"}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
@@ -306,79 +254,123 @@ const ProfilePage = () => {
                     </div>
                     <div>
                       <p className="font-black text-slate-900 dark:text-white">Parolni o&apos;zgartirish</p>
-                      <p className="text-sm text-slate-500">Kamida 6 ta belgi bo&apos;lishi kerak</p>
+                      <p className="text-sm text-slate-500">
+                        {otpStep === 1
+                          ? "Yangi parol kiriting, kod emailingizga yuboriladi"
+                          : "Emailingizga yuborilgan 4 xonali kodni kiriting"}
+                      </p>
                     </div>
                   </div>
 
                   <Separator className="bg-slate-100 dark:bg-slate-800" />
 
-                  <div className="space-y-4">
-                    {/* Yangi parol */}
-                    <div className="space-y-2">
-                      <Label className="font-bold text-slate-500">Yangi parol</Label>
-                      <div className="relative">
-                        <Input
-                          type={showNew ? "text" : "password"}
-                          value={passwords.newPassword}
-                          onChange={e => setPasswords(p => ({ ...p, newPassword: e.target.value }))}
-                          placeholder="Yangi parol"
-                          className="rounded-xl h-12 pr-12"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowNew(v => !v)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                        >
-                          {showNew ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Tasdiqlash */}
-                    <div className="space-y-2">
-                      <Label className="font-bold text-slate-500">Parolni tasdiqlang</Label>
-                      <div className="relative">
-                        <Input
-                          type={showConfirm ? "text" : "password"}
-                          value={passwords.confirm}
-                          onChange={e => setPasswords(p => ({ ...p, confirm: e.target.value }))}
-                          placeholder="Parolni qayta kiriting"
-                          className="rounded-xl h-12 pr-12"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowConfirm(v => !v)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                        >
-                          {showConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                        </button>
+                  {otpStep === 1 ? (
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label className="font-bold text-slate-500">Yangi parol</Label>
+                        <div className="relative">
+                          <Input
+                            type={showNew ? "text" : "password"}
+                            value={passwords.newPassword}
+                            onChange={e => setPasswords(p => ({ ...p, newPassword: e.target.value }))}
+                            placeholder="Yangi parol"
+                            className="rounded-xl h-12 pr-12"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowNew(v => !v)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                          >
+                            {showNew ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                          </button>
+                        </div>
                       </div>
 
-                      {/* Mos kelmaganlik haqida xabar */}
-                      {passwords.confirm && passwords.newPassword !== passwords.confirm && (
-                        <p className="text-xs text-red-500 font-medium">Parollar mos kelmadi</p>
-                      )}
-                    </div>
+                      <div className="space-y-2">
+                        <Label className="font-bold text-slate-500">Parolni tasdiqlang</Label>
+                        <div className="relative">
+                          <Input
+                            type={showConfirm ? "text" : "password"}
+                            value={passwords.confirm}
+                            onChange={e => setPasswords(p => ({ ...p, confirm: e.target.value }))}
+                            placeholder="Parolni qayta kiriting"
+                            className="rounded-xl h-12 pr-12"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowConfirm(v => !v)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                          >
+                            {showConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                          </button>
+                        </div>
+                        {passwords.confirm && passwords.newPassword !== passwords.confirm && (
+                          <p className="text-xs text-red-500 font-medium">Parollar mos kelmadi</p>
+                        )}
+                      </div>
 
-                    <div className="flex justify-end pt-2">
-                      <Button
-                        onClick={handlePasswordSave}
-                        disabled={passwordLoading || !passwords.newPassword || passwords.newPassword !== passwords.confirm}
-                        className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl gap-2 shadow-lg shadow-blue-500/25 transition-all active:scale-[0.98] disabled:opacity-50"
-                      >
-                        {passwordLoading
-                          ? <Loader2 className="w-4 h-4 animate-spin" />
-                          : <ShieldCheck className="w-4 h-4" />
-                        }
-                        {passwordLoading ? "Saqlanmoqda..." : "Parolni yangilash"}
-                      </Button>
+                      <div className="flex justify-end pt-2">
+                        <Button
+                          onClick={handleSendOtp}
+                          disabled={otpLoading || !passwords.newPassword || passwords.newPassword !== passwords.confirm}
+                          className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl gap-2 shadow-lg shadow-blue-500/25 transition-all active:scale-[0.98] disabled:opacity-50"
+                        >
+                          {otpLoading
+                            ? <Loader2 className="w-4 h-4 animate-spin" />
+                            : <Mail className="w-4 h-4" />
+                          }
+                          {otpLoading ? "Yuborilmoqda..." : "Tasdiqlash kodini yuborish"}
+                        </Button>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 rounded-xl p-4 flex items-start gap-3">
+                        <Mail className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+                        <p className="text-sm text-blue-700 dark:text-blue-400 font-medium">
+                          Emailingizga 4 xonali tasdiqlash kodi yuborildi. Kodni kiritib parolingizni yangilang.
+                        </p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="font-bold text-slate-500">Tasdiqlash kodi</Label>
+                        <Input
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={4}
+                          value={otpCode}
+                          onChange={e => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                          placeholder="0000"
+                          className="rounded-xl h-12 text-center text-2xl font-black tracking-[0.5em]"
+                        />
+                      </div>
+
+                      <div className="flex justify-between pt-2">
+                        <Button
+                          variant="outline"
+                          onClick={handleBackToPasswordForm}
+                          className="h-12 px-6 rounded-2xl gap-2"
+                        >
+                          <ArrowLeft className="w-4 h-4" />
+                          Orqaga
+                        </Button>
+                        <Button
+                          onClick={handlePasswordSave}
+                          disabled={passwordLoading || otpCode.length !== 4}
+                          className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl gap-2 shadow-lg shadow-blue-500/25 transition-all active:scale-[0.98] disabled:opacity-50"
+                        >
+                          {passwordLoading
+                            ? <Loader2 className="w-4 h-4 animate-spin" />
+                            : <ShieldCheck className="w-4 h-4" />
+                          }
+                          {passwordLoading ? "Saqlanmoqda..." : "Parolni yangilash"}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
-
-        
           </Tabs>
         </div>
       </motion.div>
