@@ -12,6 +12,7 @@ import {
   CalendarDays,
   ClipboardList,
   Wallet,
+  Library,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Logo from "../../assets/zukkoma.jpg"
@@ -31,9 +32,17 @@ const menuItems = [
       { name: "Davomat",       href: "/attendance", icon: CalendarDays    },
       { name: "Imtihonlar",    href: "/exams",      icon: ClipboardList   },
       { name: "Profil",        href: "/profile",    icon: User            },
+      { name: "Kutubxona",     href: "/library",    icon: Library         },
     ]
   },
 ]
+
+const formatNumber = (value?: number | string | null) => {
+  const numberValue = Number(value ?? 0)
+  return Number.isFinite(numberValue)
+    ? Math.floor(numberValue).toLocaleString("uz-UZ")
+    : "0"
+}
 
 export default function Sidebar() {
   const pathname = usePathname()
@@ -50,7 +59,7 @@ export default function Sidebar() {
   const fullName = data?.profile.fullName ?? ""
   const groupName = data?.profile.groupName ?? ""
   const wallet = data?.profile.wallet != null
-    ? Math.floor(data.profile.wallet).toLocaleString("uz-UZ")
+    ? formatNumber(data.profile.wallet)
     : "0"
   const initials = fullName
     ? fullName.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase()

@@ -12,6 +12,7 @@ const page = () => {
       transition={{ duration: 0.4, ease: "easeOut" }}
     >
       <Banner />
+      
     </motion.div>
   )
 }

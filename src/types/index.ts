@@ -25,6 +25,13 @@ export interface User {
   completedLessons: number
   pendingLessons: number
   joinDate: string
+  wallet?: number
+  star?: number
+  stars?: number
+  zukkoStar?: number
+  zukkoStars?: number
+  zukko_star?: number
+  zukko_stars?: number
   course_price?: number
   phone_number?: string
 }
@@ -176,6 +183,12 @@ export interface StudentExam {
 export interface HomeProfile {
   fullName: string
   wallet: number
+  star?: number
+  stars?: number
+  zukkoStar?: number
+  zukkoStars?: number
+  zukko_star?: number
+  zukko_stars?: number
   isActive: boolean
   groupName: string
 }

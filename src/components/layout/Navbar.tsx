@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Bell, LogOut, User, Settings, Wallet } from "lucide-react"
+import { Bell, LogOut, User, Settings, Wallet, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -14,16 +14,55 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useSelector, useDispatch } from "react-redux"
 import { RootState, AppDispatch } from "@/store/store"
 import { logout } from "@/store/slice/authSlice"
+import { fetchMe } from "@/store/slice/userSlice"
 import { persistor } from "@/store/store"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Logo from "../../assets/zukkoma.jpg"
 import Image from "next/image"
 
+type StarSource = {
+  star?: number | string
+  stars?: number | string
+  zukkoStar?: number | string
+  zukkoStars?: number | string
+  zukko_star?: number | string
+  zukko_stars?: number | string
+}
+
+const formatNumber = (value?: number | string | null) => {
+  const numberValue = Number(value ?? 0)
+  return Number.isFinite(numberValue)
+    ? Math.floor(numberValue).toLocaleString("uz-UZ")
+    : "0"
+}
+
+const getZukkoStars = (...sources: Array<StarSource | null | undefined>) => {
+  for (const source of sources) {
+    const value = source?.zukkoStar
+      ?? source?.zukkoStars
+      ?? source?.zukko_star
+      ?? source?.zukko_stars
+      ?? source?.stars
+      ?? source?.star
+
+    if (value != null) return formatNumber(value)
+  }
+
+  return "0"
+}
+
 export default function Header() {
   const dispatch = useDispatch<AppDispatch>()
   const router = useRouter()
   const { data, loading } = useSelector((state: RootState) => state.home)
+  const { user, loading: userLoading } = useSelector((state: RootState) => state.user)
+
+  React.useEffect(() => {
+    if (!user && !userLoading) {
+      dispatch(fetchMe())
+    }
+  }, [dispatch, user, userLoading])
 
   const handleLogout = async () => {
     dispatch(logout())
@@ -36,9 +75,9 @@ export default function Header() {
     ? fullName.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase()
     : "?"
   const wallet = data?.profile.wallet != null
-    ? Math.floor(data.profile.wallet).toLocaleString("uz-UZ")
+    ? formatNumber(data.profile.wallet)
     : "0"
-  const groupName = data?.profile.groupName ?? ""
+  const zukkoStars = getZukkoStars(data?.profile, user)
 
   return (
     <header className="sticky top-0 z-30 w-full border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md">
@@ -57,16 +96,25 @@ export default function Header() {
         {/* O'ng: hamyon, bell, avatar */}
         <div className="flex items-center gap-2 sm:gap-3 ml-auto">
 
-          {/* Hamyon */}
-          {loading ? (
+          {/* Zukko star + Hamyon */}
+          {loading || userLoading ? (
             <div className="h-9 w-28 bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse hidden sm:block" />
           ) : (
-            <div className="hidden sm:flex items-center gap-2 bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 px-3 py-1.5 rounded-xl">
-              <Wallet className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
-              <span className="text-sm font-bold text-amber-700 dark:text-amber-400 whitespace-nowrap">
-                {wallet} <span className="text-xs font-medium opacity-70">so&apos;m</span>
-              </span>
-            </div>
+            <>
+              <div className="hidden sm:flex items-center gap-2 bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 px-3 py-1.5 rounded-xl">
+                <Star className="w-4 h-4 fill-current text-blue-600 dark:text-blue-400 shrink-0" />
+                <span className="text-sm font-bold text-blue-700 dark:text-blue-400 whitespace-nowrap">
+                  {zukkoStars} <span className="text-xs font-medium opacity-70">zukko</span>
+                </span>
+              </div>
+
+              <div className="hidden sm:flex items-center gap-2 bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 px-3 py-1.5 rounded-xl">
+                <Wallet className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                <span className="text-sm font-bold text-amber-700 dark:text-amber-400 whitespace-nowrap">
+                  {wallet} <span className="text-xs font-medium opacity-70">so&apos;m</span>
+                </span>
+              </div>
+            </>
           )}
 
           {/* Bell */}
@@ -92,18 +140,26 @@ export default function Header() {
                   <span className="text-xs font-black text-slate-900 dark:text-white leading-tight max-w-[100px] truncate">
                     {fullName || "—"}
                   </span>
-                  <span className="text-[10px] text-slate-400 font-medium">O'quvchi</span>
+                  <span className="text-[10px] text-slate-400 font-medium">O&apos;quvchi</span>
                 </div>
               </button>
             </DropdownMenuTrigger>
 
             <DropdownMenuContent className="w-60 mt-2 p-2 rounded-2xl shadow-2xl border-slate-100 dark:border-slate-800" align="end">
-              {/* Hamyon — mobile da ko'rinadi */}
-              <div className="sm:hidden flex items-center gap-2 bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 px-3 py-2 rounded-xl mx-1 mb-2">
-                <Wallet className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                <span className="text-sm font-bold text-amber-700 dark:text-amber-400">
-                  {wallet} so&apos;m
-                </span>
+              {/* Zukko star + Hamyon mobile da ko'rinadi */}
+              <div className="sm:hidden grid grid-cols-2 gap-2 mx-1 mb-2">
+                <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 px-3 py-2 rounded-xl">
+                  <Star className="w-4 h-4 fill-current text-blue-600 dark:text-blue-400 shrink-0" />
+                  <span className="text-sm font-bold text-blue-700 dark:text-blue-400 truncate">
+                    {zukkoStars}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 px-3 py-2 rounded-xl">
+                  <Wallet className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                  <span className="text-sm font-bold text-amber-700 dark:text-amber-400 truncate">
+                    {wallet} so&apos;m
+                  </span>
+                </div>
               </div>
 
               <DropdownMenuSeparator className="sm:hidden bg-slate-100 dark:bg-slate-800 mb-1" />
