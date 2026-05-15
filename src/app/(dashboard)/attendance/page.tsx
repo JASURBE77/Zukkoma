@@ -1,29 +1,16 @@
 "use client"
 
-import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { AppDispatch, RootState } from '@/store/store'
-import { fetchAttendance } from '@/store/slice/attendanceSlice'
-import { motion } from 'framer-motion'
-import { CheckCircle2, XCircle, Clock, AlertCircle, CalendarDays } from 'lucide-react'
-import dayjs from 'dayjs'
-import 'dayjs/locale/uz'
+import React, { useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { AppDispatch, RootState } from "@/store/store"
+import { fetchAttendance } from "@/store/slice/attendanceSlice"
+import { motion } from "framer-motion"
+import { CheckCircle2, XCircle, Clock, AlertCircle, CalendarDays } from "lucide-react"
+import dayjs from "dayjs"
+import "dayjs/locale/uz"
+import { useTranslation } from "react-i18next"
 
-dayjs.locale('uz')
-
-const statusConfig = {
-  present:  { label: "Keldi",    bg: "bg-emerald-50 dark:bg-emerald-500/10",  text: "text-emerald-700 dark:text-emerald-400",  border: "border-emerald-100 dark:border-emerald-500/20", icon: CheckCircle2 },
-  absent:   { label: "Kelmadi",  bg: "bg-red-50 dark:bg-red-500/10",          text: "text-red-700 dark:text-red-400",           border: "border-red-100 dark:border-red-500/20",         icon: XCircle      },
-  late:     { label: "Kechikdi", bg: "bg-amber-50 dark:bg-amber-500/10",      text: "text-amber-700 dark:text-amber-400",       border: "border-amber-100 dark:border-amber-500/20",     icon: Clock        },
-  reasoned: { label: "Sababli",  bg: "bg-blue-50 dark:bg-blue-500/10",        text: "text-blue-700 dark:text-blue-400",         border: "border-blue-100 dark:border-blue-500/20",       icon: AlertCircle  },
-}
-
-const summaryCards = [
-  { key: "present",  label: "Keldi",    color: "bg-emerald-500", light: "bg-emerald-50 dark:bg-emerald-500/10", text: "text-emerald-700 dark:text-emerald-400" },
-  { key: "absent",   label: "Kelmadi",  color: "bg-red-500",     light: "bg-red-50 dark:bg-red-500/10",        text: "text-red-700 dark:text-red-400"         },
-  { key: "late",     label: "Kechikdi", color: "bg-amber-500",   light: "bg-amber-50 dark:bg-amber-500/10",    text: "text-amber-700 dark:text-amber-400"     },
-  { key: "reasoned", label: "Sababli",  color: "bg-blue-500",    light: "bg-blue-50 dark:bg-blue-500/10",      text: "text-blue-700 dark:text-blue-400"       },
-]
+dayjs.locale("uz")
 
 /* ── Skeleton ──────────────────────────────────────────────── */
 function Sk({ className }: { className?: string }) {
@@ -33,7 +20,6 @@ function Sk({ className }: { className?: string }) {
 function AttendanceSkeleton() {
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
-      {/* Header */}
       <div className="flex items-center gap-3">
         <Sk className="h-12 w-12 rounded-2xl shrink-0" />
         <div className="space-y-2">
@@ -41,8 +27,6 @@ function AttendanceSkeleton() {
           <Sk className="h-3.5 w-20" />
         </div>
       </div>
-
-      {/* Summary 4 karta */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[0, 1, 2, 3].map(i => (
           <div key={i} className="bg-slate-50 dark:bg-slate-900 rounded-[1.5rem] p-4 space-y-2">
@@ -52,8 +36,6 @@ function AttendanceSkeleton() {
           </div>
         ))}
       </div>
-
-      {/* List */}
       <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[2rem] overflow-hidden shadow-lg divide-y divide-slate-100 dark:divide-slate-800">
         {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="flex items-center justify-between px-6 py-4">
@@ -77,6 +59,21 @@ function AttendanceSkeleton() {
 export default function AttendancePage() {
   const dispatch = useDispatch<AppDispatch>()
   const { data, loading, error } = useSelector((state: RootState) => state.attendance)
+  const { t } = useTranslation()
+
+  const statusConfig = {
+    present:  { label: t("attendance.present"),  bg: "bg-emerald-50 dark:bg-emerald-500/10",  text: "text-emerald-700 dark:text-emerald-400",  border: "border-emerald-100 dark:border-emerald-500/20", icon: CheckCircle2 },
+    absent:   { label: t("attendance.absent"),   bg: "bg-red-50 dark:bg-red-500/10",          text: "text-red-700 dark:text-red-400",           border: "border-red-100 dark:border-red-500/20",         icon: XCircle      },
+    late:     { label: t("attendance.late"),     bg: "bg-amber-50 dark:bg-amber-500/10",      text: "text-amber-700 dark:text-amber-400",       border: "border-amber-100 dark:border-amber-500/20",     icon: Clock        },
+    reasoned: { label: t("attendance.reasoned"), bg: "bg-blue-50 dark:bg-blue-500/10",        text: "text-blue-700 dark:text-blue-400",         border: "border-blue-100 dark:border-blue-500/20",       icon: AlertCircle  },
+  }
+
+  const summaryCards = [
+    { key: "present",  label: t("attendance.present"),  color: "bg-emerald-500", light: "bg-emerald-50 dark:bg-emerald-500/10", text: "text-emerald-700 dark:text-emerald-400" },
+    { key: "absent",   label: t("attendance.absent"),   color: "bg-red-500",     light: "bg-red-50 dark:bg-red-500/10",        text: "text-red-700 dark:text-red-400"         },
+    { key: "late",     label: t("attendance.late"),     color: "bg-amber-500",   light: "bg-amber-50 dark:bg-amber-500/10",    text: "text-amber-700 dark:text-amber-400"     },
+    { key: "reasoned", label: t("attendance.reasoned"), color: "bg-blue-500",    light: "bg-blue-50 dark:bg-blue-500/10",      text: "text-blue-700 dark:text-blue-400"       },
+  ]
 
   useEffect(() => {
     dispatch(fetchAttendance())
@@ -105,7 +102,7 @@ export default function AttendancePage() {
           <CalendarDays className="w-6 h-6 text-white" />
         </div>
         <div>
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Davomat</h1>
+          <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{t("attendance.title")}</h1>
           {data && <p className="text-sm text-slate-500 font-medium">{data.month === "March" ? "Mart" : data.month} oyi</p>}
         </div>
       </div>
@@ -124,7 +121,6 @@ export default function AttendancePage() {
         </div>
       )}
 
-      {/* Davomat listi */}
       {data && (
         <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[2rem] overflow-hidden shadow-lg">
           <div className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -143,16 +139,16 @@ export default function AttendancePage() {
                   <div className="flex items-center gap-4">
                     <div className="text-center w-10">
                       <p className="text-xl font-black text-slate-900 dark:text-white leading-none">
-                        {d.format('D')}
+                        {d.format("D")}
                       </p>
                       <p className="text-[10px] uppercase font-bold text-slate-400">
-                        {d.format('ddd')}
+                        {d.format("ddd")}
                       </p>
                     </div>
                     <div className="w-px h-8 bg-slate-100 dark:bg-slate-800" />
                     <div>
                       <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                        {d.format('D-MMMM, YYYY')}
+                        {d.format("D-MMMM, YYYY")}
                       </p>
                       {item.comment && (
                         <p className="text-xs text-slate-400 mt-0.5">{item.comment}</p>

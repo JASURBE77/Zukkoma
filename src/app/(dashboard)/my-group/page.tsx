@@ -10,8 +10,11 @@ import {
 } from "@/components/ui/tabs"
 import { AppWindowIcon, CodeIcon } from "lucide-react"
 import { motion } from "framer-motion"
+import { useTranslation } from "react-i18next"
 
 export default function Page() {
+  const { t } = useTranslation()
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -22,12 +25,12 @@ export default function Page() {
         <TabsList>
           <TabsTrigger value="preview">
             <AppWindowIcon className="mr-2 h-4 w-4" />
-            Do'stlarim
+            {t("group.friends")}
           </TabsTrigger>
 
           <TabsTrigger value="code">
             <CodeIcon className="mr-2 h-4 w-4" />
-            Darsliklarim
+            {t("group.lessons")}
           </TabsTrigger>
         </TabsList>
         <TabsContent value="preview">

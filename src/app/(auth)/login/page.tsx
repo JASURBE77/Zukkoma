@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Eye, EyeOff, ShieldCheck, ArrowRight } from "lucide-react"
+import { Eye, EyeOff, ArrowRight } from "lucide-react"
 import Logo from "../../../assets/zukkoma.jpg"
 import LoginBanner from "../../../assets/LoginImg.svg"
 import Image from "next/image"
@@ -14,6 +14,8 @@ import BannerText from "../../../assets/text.svg"
 import { loginUser } from "@/store/slice/authSlice"
 import { AppDispatch, RootState } from "@/store/store"
 import { toast } from "sonner"
+import { useTranslation } from "react-i18next"
+import LanguageSwitcher from "@/components/layout/LanguageSwitcher"
 
 export default function LoginPage() {
   const [login, setLogin] = useState("")
@@ -23,6 +25,7 @@ export default function LoginPage() {
   const dispatch = useDispatch<AppDispatch>()
   const router = useRouter()
   const { loading, error, token } = useSelector((state: RootState) => state.auth)
+  const { t } = useTranslation()
 
   useEffect(() => {
     if (token) router.replace("/home")
@@ -32,19 +35,20 @@ export default function LoginPage() {
     e.preventDefault()
     const result = await dispatch(loginUser({ login, password }))
     if (loginUser.fulfilled.match(result)) {
-      toast.success("Tizimga muvaffaqiyatli kirdingiz!")
-      router.push('/home')
+      toast.success(t("auth.loginSuccess"))
+      router.push("/home")
     } else {
-      toast.error(result.payload ?? "Login yoki parol noto'g'ri!")
+      toast.error(result.payload ?? t("auth.loginError"))
     }
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f8fafc] dark:bg-[#020617] p-4 lg:p-0">
 
-      {!loading && !error && (
-        <div className="fixed top-6 right-6 z-50 hidden" />
-      )}
+      {/* Til almashtiruvchi — yuqori o'ng burchak */}
+      <div className="fixed top-4 right-4 z-50">
+        <LanguageSwitcher />
+      </div>
 
       <div className="w-full max-w-6xl grid lg:grid-cols-2 min-h-[500px] bg-white dark:bg-slate-900 shadow-2xl rounded-[2.5rem] overflow-hidden border border-slate-100 dark:border-slate-800">
 
@@ -52,14 +56,14 @@ export default function LoginPage() {
           className="relative hidden lg:flex flex-col justify-between p-12 overflow-hidden"
           style={{
             backgroundImage: `url(${LoginBanner.src})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat'
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
           }}
         >
           <Image src={BannerText} alt="salom" />
           <div className="relative z-10 text-white/70 text-sm font-medium">
-            © 2024 Zukkoma. Barcha huquqlar himoyalangan.
+            {t("auth.copyright")}
           </div>
         </div>
 
@@ -68,10 +72,10 @@ export default function LoginPage() {
             <Image src={Logo} alt="zukkoma logo" width={48} height={48} className="absolute top-4 right-6 w-12 h-12 rounded-xl object-cover" />
             <div className="space-y-2 text-center lg:text-left">
               <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-                Kirish
+                {t("auth.title")}
               </h1>
               <p className="text-slate-500 dark:text-slate-400 font-medium">
-                Tizimga kirish uchun ma'lumotlarni kiriting
+                {t("auth.subtitle")}
               </p>
             </div>
 
@@ -79,12 +83,12 @@ export default function LoginPage() {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="login" className="text-xs uppercase tracking-widest text-slate-400 font-bold ml-1">
-                    Foydalanuvchi nomi
+                    {t("auth.username")}
                   </Label>
                   <Input
                     id="login"
                     type="text"
-                    placeholder="Foydalanuvchi nomingiz"
+                    placeholder={t("auth.usernamePlaceholder")}
                     value={login}
                     onChange={(e) => setLogin(e.target.value)}
                     required
@@ -94,7 +98,7 @@ export default function LoginPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="password" className="text-xs uppercase tracking-widest text-slate-400 font-bold ml-1">
-                    Parol
+                    {t("auth.password")}
                   </Label>
                   <div className="relative">
                     <Input
@@ -126,16 +130,16 @@ export default function LoginPage() {
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <>
-                    Kirish <ArrowRight className="w-4 h-4" />
+                    {t("auth.login")} <ArrowRight className="w-4 h-4" />
                   </>
                 )}
               </Button>
 
               <div className="text-center pt-4 border-t border-slate-100 dark:border-slate-800">
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Hisobingiz yo'qmi?{" "}
+                  {t("auth.noAccount")}{" "}
                   <button type="button" className="text-blue-600 font-black hover:underline underline-offset-4">
-                    Ro'yxatdan o'ting
+                    {t("auth.register")}
                   </button>
                 </p>
               </div>

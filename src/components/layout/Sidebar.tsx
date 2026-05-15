@@ -21,25 +21,27 @@ import { AppDispatch, RootState } from "@/store/store"
 import { logout } from "@/store/slice/authSlice"
 import { persistor } from "@/store/store"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-
-const menuItems = [
-  {
-    group: "Asosiy",
-    items: [
-      { name: "Bosh sahifa",   href: "/home",       icon: LayoutDashboard },
-      { name: "Mening guruhim",href: "/my-group",   icon: Users           },
-      { name: "Davomat",       href: "/attendance", icon: CalendarDays    },
-      { name: "Imtihonlar",    href: "/exams",      icon: ClipboardList   },
-      { name: "Profil",        href: "/profile",    icon: User            },
-    ]
-  },
-]
+import { useTranslation } from "react-i18next"
 
 export default function Sidebar() {
   const pathname = usePathname()
   const dispatch = useDispatch<AppDispatch>()
   const router = useRouter()
   const { data, loading } = useSelector((state: RootState) => state.home)
+  const { t } = useTranslation()
+
+  const menuItems = [
+    {
+      group: t("nav.main"),
+      items: [
+        { name: t("nav.home"),       href: "/home",       icon: LayoutDashboard },
+        { name: t("nav.myGroup"),    href: "/my-group",   icon: Users           },
+        { name: t("nav.attendance"), href: "/attendance", icon: CalendarDays    },
+        { name: t("nav.exams"),      href: "/exams",      icon: ClipboardList   },
+        { name: t("nav.profile"),    href: "/profile",    icon: User            },
+      ]
+    },
+  ]
 
   const handleLogout = async () => {
     dispatch(logout())
@@ -71,7 +73,7 @@ export default function Sidebar() {
         </Link>
       </div>
 
-      {/* Nav linklari */}
+      {/* Nav links */}
       <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
         {menuItems.map((group, idx) => (
           <div key={idx} className="space-y-1">
@@ -82,7 +84,7 @@ export default function Sidebar() {
               const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
               return (
                 <Link
-                  key={item.name}
+                  key={item.href}
                   href={item.href}
                   className={cn(
                     "group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200",
@@ -106,22 +108,22 @@ export default function Sidebar() {
         ))}
       </div>
 
-      {/* Pastki: profil + hamyon + chiqish */}
+      {/* Bottom: wallet + profile + logout */}
       <div className="px-3 py-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
 
-        {/* Hamyon */}
+        {/* Wallet */}
         {loading ? (
           <div className="h-10 bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse" />
         ) : (
           <div className="flex items-center gap-2 bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 px-3 py-2.5 rounded-xl">
             <Wallet className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
             <span className="text-sm font-bold text-amber-700 dark:text-amber-400">
-              {wallet} <span className="text-xs font-medium opacity-70">so&apos;m</span>
+              {wallet} <span className="text-xs font-medium opacity-70">{t("common.som")}</span>
             </span>
           </div>
         )}
 
-        {/* Profil */}
+        {/* Profile */}
         {loading ? (
           <div className="flex items-center gap-3 px-3 py-2">
             <div className="w-9 h-9 bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse shrink-0" />
@@ -144,13 +146,13 @@ export default function Sidebar() {
           </Link>
         )}
 
-        {/* Chiqish */}
+        {/* Logout */}
         <button
           onClick={handleLogout}
           className="flex w-full items-center gap-3 px-3 py-2.5 text-slate-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all font-bold text-sm"
         >
           <LogOut className="h-4 w-4" />
-          Chiqish
+          {t("nav.logout")}
         </button>
       </div>
     </aside>

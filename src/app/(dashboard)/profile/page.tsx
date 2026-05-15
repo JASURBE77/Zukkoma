@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "@/store/store"
 import { fetchMe, sendOtp, updatePassword, clearOtpState } from "@/store/slice/userSlice"
@@ -19,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import { motion } from "framer-motion"
 import { toast } from "sonner"
+import { useTranslation } from "react-i18next"
 
 const container = {
   hidden: { opacity: 0 },
@@ -62,6 +63,7 @@ const ProfilePage = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { user, loading, error, passwordLoading, passwordError, otpLoading, otpError } =
     useSelector((state: RootState) => state.user)
+  const { t } = useTranslation()
 
   const [passwords, setPasswords] = useState({ newPassword: "", confirm: "" })
   const [showNew, setShowNew] = useState(false)
@@ -82,23 +84,23 @@ const ProfilePage = () => {
   }, [otpError])
 
   const handleSendOtp = async () => {
-    if (!passwords.newPassword) return toast.error("Yangi parol kiriting")
-    if (passwords.newPassword.length < 6) return toast.error("Parol kamida 6 ta belgi bo'lishi kerak")
-    if (passwords.newPassword !== passwords.confirm) return toast.error("Parollar mos kelmadi")
+    if (!passwords.newPassword) return toast.error(t("profile.enterNewPassword"))
+    if (passwords.newPassword.length < 6) return toast.error(t("profile.minLength"))
+    if (passwords.newPassword !== passwords.confirm) return toast.error(t("profile.passwordMismatch"))
 
     const result = await dispatch(sendOtp())
     if (sendOtp.fulfilled.match(result)) {
       setOtpStep(2)
-      toast.success("Tasdiqlash kodi emailingizga yuborildi!")
+      toast.success(t("profile.otpSentSuccess"))
     }
   }
 
   const handlePasswordSave = async () => {
-    if (!otpCode || otpCode.length !== 4) return toast.error("4 xonali kodni kiriting")
+    if (!otpCode || otpCode.length !== 4) return toast.error(t("profile.otpRequired"))
 
     const result = await dispatch(updatePassword({ otp: otpCode, newPassword: passwords.newPassword }))
     if (updatePassword.fulfilled.match(result)) {
-      toast.success("Parol muvaffaqiyatli o'zgartirildi!")
+      toast.success(t("profile.passwordUpdateSuccess"))
       setPasswords({ newPassword: "", confirm: "" })
       setOtpCode("")
       setOtpStep(1)
@@ -127,12 +129,12 @@ const ProfilePage = () => {
   }
 
   const infoFields = [
-    { label: "Ism", value: user?.name },
-    { label: "Familiya", value: user?.surname },
-    { label: "Yosh", value: user?.age },
-    { label: "Telefon", value: user?.phone_number },
-    { label: "Foydalanuvchi nomi", value: user?.login, full: true },
-    { label: "Guruh", value: user?.groupName ?? "—", full: true },
+    { label: t("profile.firstName"),  value: user?.name },
+    { label: t("profile.lastName"),   value: user?.surname },
+    { label: t("profile.age"),        value: user?.age },
+    { label: t("profile.phone"),      value: user?.phone_number },
+    { label: t("profile.username"),   value: user?.login, full: true },
+    { label: t("profile.group"),      value: user?.groupName ?? "—", full: true },
   ]
 
   return (
@@ -142,7 +144,7 @@ const ProfilePage = () => {
       initial="hidden"
       animate="show"
     >
-      {/* ── Header banner ─────────────────────────────────── */}
+      {/* Header banner */}
       <motion.div variants={item} className="relative">
         <div className="h-48 md:h-56 w-full bg-gradient-to-r from-blue-600 to-indigo-700 rounded-[2.5rem] shadow-lg overflow-hidden relative">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl" />
@@ -178,14 +180,14 @@ const ProfilePage = () => {
         </div>
       </motion.div>
 
-      {/* ── Asosiy kontent ────────────────────────────────── */}
+      {/* Main content */}
       <motion.div variants={item} className="pt-20 sm:pt-24 grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
 
-        {/* Chap: Ma'lumotlar kartasi */}
+        {/* Left: Info card */}
         <div className="space-y-4">
           <Card className="rounded-[2rem] border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none">
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-black">Ma&apos;lumotlar</CardTitle>
+              <CardTitle className="text-lg font-black">{t("profile.info")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center gap-3 text-slate-600 dark:text-slate-400 text-sm">
@@ -204,30 +206,30 @@ const ProfilePage = () => {
                 <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg shrink-0">
                   <ShieldCheck className="w-4 h-4" />
                 </div>
-                <span>{user?.isActive ? "Faol" : "Nofaol"}</span>
+                <span>{user?.isActive ? t("common.active") : t("common.inactive")}</span>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* O'ng: Tabs */}
+        {/* Right: Tabs */}
         <div className="lg:col-span-2">
           <Tabs defaultValue="account" className="w-full">
             <TabsList className="bg-slate-100/70 dark:bg-slate-800/70 p-1 rounded-2xl mb-6 flex w-full sm:w-auto sm:inline-flex border border-slate-200 dark:border-slate-700">
               <TabsTrigger value="account" className="flex-1 sm:flex-none rounded-xl px-3 sm:px-6 font-bold text-xs sm:text-sm data-[state=active]:bg-white dark:data-[state=active]:bg-slate-900 data-[state=active]:shadow-sm">
-                Profil
+                {t("profile.title")}
               </TabsTrigger>
               <TabsTrigger value="security" className="flex-1 sm:flex-none rounded-xl px-3 sm:px-6 font-bold text-xs sm:text-sm data-[state=active]:bg-white dark:data-[state=active]:bg-slate-900 data-[state=active]:shadow-sm">
-                Xavfsizlik
+                {t("profile.security")}
               </TabsTrigger>
             </TabsList>
 
-            {/* ── Profil tab (read-only) ── */}
+            {/* Profile tab (read-only) */}
             <TabsContent value="account">
               <Card className="rounded-[2rem] border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none">
                 <CardHeader>
-                  <CardTitle className="font-black">Shaxsiy ma&apos;lumotlar</CardTitle>
-                  <CardDescription>Ma&apos;lumotlarni faqat administrator o&apos;zgartira oladi</CardDescription>
+                  <CardTitle className="font-black">{t("profile.personalInfo")}</CardTitle>
+                  <CardDescription>{t("profile.readOnly")}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -244,7 +246,7 @@ const ProfilePage = () => {
               </Card>
             </TabsContent>
 
-            {/* ── Xavfsizlik tab ── */}
+            {/* Security tab */}
             <TabsContent value="security">
               <Card className="rounded-[2rem] border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none">
                 <CardContent className="p-6 sm:p-8 space-y-6">
@@ -253,11 +255,9 @@ const ProfilePage = () => {
                       <ShieldCheck className="w-6 h-6 text-blue-600" />
                     </div>
                     <div>
-                      <p className="font-black text-slate-900 dark:text-white">Parolni o&apos;zgartirish</p>
+                      <p className="font-black text-slate-900 dark:text-white">{t("profile.changePassword")}</p>
                       <p className="text-sm text-slate-500">
-                        {otpStep === 1
-                          ? "Yangi parol kiriting, kod emailingizga yuboriladi"
-                          : "Emailingizga yuborilgan 4 xonali kodni kiriting"}
+                        {otpStep === 1 ? t("profile.changePasswordStep1") : t("profile.changePasswordStep2")}
                       </p>
                     </div>
                   </div>
@@ -267,13 +267,13 @@ const ProfilePage = () => {
                   {otpStep === 1 ? (
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <Label className="font-bold text-slate-500">Yangi parol</Label>
+                        <Label className="font-bold text-slate-500">{t("profile.newPassword")}</Label>
                         <div className="relative">
                           <Input
                             type={showNew ? "text" : "password"}
                             value={passwords.newPassword}
                             onChange={e => setPasswords(p => ({ ...p, newPassword: e.target.value }))}
-                            placeholder="Yangi parol"
+                            placeholder={t("profile.newPassword")}
                             className="rounded-xl h-12 pr-12"
                           />
                           <button
@@ -287,13 +287,13 @@ const ProfilePage = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label className="font-bold text-slate-500">Parolni tasdiqlang</Label>
+                        <Label className="font-bold text-slate-500">{t("profile.confirmPassword")}</Label>
                         <div className="relative">
                           <Input
                             type={showConfirm ? "text" : "password"}
                             value={passwords.confirm}
                             onChange={e => setPasswords(p => ({ ...p, confirm: e.target.value }))}
-                            placeholder="Parolni qayta kiriting"
+                            placeholder={t("profile.confirmPasswordPlaceholder")}
                             className="rounded-xl h-12 pr-12"
                           />
                           <button
@@ -305,7 +305,7 @@ const ProfilePage = () => {
                           </button>
                         </div>
                         {passwords.confirm && passwords.newPassword !== passwords.confirm && (
-                          <p className="text-xs text-red-500 font-medium">Parollar mos kelmadi</p>
+                          <p className="text-xs text-red-500 font-medium">{t("profile.passwordMismatch")}</p>
                         )}
                       </div>
 
@@ -319,7 +319,7 @@ const ProfilePage = () => {
                             ? <Loader2 className="w-4 h-4 animate-spin" />
                             : <Mail className="w-4 h-4" />
                           }
-                          {otpLoading ? "Yuborilmoqda..." : "Tasdiqlash kodini yuborish"}
+                          {otpLoading ? t("common.sending") : t("profile.sendOtp")}
                         </Button>
                       </div>
                     </div>
@@ -328,12 +328,12 @@ const ProfilePage = () => {
                       <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 rounded-xl p-4 flex items-start gap-3">
                         <Mail className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
                         <p className="text-sm text-blue-700 dark:text-blue-400 font-medium">
-                          Emailingizga 4 xonali tasdiqlash kodi yuborildi. Kodni kiritib parolingizni yangilang.
+                          {t("profile.otpSent")}
                         </p>
                       </div>
 
                       <div className="space-y-2">
-                        <Label className="font-bold text-slate-500">Tasdiqlash kodi</Label>
+                        <Label className="font-bold text-slate-500">{t("profile.otpCode")}</Label>
                         <Input
                           type="text"
                           inputMode="numeric"
@@ -352,7 +352,7 @@ const ProfilePage = () => {
                           className="h-12 px-6 rounded-2xl gap-2"
                         >
                           <ArrowLeft className="w-4 h-4" />
-                          Orqaga
+                          {t("common.back")}
                         </Button>
                         <Button
                           onClick={handlePasswordSave}
@@ -363,7 +363,7 @@ const ProfilePage = () => {
                             ? <Loader2 className="w-4 h-4 animate-spin" />
                             : <ShieldCheck className="w-4 h-4" />
                           }
-                          {passwordLoading ? "Saqlanmoqda..." : "Parolni yangilash"}
+                          {passwordLoading ? t("common.saving") : t("profile.updatePassword")}
                         </Button>
                       </div>
                     </div>

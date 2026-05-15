@@ -4,17 +4,19 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { LayoutDashboard, Users, User, ClipboardList, CalendarDays } from "lucide-react"
 import { cn } from "@/lib/utils"
-
-const navItems = [
-  { name: "Bosh sahifa", href: "/home",       icon: LayoutDashboard },
-  { name: "Guruhim",     href: "/my-group",   icon: Users           },
-  { name: "Davomat",     href: "/attendance", icon: CalendarDays    },
-  { name: "Imtihonlar",  href: "/exams",      icon: ClipboardList   },
-  { name: "Profil",      href: "/profile",    icon: User            },
-]
+import { useTranslation } from "react-i18next"
 
 export default function NavigationMobile() {
   const pathname = usePathname()
+  const { t } = useTranslation()
+
+  const navItems = [
+    { name: t("nav.home"),         href: "/home",       icon: LayoutDashboard },
+    { name: t("nav.myGroupShort"), href: "/my-group",   icon: Users           },
+    { name: t("nav.attendance"),   href: "/attendance", icon: CalendarDays    },
+    { name: t("nav.exams"),        href: "/exams",      icon: ClipboardList   },
+    { name: t("nav.profile"),      href: "/profile",    icon: User            },
+  ]
 
   return (
     <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-950/90 backdrop-blur-md border-t border-slate-100 dark:border-slate-800">

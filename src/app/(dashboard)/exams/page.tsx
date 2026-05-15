@@ -27,7 +27,7 @@ import "dayjs/locale/uz"
 
 dayjs.locale("uz")
 
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -39,24 +39,16 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card"
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-const STATUS_BADGE = {
-  pending:  { label: "Kutilmoqda",  variant: "outline"   },
-  active:   { label: "Faol",        variant: "default"   },
-  finished: { label: "Yakunlangan", variant: "secondary" },
-} as const
+import { useTranslation } from "react-i18next"
 
 function formatDate(ts: number | string) {
   return dayjs(Number(ts)).format("DD.MM.YYYY HH:mm")
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 export default function ExamPage() {
   const dispatch = useDispatch<AppDispatch>()
   const router   = useRouter()
+  const { t } = useTranslation()
 
   const { sessions, sessionsLoading, actionLoading } =
     useSelector((state: RootState) => state.exam)
@@ -64,11 +56,15 @@ export default function ExamPage() {
   const [startingId,    setStartingId]    = useState<number | null>(null)
   const [practiceLinks, setPracticeLinks] = useState<Record<number, string>>({})
 
+  const STATUS_BADGE = {
+    pending:  { label: t("exams.statusPending"),  variant: "outline"   },
+    active:   { label: t("exams.statusActive"),   variant: "default"   },
+    finished: { label: t("exams.statusFinished"), variant: "secondary" },
+  } as const
+
   useEffect(() => {
     dispatch(fetchExamSessions())
   }, [dispatch])
-
-  // ── Handlers ───────────────────────────────────────────────────────────────
 
   async function handleStart(sessionId: number) {
     setStartingId(sessionId)
@@ -76,10 +72,10 @@ export default function ExamPage() {
     setStartingId(null)
 
     if (startExam.fulfilled.match(result)) {
-      toast.success("Imtihon boshlandi!")
+      toast.success(t("exams.startSuccess"))
       router.push(`/student-exam/${result.payload}`)
     } else {
-      toast.error(result.payload ?? "Imtihonni boshlashda xatolik")
+      toast.error(result.payload ?? t("exams.startError"))
     }
   }
 
@@ -96,15 +92,13 @@ export default function ExamPage() {
     setStartingId(null)
 
     if (submitPracticeLink.fulfilled.match(result)) {
-      toast.success("Havola muvaffaqiyatli yuborildi!")
+      toast.success(t("exams.linkSuccess"))
       setPracticeLinks((prev) => ({ ...prev, [sessionId]: "" }))
       dispatch(fetchExamSessions())
     } else {
-      toast.error(result.payload ?? "Yuborishda xatolik yuz berdi")
+      toast.error(result.payload ?? t("exams.linkError"))
     }
   }
-
-  // ── Loading (faqat birinchi yuklashda to'liq ekran) ───────────────────────
 
   if (sessions.length === 0 && sessionsLoading) {
     return (
@@ -116,8 +110,6 @@ export default function ExamPage() {
 
   const list = Array.isArray(sessions) ? sessions : []
 
-  // ── Render ─────────────────────────────────────────────────────────────────
-
   return (
     <motion.div
       className="space-y-6"
@@ -128,9 +120,9 @@ export default function ExamPage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white">Imtihonlar</h1>
+          <h1 className="text-2xl font-black text-slate-900 dark:text-white">{t("exams.title")}</h1>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            Barcha mavjud imtihon va amaliyot topshiriqlari
+            {t("exams.subtitle")}
           </p>
         </div>
         <Button
@@ -139,7 +131,7 @@ export default function ExamPage() {
           disabled={sessionsLoading}
           onClick={() => dispatch(fetchExamSessions())}
           className="h-10 w-10 rounded-xl shrink-0"
-          title="Yangilash"
+          title={t("exams.refresh")}
         >
           {sessionsLoading
             ? <Loader2 className="h-4 w-4 animate-spin" />
@@ -152,7 +144,7 @@ export default function ExamPage() {
       {list.length === 0 && (
         <div className="flex h-52 flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
           <ClipboardList className="h-10 w-10 text-slate-300" />
-          <p className="text-sm font-medium text-slate-400">Hozircha imtihon mavjud emas</p>
+          <p className="text-sm font-medium text-slate-400">{t("exams.empty")}</p>
         </div>
       )}
 
@@ -181,7 +173,7 @@ export default function ExamPage() {
                       }
                     </div>
                     <CardTitle className="font-bold text-slate-900 dark:text-white">
-                      {session.exam?.title ?? "Imtihon"}
+                      {session.exam?.title ?? t("exams.examDefault")}
                     </CardTitle>
                   </div>
                   <Badge variant={status.variant}>{status.label}</Badge>
@@ -190,15 +182,15 @@ export default function ExamPage() {
                 <CardDescription className="flex flex-col gap-1 pt-2">
                   <span className="flex items-center gap-1.5 text-xs">
                     <CalendarClock className="h-3.5 w-3.5" />
-                    Boshlanish: {formatDate(session.startDate)}
+                    {t("exams.startDate")}: {formatDate(session.startDate)}
                   </span>
                   <span className="flex items-center gap-1.5 text-xs">
                     <CalendarClock className="h-3.5 w-3.5" />
-                    Tugash: {formatDate(session.endDate)}
+                    {t("exams.endDate")}: {formatDate(session.endDate)}
                   </span>
                   {session.exam?.ball && (
                     <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
-                      Maksimal ball: {session.exam.ball}
+                      {t("exams.maxScore")}: {session.exam.ball}
                     </span>
                   )}
                 </CardDescription>
@@ -209,7 +201,7 @@ export default function ExamPage() {
                 <CardContent>
                   <div className="flex gap-2">
                     <Input
-                      placeholder="Havola kiriting..."
+                      placeholder={t("exams.linkPlaceholder")}
                       value={practiceLinks[session.id] ?? ""}
                       onChange={(e) =>
                         setPracticeLinks((prev) => ({ ...prev, [session.id]: e.target.value }))
@@ -241,7 +233,7 @@ export default function ExamPage() {
                     onClick={() => handleViewResult(session.studentExam!.id)}
                   >
                     {isBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trophy className="h-4 w-4 text-yellow-500" />}
-                    Natijani ko'rish
+                    {t("exams.viewResult")}
                   </Button>
                 ) : session.studentExam?.status === "started" ? (
                   <Button
@@ -250,11 +242,11 @@ export default function ExamPage() {
                     onClick={() => router.push(`/student-exam/${session.id}`)}
                   >
                     {isBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCcw className="h-4 w-4" />}
-                    Davom etish
+                    {t("exams.continueExam")}
                   </Button>
                 ) : session.status === "finished" ? (
                   <Button variant="outline" className="w-full gap-2" disabled>
-                    Muddati o'tdi
+                    {t("exams.expired")}
                   </Button>
                 ) : session.status === "active" ? (
                   <Button
@@ -263,12 +255,12 @@ export default function ExamPage() {
                     onClick={() => handleStart(session.id)}
                   >
                     {isBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCcw className="h-4 w-4" />}
-                    Boshlash
+                    {t("exams.start")}
                   </Button>
                 ) : (
                   <Button variant="outline" className="w-full gap-2" disabled>
                     <CalendarClock className="h-4 w-4" />
-                    Kutilmoqda
+                    {t("exams.pending")}
                   </Button>
                 )}
               </CardFooter>

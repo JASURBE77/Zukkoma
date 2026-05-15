@@ -10,10 +10,13 @@ import { Badge } from "@/components/ui/badge"
 import { ChevronRight } from "lucide-react"
 import Strike from "@/assets/fire-svgrepo-com.svg"
 import Image from "next/image"
+import { useTranslation } from "react-i18next"
+
 export default function Friends() {
   const dispatch = useDispatch<AppDispatch>()
   const router = useRouter()
   const { members, loading, error } = useSelector((state: RootState) => state.group)
+  const { t } = useTranslation()
 
   useEffect(() => {
     dispatch(fetchGroupMembers())
@@ -38,7 +41,7 @@ export default function Friends() {
   return (
     <div className="p-6 space-y-4">
       <h1 className="text-xl font-black text-slate-800">
-        Guruhdoshlar
+        {t("group.groupmates")}
         <span className="ml-2 text-sm font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
           {members.length}
         </span>
@@ -46,7 +49,7 @@ export default function Friends() {
 
       {members.length === 0 ? (
         <div className="text-center py-16 text-slate-400 font-medium">
-          Guruhdoshlar topilmadi
+          {t("group.noGroupmates")}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -73,7 +76,7 @@ export default function Friends() {
 
                 <div className="flex gap-2 p-2 border-1 rounded-[10px]">
                   <Image src={Strike} alt="Strike Icon" className="w-4 h-4" />
-                   <span className="text-xs text-slate-500">{member.strike ? ` ${member.strike}` : 0}</span>
+                  <span className="text-xs text-slate-500">{member.strike ? ` ${member.strike}` : 0}</span>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
@@ -84,10 +87,8 @@ export default function Friends() {
                         : "bg-slate-100 text-slate-400 border-none text-xs font-bold"
                     }
                   >
-                    {member.isActive ? "Faol" : "Nofaol"}
+                    {member.isActive ? t("common.active") : t("common.inactive")}
                   </Badge>
-
-                 
                   <ChevronRight className="w-4 h-4 text-slate-300" />
                 </div>
               </div>

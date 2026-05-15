@@ -1,11 +1,14 @@
 "use client"
 
+import Image from "next/image"
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "@/store/store"
 import { fetchGroupMembers } from "@/store/slice/groupSlice"
 import { fetchMe } from "@/store/slice/userSlice"
 import { Trophy, Flame } from "lucide-react"
+import FireIcon from "../../../assets/fire-svgrepo-com.svg"
+import { useTranslation } from "react-i18next"
 
 const TOP3_STYLES = [
   "bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-500/10 dark:to-amber-500/10 border border-yellow-200 dark:border-yellow-500/30",
@@ -46,6 +49,7 @@ export default function Rating() {
   const dispatch = useDispatch<AppDispatch>()
   const { members, loading } = useSelector((state: RootState) => state.group)
   const { user } = useSelector((state: RootState) => state.user)
+  const { t } = useTranslation()
 
   useEffect(() => {
     dispatch(fetchGroupMembers())
@@ -65,14 +69,14 @@ export default function Rating() {
     <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[2rem] p-6 shadow-lg">
       <div className="flex items-center gap-2 mb-5">
         <Trophy className="w-5 h-5 text-amber-500" />
-        <h3 className="font-black text-slate-900 dark:text-white">Guruh reytingi</h3>
+        <h3 className="font-black text-slate-900 dark:text-white">{t("group.groupmates")} rating</h3>
         <span className="ml-auto text-xs font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
-          {members.length} ta o&apos;quvchi
+          {members.length}
         </span>
       </div>
 
       {sorted.length === 0 ? (
-        <p className="text-sm text-slate-400 text-center py-8">Ma&apos;lumot yo&apos;q</p>
+        <p className="text-sm text-slate-400 text-center py-8">{t("group.noGroupmates")}</p>
       ) : (
         <>
           <div className="space-y-2">
@@ -113,7 +117,7 @@ export default function Rating() {
                     {member.name} {member.surname}
                     {isMe && (
                       <span className="ml-2 text-xs font-bold text-blue-500 bg-blue-100 dark:bg-blue-500/20 px-1.5 py-0.5 rounded-md">
-                        Siz
+                        You
                       </span>
                     )}
                   </span>
@@ -127,12 +131,11 @@ export default function Rating() {
             })}
           </div>
 
-          {/* Foydalanuvchi top 10 da bo'lmasa, uning o'rnini alohida ko'rsatish */}
           {!isCurrentUserInTop10 && currentUserMember && (
             <>
               <div className="my-3 flex items-center gap-2">
                 <div className="flex-1 h-px bg-slate-100 dark:bg-slate-800" />
-                <span className="text-xs text-slate-400 font-medium px-2">Sizning o&apos;rningiz</span>
+                <span className="text-xs text-slate-400 font-medium px-2">Your rank</span>
                 <div className="flex-1 h-px bg-slate-100 dark:bg-slate-800" />
               </div>
               <div className="flex items-center gap-3 px-3 py-2 rounded-xl border-2 border-blue-400 bg-blue-50 dark:bg-blue-500/10">
@@ -147,7 +150,7 @@ export default function Rating() {
                 <span className="flex-1 text-sm font-bold text-blue-700 dark:text-blue-400 truncate">
                   {currentUserMember.name} {currentUserMember.surname}
                   <span className="ml-2 text-xs font-bold text-blue-500 bg-blue-100 dark:bg-blue-500/20 px-1.5 py-0.5 rounded-md">
-                    Siz
+                    You
                   </span>
                 </span>
                 <div className="flex items-center gap-1 shrink-0">

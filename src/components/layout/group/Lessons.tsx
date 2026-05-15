@@ -1,18 +1,21 @@
 "use client"
+
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/navigation"
 import { AppDispatch, RootState } from "@/store/store"
 import { fetchLessonStatus } from "@/store/slice/lessonSlice"
 import { fetchMe } from "@/store/slice/userSlice"
-import { ChevronDown, ChevronUp, CheckCircle2, Circle, ChevronRight, Lock } from "lucide-react"
+import { ChevronDown, CheckCircle2, ChevronRight, Lock } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { useTranslation } from "react-i18next"
 
 export default function Lessons() {
   const dispatch = useDispatch<AppDispatch>()
   const router = useRouter()
   const { data, loading, error } = useSelector((state: RootState) => state.lessons)
   const { user } = useSelector((state: RootState) => state.user)
+  const { t } = useTranslation()
   const [openIds, setOpenIds] = useState<number[]>([])
 
   useEffect(() => {
@@ -78,7 +81,7 @@ export default function Lessons() {
                 <div className="text-left">
                   <h2 className="font-bold text-lg text-slate-800">{methodology.name}</h2>
                   <p className="text-sm text-slate-500">
-                    {completedCount}/{totalCount} ta dars bajarildi
+                    {completedCount}/{totalCount} {t("group.lessonsCompleted")}
                   </p>
                 </div>
               </div>
@@ -159,4 +162,3 @@ export default function Lessons() {
     </div>
   )
 }
-   
