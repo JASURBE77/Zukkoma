@@ -15,6 +15,7 @@ const page = () => {
     >
       <Banner />
       <Rating />
+      
     </motion.div>
   )
 }

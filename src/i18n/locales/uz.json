@@ -34,7 +34,8 @@
     "logout": "Chiqish",
     "student": "O'quvchi",
     "main": "Asosiy",
-    "myGroupShort": "Guruhim"
+    "myGroupShort": "Guruhim",
+    "library": "Kutubxona"
   },
   "home": {
     "attendancePercent": "Davomat foizi",
@@ -114,5 +115,31 @@
     "groupmates": "Guruhdoshlar",
     "noGroupmates": "Guruhdoshlar topilmadi",
     "lessonsCompleted": "ta dars bajarildi"
+  },
+  "library": {
+    "title": "Kutubxona",
+    "subtitle": "Bilim olish uchun eng yaxshi manbalar to'plami",
+    "searchPlaceholder": "Kitob izlash...",
+    "all": "Barchasi",
+    "myBooks": "Mening kitoblarim",
+    "literary": "Badiiy",
+    "scientific": "Ilmiy",
+    "fairy": "Ertak",
+    "practical": "Amaliy",
+    "noDescription": "Tavsif mavjud emas",
+    "price": "Narxi",
+    "zukkoStar": "Zukko star",
+    "read": "O'qish",
+    "buy": "Sotib olish",
+    "noBooks": "Kitoblar topilmadi",
+    "noBooksHint": "Qidiruv so'rovini yoki kategoriyani o'zgartirib ko'ring",
+    "retry": "Qayta urinish",
+    "buyTitle": "Sotib olish",
+    "buyConfirm": "Rostdan ham \"{{title}}\" kitobini sotib olishni xohlaysizmi?",
+    "buyCancel": "Yo'q",
+    "buyConfirmBtn": "Ha",
+    "buySuccess": "Kitob muvaffaqiyatli sotib olindi",
+    "buyFailed": "Kitob sotib olinmadi",
+    "notEnoughStars": "Zukko star yetarli emas"
   }
 }

@@ -34,7 +34,8 @@
     "logout": "Log Out",
     "student": "Student",
     "main": "Main",
-    "myGroupShort": "Group"
+    "myGroupShort": "Group",
+    "library": "Library"
   },
   "home": {
     "attendancePercent": "Attendance Rate",
@@ -114,5 +115,31 @@
     "groupmates": "Groupmates",
     "noGroupmates": "No groupmates found",
     "lessonsCompleted": "lessons completed"
+  },
+  "library": {
+    "title": "Library",
+    "subtitle": "The best collection of resources for learning",
+    "searchPlaceholder": "Search books...",
+    "all": "All",
+    "myBooks": "My Books",
+    "literary": "Literary",
+    "scientific": "Scientific",
+    "fairy": "Fairy Tales",
+    "practical": "Practical",
+    "noDescription": "No description available",
+    "price": "Price",
+    "zukkoStar": "Zukko star",
+    "read": "Read",
+    "buy": "Purchase",
+    "noBooks": "No books found",
+    "noBooksHint": "Try changing your search query or category",
+    "retry": "Retry",
+    "buyTitle": "Purchase",
+    "buyConfirm": "Do you really want to buy \"{{title}}\"?",
+    "buyCancel": "No",
+    "buyConfirmBtn": "Yes",
+    "buySuccess": "Book purchased successfully",
+    "buyFailed": "Failed to purchase the book",
+    "notEnoughStars": "Not enough Zukko stars"
   }
 }

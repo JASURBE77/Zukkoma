@@ -8,6 +8,7 @@ import examReducer from "./slice/examSlice"
 import historyReducer from "./slice/historySlice"
 import homeReducer from "./slice/homeSlice"
 import attendanceReducer from "./slice/attendanceSlice"
+import libraryReducer from "./slice/librarySlice"
 import storage from "redux-persist/lib/storage"
 import {
   persistReducer,
@@ -31,6 +32,7 @@ export const store = configureStore({
     user:       userReducer,
     home:       homeReducer,
     attendance: attendanceReducer,
+    library:    libraryReducer,
     lessons:    lessonReducer,
     group:      groupReducer,
     exam:       examReducer,

@@ -34,7 +34,8 @@
     "logout": "Выйти",
     "student": "Учащийся",
     "main": "Основное",
-    "myGroupShort": "Группа"
+    "myGroupShort": "Группа",
+    "library": "Библиотека"
   },
   "home": {
     "attendancePercent": "Процент посещаемости",
@@ -114,5 +115,31 @@
     "groupmates": "Одногруппники",
     "noGroupmates": "Одногруппников не найдено",
     "lessonsCompleted": "уроков выполнено"
+  },
+  "library": {
+    "title": "Библиотека",
+    "subtitle": "Лучшая коллекция источников для получения знаний",
+    "searchPlaceholder": "Поиск книг...",
+    "all": "Все",
+    "myBooks": "Мои книги",
+    "literary": "Художественная",
+    "scientific": "Научная",
+    "fairy": "Сказки",
+    "practical": "Практическая",
+    "noDescription": "Описание отсутствует",
+    "price": "Цена",
+    "zukkoStar": "Zukko star",
+    "read": "Читать",
+    "buy": "Купить",
+    "noBooks": "Книги не найдены",
+    "noBooksHint": "Попробуйте изменить запрос или категорию",
+    "retry": "Повторить",
+    "buyTitle": "Купить",
+    "buyConfirm": "Вы действительно хотите купить «{{title}}»?",
+    "buyCancel": "Нет",
+    "buyConfirmBtn": "Да",
+    "buySuccess": "Книга успешно куплена",
+    "buyFailed": "Не удалось купить книгу",
+    "notEnoughStars": "Недостаточно Zukko star"
   }
 }

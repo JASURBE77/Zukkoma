@@ -12,6 +12,7 @@ import {
   CalendarDays,
   ClipboardList,
   Wallet,
+  Library,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Logo from "../../assets/zukkoma.jpg"
@@ -22,6 +23,14 @@ import { logout } from "@/store/slice/authSlice"
 import { persistor } from "@/store/store"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useTranslation } from "react-i18next"
+
+
+const formatNumber = (value?: number | string | null) => {
+  const numberValue = Number(value ?? 0)
+  return Number.isFinite(numberValue)
+    ? Math.floor(numberValue).toLocaleString("uz-UZ")
+    : "0"
+}
 
 export default function Sidebar() {
   const pathname = usePathname()
@@ -39,6 +48,7 @@ export default function Sidebar() {
         { name: t("nav.attendance"), href: "/attendance", icon: CalendarDays    },
         { name: t("nav.exams"),      href: "/exams",      icon: ClipboardList   },
         { name: t("nav.profile"),    href: "/profile",    icon: User            },
+        { name: t("nav.library"),  href: "/library",    icon: Library         },
       ]
     },
   ]
@@ -52,7 +62,7 @@ export default function Sidebar() {
   const fullName = data?.profile.fullName ?? ""
   const groupName = data?.profile.groupName ?? ""
   const wallet = data?.profile.wallet != null
-    ? Math.floor(data.profile.wallet).toLocaleString("uz-UZ")
+    ? formatNumber(data.profile.wallet)
     : "0"
   const initials = fullName
     ? fullName.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase()

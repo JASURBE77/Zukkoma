@@ -18,12 +18,21 @@ export interface User {
   role: string
   login: string
   isActive: boolean
-  groupId: number | null
-  groupName: string | null
-  organizationId: number
-  branchId: number | null
-  wallet?: string
-  strike?: number
+  group: { id: string; name: string }
+  organizationId: string
+  branch_id: string
+  totalLessons: number
+  completedLessons: number
+  pendingLessons: number
+  joinDate: string
+  wallet?: number
+  star?: number
+  stars?: number
+  zukkoStar?: number
+  zukkoStars?: number
+  zukko_star?: number
+  zukko_stars?: number
+  course_price?: number
   phone_number?: string
   parent_phone_number?: string
 }
@@ -79,6 +88,7 @@ export interface LessonStatusResponse {
   scienceId: string
   methodologies: Methodology[]
 }
+
 export interface LoginResponse {
   accessToken: string
   role: string
@@ -177,6 +187,12 @@ export interface StudentExam {
 export interface HomeProfile {
   fullName: string
   wallet: number
+  star?: number
+  stars?: number
+  zukkoStar?: number
+  zukkoStars?: number
+  zukko_star?: number
+  zukko_stars?: number
   isActive: boolean
   groupName: string
   strike?: number
@@ -210,6 +226,31 @@ export interface HomeData {
   attendance: HomeAttendanceItem[]
   currentProgress: HomeProgress
 }
+
+// Library types
+export interface Book {
+  id: number
+  title: string
+  type?: string
+  category?: string
+  book_type?: string
+  description?: string
+  price: number
+  image_id: number
+  status: string
+  pdf_id: number | null
+}
+
+export type UserBookResponse =
+  | Book
+  | {
+      book?: Book
+      id?: number
+      bookId?: number
+      book_id?: number
+      pdf_id?: number | null
+      status?: string
+    }
 
 // Attendance page types
 export interface AttendanceItem {
