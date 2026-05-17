@@ -139,7 +139,7 @@ export default function Header() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="hidden sm:flex flex-col items-start">
-                  <span className="text-xs font-black text-slate-900 dark:text-white leading-tight max-w-[100px] truncate">
+                  <span className="text-xs font-black text-slate-900 dark:text-white leading-tight max-w-[300px] truncate">
                     {fullName || "—"}
                   </span>
                   <span className="text-[10px] text-slate-400 font-medium">O&apos;quvchi</span>

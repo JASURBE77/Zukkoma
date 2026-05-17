@@ -5,6 +5,8 @@ import type { Book, UserBookResponse } from "@/types"
 
 interface LibraryState {
   books: Book[]
+  typedBooks: Book[]
+  typedBooksLoading: boolean
   userBooks: Book[]
   purchasedBookIds: number[]
   purchasedBooksById: Record<number, Partial<Book>>
@@ -14,6 +16,8 @@ interface LibraryState {
 
 const initialState: LibraryState = {
   books: [],
+  typedBooks: [],
+  typedBooksLoading: false,
   userBooks: [],
   purchasedBookIds: [],
   purchasedBooksById: {},
@@ -66,6 +70,18 @@ const getAxiosError = (error: unknown): string => {
 }
 
 // ---- thunks -----------------------------------------------------------------
+
+export const fetchBooksByType = createAsyncThunk<Book[], string, { rejectValue: string }>(
+  "library/fetchBooksByType",
+  async (type, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get<Book[]>(`/book?type=${type}`)
+      return Array.isArray(res.data) ? res.data : []
+    } catch (error) {
+      return rejectWithValue(getAxiosError(error))
+    }
+  }
+)
 
 export const fetchLibraryData = createAsyncThunk<
   { books: Book[]; userBookItems: UserBookResponse[] },
@@ -150,6 +166,16 @@ const librarySlice = createSlice({
         if (!state.purchasedBookIds.includes(book.id)) state.purchasedBookIds.push(book.id)
         state.purchasedBooksById[book.id] = book
         if (!state.userBooks.some((b) => b.id === book.id)) state.userBooks.push(book)
+      })
+      .addCase(fetchBooksByType.pending, (state) => {
+        state.typedBooksLoading = true
+      })
+      .addCase(fetchBooksByType.fulfilled, (state, action) => {
+        state.typedBooksLoading = false
+        state.typedBooks = action.payload
+      })
+      .addCase(fetchBooksByType.rejected, (state) => {
+        state.typedBooksLoading = false
       })
   },
 })

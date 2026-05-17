@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { AppDispatch, RootState } from "@/store/store"
 import type { Book } from "@/types"
-import { fetchLibraryData, buyBook } from "@/store/slice/librarySlice"
+import { fetchLibraryData, buyBook, fetchBooksByType } from "@/store/slice/librarySlice"
 import { fetchHomeData, invalidateHome } from "@/store/slice/homeSlice"
 import { useRouter } from "next/navigation"
 
@@ -62,7 +62,7 @@ export default function LibraryPage() {
   const dispatch = useDispatch<AppDispatch>()
   const router = useRouter()
 
-  const { books, userBooks, purchasedBookIds, purchasedBooksById, loading, error } =
+  const { books, typedBooks, typedBooksLoading, userBooks, purchasedBooksById, loading, error } =
     useSelector((s: RootState) => s.library)
   const homeData = useSelector((s: RootState) => s.home.data)
 
@@ -75,6 +75,12 @@ export default function LibraryPage() {
   useEffect(() => {
     dispatch(fetchLibraryData())
   }, [dispatch])
+
+  useEffect(() => {
+    if (activeCategory !== "ALL" && activeCategory !== "MY_BOOKS") {
+      dispatch(fetchBooksByType(activeCategory))
+    }
+  }, [dispatch, activeCategory])
 
   // category labels from i18n
   const categoryLabels = useMemo((): Record<BookType, string> => ({
@@ -98,14 +104,11 @@ export default function LibraryPage() {
     return normalized ? categoryLabels[normalized] : getBookRawType(book)
   }
 
-  // merge userBooks data (pdf_id, status) into display books
-  const purchasedSet = useMemo(() => new Set(purchasedBookIds), [purchasedBookIds])
-
   const displayBooks = useMemo(() => {
-    if (activeCategory !== "MY_BOOKS") return books
-    const bookIds = new Set(books.map((b) => b.id))
-    return [...books, ...userBooks.filter((b) => !bookIds.has(b.id))]
-  }, [activeCategory, books, userBooks])
+    if (activeCategory === "MY_BOOKS") return userBooks
+    if (activeCategory !== "ALL") return typedBooks
+    return books
+  }, [activeCategory, books, userBooks, typedBooks])
 
   const filteredBooks = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
@@ -115,14 +118,10 @@ export default function LibraryPage() {
         return owned ? { ...book, pdf_id: owned.pdf_id ?? book.pdf_id, status: owned.status ?? book.status } : book
       })
       .filter((book) => {
-        const isPurchased = purchasedSet.has(book.id)
-        if (activeCategory === "MY_BOOKS" && !isPurchased) return false
-        if (activeCategory !== "ALL" && activeCategory !== "MY_BOOKS" && !isPurchased) return false
-        if (activeCategory !== "ALL" && activeCategory !== "MY_BOOKS" && normalizeBookType(getBookRawType(book)) !== activeCategory) return false
         if (!query) return true
         return book.title.toLowerCase().includes(query) || (book.description ?? "").toLowerCase().includes(query)
       })
-  }, [displayBooks, purchasedBooksById, purchasedSet, activeCategory, searchQuery])
+  }, [displayBooks, purchasedBooksById, searchQuery])
 
   const handleBuy = async () => {
     if (!selectedBook) return
@@ -206,7 +205,7 @@ export default function LibraryPage() {
       </div>
 
       {/* Grid */}
-      {loading ? (
+      {(loading || typedBooksLoading) ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4  gap-4">
           {[1, 2, 3, 4, 5].map((n) => (
             <div key={n} className="animate-pulse space-y-3">
