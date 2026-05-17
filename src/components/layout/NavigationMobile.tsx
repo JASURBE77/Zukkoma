@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, Users, User, ClipboardList, CalendarDays } from "lucide-react"
+import { LayoutDashboard, Users, User, ClipboardList, CalendarDays, Library } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useTranslation } from "react-i18next"
 
@@ -16,6 +16,7 @@ export default function NavigationMobile() {
     { name: t("nav.attendance"),   href: "/attendance", icon: CalendarDays    },
     { name: t("nav.exams"),        href: "/exams",      icon: ClipboardList   },
     { name: t("nav.profile"),      href: "/profile",    icon: User            },
+     { name: t("nav.library"),  href: "/library",    icon: Library         },
   ]
 
   return (

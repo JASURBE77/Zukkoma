@@ -87,7 +87,7 @@ export default function BookReaderPage() {
         pageFlipInstance.on("flip", (e: { data: number }) => {
           setCurrentPage(e.data);
           if (soundRef.current) {
-            const audio = new Audio("/public/sounds/page-flip.mp3")
+            const audio = new Audio("/sounds/page-flip.mp3")
             audio.volume = 0.2
             audio.play().catch(() => {});
           }
