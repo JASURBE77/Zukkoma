@@ -95,7 +95,6 @@ export default function Header() {
 
         <div className="flex items-center gap-2 sm:gap-3 ml-auto">
 
-          {/* Zukko star + Hamyon */}
           {loading || userLoading ? (
             <div className="h-9 w-28 bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse hidden sm:block" />
           ) : (
@@ -146,6 +145,7 @@ export default function Header() {
                 </div>
               </button>
             </DropdownMenuTrigger>
+            
 
             <DropdownMenuContent className="w-60 mt-2 p-2 rounded-2xl shadow-2xl border-slate-100 dark:border-slate-800" align="end">
               {/* Zukko star + Hamyon mobile da ko'rinadi */}
@@ -197,3 +197,5 @@ export default function Header() {
     </header>
   )
 }
+
+//frg
