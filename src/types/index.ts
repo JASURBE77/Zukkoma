@@ -18,7 +18,8 @@ export interface User {
   role: string
   login: string
   isActive: boolean
-  group: { id: string; name: string }
+  groupId: number
+  groupName: string | null
   organizationId: string
   branch_id: string
   totalLessons: number
