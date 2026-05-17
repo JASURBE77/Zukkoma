@@ -13,6 +13,7 @@ import type { AppDispatch, RootState } from "@/store/store"
 import type { Book } from "@/types"
 import { fetchLibraryData, buyBook } from "@/store/slice/librarySlice"
 import { fetchHomeData, invalidateHome } from "@/store/slice/homeSlice"
+import { useRouter } from "next/navigation"
 
 // ---- types ------------------------------------------------------------------
 
@@ -49,7 +50,7 @@ const deductStars = <T extends StarSource>(src: T, price: number): T => {
   return { ...src, [field]: Math.max((getStarNumber(src) ?? 0) - price, 0) }
 }
 
-const isBuyErrorAboutStars = (msg: string) => {
+const isBuyErrorAboutStars = (msg: string) => { 
   const m = msg.toLowerCase()
   return m.includes("star") || m.includes("balance") || m.includes("enough") || m.includes("yetar") || m.includes("etar")
 }
@@ -59,6 +60,7 @@ const isBuyErrorAboutStars = (msg: string) => {
 export default function LibraryPage() {
   const { t } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
+  const router = useRouter()
 
   const { books, userBooks, purchasedBookIds, purchasedBooksById, loading, error } =
     useSelector((s: RootState) => s.library)
@@ -159,8 +161,8 @@ export default function LibraryPage() {
   }
 
   const handleOpenPdf = (book: Book) => {
-    if (!book.pdf_id) return
-    window.open(`${process.env.NEXT_PUBLIC_API_URL}/file/${book.pdf_id}`, "_blank", "noopener,noreferrer")
+      if (!book.pdf_id) return
+      router.push(`/library/read/${book.id}?pdf_id=${book.pdf_id}`)
   }
 
   // ---- render ---------------------------------------------------------------
@@ -205,7 +207,7 @@ export default function LibraryPage() {
 
       {/* Grid */}
       {loading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4  gap-4">
           {[1, 2, 3, 4, 5].map((n) => (
             <div key={n} className="animate-pulse space-y-3">
               <div className="h-44 rounded-2xl bg-slate-100 dark:bg-slate-800" />
@@ -223,7 +225,7 @@ export default function LibraryPage() {
           <Button onClick={() => dispatch(fetchLibraryData())} variant="outline">{t("library.retry")}</Button>
         </div>
       ) : filteredBooks.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4  gap-4">
           {filteredBooks.map((book, i) => (
             <motion.div
               key={book.id}
@@ -232,7 +234,7 @@ export default function LibraryPage() {
               transition={{ delay: i * 0.04 }}
               className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm shadow-slate-200/60 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none"
             >
-              <div className="relative h-44 overflow-hidden bg-slate-100 dark:bg-slate-800">
+              <div className="relative h-70 overflow-hidden bg-slate-100 dark:bg-slate-800">
                 <img src={`${process.env.NEXT_PUBLIC_API_URL}/file/${book.image_id}`} alt={book.title} className="h-full w-full object-cover" />
                 <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/70 to-transparent" />
                 <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2">
