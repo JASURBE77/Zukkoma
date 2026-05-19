@@ -3,11 +3,11 @@
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "@/store/store"
-import { fetchMe, sendOtp, updatePassword, clearOtpState } from "@/store/slice/userSlice"
+import { fetchMe, updatePassword, clearPasswordError } from "@/store/slice/userSlice"
 import {
   Phone, ShieldCheck, Camera,
   CheckCircle2, Briefcase, User as UserIcon,
-  Eye, EyeOff, Loader2, Mail, ArrowLeft
+  Eye, EyeOff, Loader2
 } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -61,15 +61,13 @@ function ProfileSkeleton() {
 
 const ProfilePage = () => {
   const dispatch = useDispatch<AppDispatch>()
-  const { user, loading, error, passwordLoading, passwordError, otpLoading, otpError } =
+  const { user, loading, error, passwordLoading, passwordError } =
     useSelector((state: RootState) => state.user)
   const { t } = useTranslation()
 
   const [passwords, setPasswords] = useState({ newPassword: "", confirm: "" })
   const [showNew, setShowNew] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
-  const [otpStep, setOtpStep] = useState<1 | 2>(1)
-  const [otpCode, setOtpCode] = useState("")
 
   useEffect(() => {
     dispatch(fetchMe())
@@ -79,39 +77,17 @@ const ProfilePage = () => {
     if (passwordError) toast.error(passwordError)
   }, [passwordError])
 
-  useEffect(() => {
-    if (otpError) toast.error(otpError)
-  }, [otpError])
-
-  const handleSendOtp = async () => {
+  const handlePasswordSave = async () => {
     if (!passwords.newPassword) return toast.error(t("profile.enterNewPassword"))
     if (passwords.newPassword.length < 6) return toast.error(t("profile.minLength"))
     if (passwords.newPassword !== passwords.confirm) return toast.error(t("profile.passwordMismatch"))
 
-    const result = await dispatch(sendOtp())
-    if (sendOtp.fulfilled.match(result)) {
-      setOtpStep(2)
-      toast.success(t("profile.otpSentSuccess"))
-    }
-  }
-
-  const handlePasswordSave = async () => {
-    if (!otpCode || otpCode.length !== 4) return toast.error(t("profile.otpRequired"))
-
-    const result = await dispatch(updatePassword({ otp: otpCode, newPassword: passwords.newPassword }))
+    const result = await dispatch(updatePassword({ newPassword: passwords.newPassword }))
     if (updatePassword.fulfilled.match(result)) {
       toast.success(t("profile.passwordUpdateSuccess"))
       setPasswords({ newPassword: "", confirm: "" })
-      setOtpCode("")
-      setOtpStep(1)
-      dispatch(clearOtpState())
+      dispatch(clearPasswordError())
     }
-  }
-
-  const handleBackToPasswordForm = () => {
-    setOtpStep(1)
-    setOtpCode("")
-    dispatch(clearOtpState())
   }
 
   const initials = user
@@ -256,118 +232,70 @@ const ProfilePage = () => {
                     </div>
                     <div>
                       <p className="font-black text-slate-900 dark:text-white">{t("profile.changePassword")}</p>
-                      <p className="text-sm text-slate-500">
-                        {otpStep === 1 ? t("profile.changePasswordStep1") : t("profile.changePasswordStep2")}
-                      </p>
+                      <p className="text-sm text-slate-500">{t("profile.changePasswordStep1")}</p>
                     </div>
                   </div>
 
                   <Separator className="bg-slate-100 dark:bg-slate-800" />
 
-                  {otpStep === 1 ? (
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label className="font-bold text-slate-500">{t("profile.newPassword")}</Label>
-                        <div className="relative">
-                          <Input
-                            type={showNew ? "text" : "password"}
-                            value={passwords.newPassword}
-                            onChange={e => setPasswords(p => ({ ...p, newPassword: e.target.value }))}
-                            placeholder={t("profile.newPassword")}
-                            className="rounded-xl h-12 pr-12"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowNew(v => !v)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                          >
-                            {showNew ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label className="font-bold text-slate-500">{t("profile.confirmPassword")}</Label>
-                        <div className="relative">
-                          <Input
-                            type={showConfirm ? "text" : "password"}
-                            value={passwords.confirm}
-                            onChange={e => setPasswords(p => ({ ...p, confirm: e.target.value }))}
-                            placeholder={t("profile.confirmPasswordPlaceholder")}
-                            className="rounded-xl h-12 pr-12"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowConfirm(v => !v)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                          >
-                            {showConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                          </button>
-                        </div>
-                        {passwords.confirm && passwords.newPassword !== passwords.confirm && (
-                          <p className="text-xs text-red-500 font-medium">{t("profile.passwordMismatch")}</p>
-                        )}
-                      </div>
-
-                      <div className="flex justify-end pt-2">
-                        <Button
-                          onClick={handleSendOtp}
-                          disabled={otpLoading || !passwords.newPassword || passwords.newPassword !== passwords.confirm}
-                          className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl gap-2 shadow-lg shadow-blue-500/25 transition-all active:scale-[0.98] disabled:opacity-50"
-                        >
-                          {otpLoading
-                            ? <Loader2 className="w-4 h-4 animate-spin" />
-                            : <Mail className="w-4 h-4" />
-                          }
-                          {otpLoading ? t("common.sending") : t("profile.sendOtp")}
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 rounded-xl p-4 flex items-start gap-3">
-                        <Mail className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-                        <p className="text-sm text-blue-700 dark:text-blue-400 font-medium">
-                          {t("profile.otpSent")}
-                        </p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label className="font-bold text-slate-500">{t("profile.otpCode")}</Label>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="font-bold text-slate-500">{t("profile.newPassword")}</Label>
+                      <div className="relative">
                         <Input
-                          type="text"
-                          inputMode="numeric"
-                          maxLength={4}
-                          value={otpCode}
-                          onChange={e => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 4))}
-                          placeholder="0000"
-                          className="rounded-xl h-12 text-center text-2xl font-black tracking-[0.5em]"
+                          type={showNew ? "text" : "password"}
+                          value={passwords.newPassword}
+                          onChange={e => setPasswords(p => ({ ...p, newPassword: e.target.value }))}
+                          placeholder={t("profile.newPassword")}
+                          className="rounded-xl h-12 pr-12"
                         />
-                      </div>
-
-                      <div className="flex justify-between pt-2">
-                        <Button
-                          variant="outline"
-                          onClick={handleBackToPasswordForm}
-                          className="h-12 px-6 rounded-2xl gap-2"
+                        <button
+                          type="button"
+                          onClick={() => setShowNew(v => !v)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                         >
-                          <ArrowLeft className="w-4 h-4" />
-                          {t("common.back")}
-                        </Button>
-                        <Button
-                          onClick={handlePasswordSave}
-                          disabled={passwordLoading || otpCode.length !== 4}
-                          className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl gap-2 shadow-lg shadow-blue-500/25 transition-all active:scale-[0.98] disabled:opacity-50"
-                        >
-                          {passwordLoading
-                            ? <Loader2 className="w-4 h-4 animate-spin" />
-                            : <ShieldCheck className="w-4 h-4" />
-                          }
-                          {passwordLoading ? t("common.saving") : t("profile.updatePassword")}
-                        </Button>
+                          {showNew ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
                       </div>
                     </div>
-                  )}
+
+                    <div className="space-y-2">
+                      <Label className="font-bold text-slate-500">{t("profile.confirmPassword")}</Label>
+                      <div className="relative">
+                        <Input
+                          type={showConfirm ? "text" : "password"}
+                          value={passwords.confirm}
+                          onChange={e => setPasswords(p => ({ ...p, confirm: e.target.value }))}
+                          placeholder={t("profile.confirmPasswordPlaceholder")}
+                          className="rounded-xl h-12 pr-12"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirm(v => !v)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        >
+                          {showConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
+                      </div>
+                      {passwords.confirm && passwords.newPassword !== passwords.confirm && (
+                        <p className="text-xs text-red-500 font-medium">{t("profile.passwordMismatch")}</p>
+                      )}
+                    </div>
+
+                    <div className="flex justify-end pt-2">
+                      <Button
+                        onClick={handlePasswordSave}
+                        disabled={passwordLoading || !passwords.newPassword || passwords.newPassword !== passwords.confirm}
+                        className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl gap-2 shadow-lg shadow-blue-500/25 transition-all active:scale-[0.98] disabled:opacity-50"
+                      >
+                        {passwordLoading
+                          ? <Loader2 className="w-4 h-4 animate-spin" />
+                          : <ShieldCheck className="w-4 h-4" />
+                        }
+                        {passwordLoading ? t("common.saving") : t("profile.updatePassword")}
+                      </Button>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
