@@ -60,17 +60,16 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="hidden lg:flex h-screen w-[260px] flex-col bg-[#faf8ff] dark:bg-slate-950 sticky top-0 shrink-0 py-6 px-4 z-50"
+      className="hidden lg:flex h-screen w-[320px] flex-col bg-[white] dark:bg-slate-950 sticky top-0 shrink-0 py-6 px-4 z-50"
       style={{ boxShadow: "2px 0 8px rgba(0,0,0,0.04)" }}
     >
-      {/* Logo */}
       <div className="mb-8 px-2 flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl bg-[#2D6BFF] flex items-center justify-center shrink-0">
-          <Image className="w-10 h-10 rounded-xl object-cover" src={Logo} alt="Zukkoma logo" />
+          <Image className=" object-cover" src={Logo} alt="Zukkoma logo" />
         </div>
         <div>
           <h1
-            className="font-black text-[#2D6BFF] leading-none text-lg"
+            className="font-black text-blue-700 leading-none text-lg"
             style={{ fontFamily: "var(--font-manrope, 'Manrope', sans-serif)" }}
           >
             ZUKKOMA
@@ -81,7 +80,6 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Nav links */}
       <nav className="flex-1 space-y-1 overflow-y-auto">
         {menuItems.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
@@ -92,13 +90,13 @@ export default function Sidebar() {
               className={cn(
                 "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium text-sm",
                 isActive
-                  ? "bg-[#708cfd]/20 text-[#00217a] dark:bg-blue-500/20 dark:text-blue-300 font-bold"
+                  ? "bg-blue-700 text-white dark:bg-blue-500/20 dark:text-blue-300 font-bold"
                   : "text-slate-500 hover:bg-[#ededf9] hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white"
               )}
             >
               <item.icon className={cn(
                 "h-5 w-5 shrink-0 transition-colors",
-                isActive ? "text-[#2D6BFF] dark:text-blue-400" : "text-slate-400"
+                isActive ? "text-white dark:text-blue-400" : "text-slate-400"
               )} />
               <span>{item.name}</span>
             </Link>
