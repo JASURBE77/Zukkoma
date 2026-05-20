@@ -185,7 +185,7 @@ export default function LibraryPage() {
             placeholder={t("library.searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-11 h-11 bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-600"
+            className="pl-11 h-11 bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-700"
           />
         </div>
       </div>
@@ -199,7 +199,7 @@ export default function LibraryPage() {
             className={cn(
               "px-4 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap",
               activeCategory === cat.value
-                ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30"
+                ? "bg-blue-700 text-white shadow-lg shadow-blue-700/30"
                 : "bg-white dark:bg-slate-900 text-slate-500 border border-slate-100 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900"
             )}
           >
@@ -241,7 +241,7 @@ export default function LibraryPage() {
                 <img src={`${process.env.NEXT_PUBLIC_API_URL}/file/${book.image_id}`} alt={book.title} className="h-full w-full object-contain" />
                 <div className="absolute inset-x-0 bottom-0 h-20 bg-linear-to-t from-black/70 to-transparent" />
                 <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2">
-                  <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-white/90 text-blue-600 backdrop-blur-md dark:bg-slate-950/90">
+                  <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-white/90 text-blue-700 backdrop-blur-md dark:bg-slate-950/90">
                     {getCategoryLabel(book)}
                   </span>
                   <span className="rounded-md bg-white/90 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-slate-600 backdrop-blur-md dark:bg-slate-950/90 dark:text-slate-300">
@@ -259,10 +259,10 @@ export default function LibraryPage() {
                     className="group relative mt-1 block w-full text-left rounded-lg p-1 -mx-1 transition-all hover:bg-slate-50 dark:hover:bg-slate-800/60 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     title={t("library.viewFullDescription") || "Batafsil ko'rish uchun bosing"}
                   >
-                    <p className="line-clamp-2 text-xs font-medium leading-relaxed text-slate-500 dark:text-slate-400 whitespace-pre-line group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                    <p className="line-clamp-2 text-xs font-medium leading-relaxed text-slate-500 dark:text-slate-400 whitespace-pre-line group-hover:text-blue-700 dark:group-hover:text-blue-400">
                       {book.description ?? t("library.noDescription")}
                     </p>
-                    <span className="absolute right-1 bottom-1 opacity-0 group-hover:opacity-100 transition-opacity text-blue-600 dark:text-blue-400">
+                    <span className="absolute right-1 bottom-1 opacity-0 group-hover:opacity-100 transition-opacity text-blue-700 dark:text-blue-400">
                       <Info className="w-3.5 h-3.5" />
                     </span>
                   </button>
@@ -279,7 +279,7 @@ export default function LibraryPage() {
                   </div>
                 </div>
                 {book.pdf_id ? (
-                  <Button onClick={() => handleOpenPdf(book)} className="h-9 w-full rounded-xl bg-blue-600 text-xs font-bold text-white shadow-md shadow-blue-500/20 hover:bg-blue-700 gap-1.5">
+                  <Button onClick={() => handleOpenPdf(book)} className="h-9 w-full rounded-xl bg-blue-700 text-xs font-bold text-white shadow-md shadow-blue-700/20 hover:bg-blue-800 gap-1.5">
                     {t("library.read")} <BookOpen className="w-3.5 h-3.5" />
                   </Button>
                 ) : (
@@ -328,7 +328,7 @@ export default function LibraryPage() {
               <Button
                 onClick={handleBuy}
                 disabled={buying}
-                className="h-10 rounded-xl font-bold bg-blue-600 text-white hover:bg-blue-700"
+                className="h-10 rounded-xl font-bold bg-blue-700 text-white hover:bg-blue-800"
               >
                 {buying ? <Loader2 className="w-4 h-4 animate-spin" /> : t("library.buyConfirmBtn")}
               </Button>
@@ -349,7 +349,7 @@ export default function LibraryPage() {
           >
             <div className="mb-4 flex items-start justify-between border-b pb-3 dark:border-slate-800">
               <div className="pr-4">
-                <span className="text-[10px] font-black uppercase tracking-wider text-blue-600 bg-blue-50 dark:bg-blue-950/50 px-2 py-1 rounded-md">
+                <span className="text-[10px] font-black uppercase tracking-wider text-blue-700 bg-blue-50 dark:bg-blue-950/50 px-2 py-1 rounded-md">
                   {getCategoryLabel(viewingDescBook)}
                 </span>
                 <h2 className="text-lg font-black text-slate-900 dark:text-white mt-1.5 leading-snug">

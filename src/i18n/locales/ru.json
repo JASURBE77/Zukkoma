@@ -8,7 +8,8 @@
     "all": "Все",
     "back": "Назад",
     "saving": "Сохранение...",
-    "sending": "Отправка..."
+    "sending": "Отправка...",
+    "balance": "Баланс"
   },
   "auth": {
     "title": "Вход",
@@ -48,14 +49,33 @@
     "lesson": "урок",
     "nextLesson": "Следующий урок",
     "activeStudent": "Активный студент",
-    "dayStreak": "дней подряд"
+    "dayStreak": "дней подряд",
+    "greeting": "Привет,",
+    "heroSubtitle": "Повышайте свои знания и навыки каждый день!",
+    "continueLesson": "Продолжить урок",
+    "viewSchedule": "Расписание",
+    "walletBalance": "Кошелёк",
+    "zukkoStars": "Zukko звёзды",
+    "allTime": "Всего",
+    "quickActions": "Быстрые разделы",
+    "libraryDesc": "Книги и ресурсы",
+    "myGroupDesc": "Студенты группы",
+    "examsDesc": "Результаты экзаменов",
+    "needHelp": "Нужна помощь?",
+    "supportDesc": "Если есть вопросы, обратитесь к администратору",
+    "contactAdmin": "Связаться"
   },
   "attendance": {
     "title": "Посещаемость",
+    "subtitle": "Отслеживайте свои визиты и опоздания в реальном времени",
     "present": "Присутствовал",
     "absent": "Отсутствовал",
     "late": "Опоздал",
-    "reasoned": "По причине"
+    "reasoned": "По причине",
+    "total": "Всего",
+    "lessonsThisMonth": "Занятий в месяце",
+    "attendanceRate": "посещаемость",
+    "lateSubtitle": "Опоздания"
   },
   "exams": {
     "title": "Экзамены",
@@ -78,13 +98,18 @@
     "startError": "Ошибка при запуске экзамена",
     "linkSuccess": "Ссылка успешно отправлена!",
     "linkError": "Ошибка при отправке",
-    "examDefault": "Экзамен"
+    "examDefault": "Экзамен",
+    "tabAll": "Все",
+    "tabActive": "Активные",
+    "tabFinished": "Завершённые",
+    "tabPending": "Ожидаемые"
   },
   "profile": {
     "title": "Профиль",
     "security": "Безопасность",
     "info": "Сведения",
     "personalInfo": "Личные данные",
+    "achievements": "Достижения",
     "readOnly": "Данные может изменить только администратор",
     "firstName": "Имя",
     "lastName": "Фамилия",
@@ -114,7 +139,14 @@
     "lessons": "Мои уроки",
     "groupmates": "Одногруппники",
     "noGroupmates": "Одногруппников не найдено",
-    "lessonsCompleted": "уроков выполнено"
+    "lessonsCompleted": "уроков выполнено",
+    "students": "Студенты",
+    "schedule": "Расписание",
+    "announcements": "Объявления",
+    "leaderboard": "Лидеры группы",
+    "leaderboardDesc": "Самые активные студенты",
+    "showAll": "Показать всех",
+    "sortByRating": "По рейтингу"
   },
   "library": {
     "title": "Библиотека",
@@ -140,6 +172,7 @@
     "buyConfirmBtn": "Да",
     "buySuccess": "Книга успешно куплена",
     "buyFailed": "Не удалось купить книгу",
-    "notEnoughStars": "Недостаточно Zukko star"
+    "notEnoughStars": "Недостаточно Zukko star",
+    "viewFullDescription": "Полное описание"
   }
 }

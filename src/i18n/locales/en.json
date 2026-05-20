@@ -8,7 +8,8 @@
     "all": "All",
     "back": "Back",
     "saving": "Saving...",
-    "sending": "Sending..."
+    "sending": "Sending...",
+    "balance": "Balance"
   },
   "auth": {
     "title": "Sign In",
@@ -48,14 +49,33 @@
     "lesson": "lesson",
     "nextLesson": "Next Lesson",
     "activeStudent": "Active Student",
-    "dayStreak": "day streak"
+    "dayStreak": "day streak",
+    "greeting": "Hello,",
+    "heroSubtitle": "Keep learning and growing every day!",
+    "continueLesson": "Continue Lesson",
+    "viewSchedule": "Schedule",
+    "walletBalance": "Wallet",
+    "zukkoStars": "Zukko Stars",
+    "allTime": "All time",
+    "quickActions": "Quick Access",
+    "libraryDesc": "Books & resources",
+    "myGroupDesc": "Classmates",
+    "examsDesc": "Exam results",
+    "needHelp": "Need help?",
+    "supportDesc": "If you have questions, contact the administrator",
+    "contactAdmin": "Contact Admin"
   },
   "attendance": {
     "title": "Attendance",
+    "subtitle": "Track your attendance and lates in real time",
     "present": "Present",
     "absent": "Absent",
     "late": "Late",
-    "reasoned": "Excused"
+    "reasoned": "Excused",
+    "total": "Total",
+    "lessonsThisMonth": "Lessons this month",
+    "attendanceRate": "attendance",
+    "lateSubtitle": "Late arrivals"
   },
   "exams": {
     "title": "Exams",
@@ -78,13 +98,18 @@
     "startError": "Failed to start the exam",
     "linkSuccess": "Link submitted successfully!",
     "linkError": "Failed to submit",
-    "examDefault": "Exam"
+    "examDefault": "Exam",
+    "tabAll": "All",
+    "tabActive": "Active",
+    "tabFinished": "Finished",
+    "tabPending": "Pending"
   },
   "profile": {
     "title": "Profile",
     "security": "Security",
     "info": "Details",
     "personalInfo": "Personal Information",
+    "achievements": "Achievements",
     "readOnly": "Only an administrator can change your details",
     "firstName": "First Name",
     "lastName": "Last Name",
@@ -114,7 +139,14 @@
     "lessons": "My Lessons",
     "groupmates": "Groupmates",
     "noGroupmates": "No groupmates found",
-    "lessonsCompleted": "lessons completed"
+    "lessonsCompleted": "lessons completed",
+    "students": "Students",
+    "schedule": "Schedule",
+    "announcements": "Announcements",
+    "leaderboard": "Group Leaders",
+    "leaderboardDesc": "Most active students",
+    "showAll": "Show all",
+    "sortByRating": "By rating"
   },
   "library": {
     "title": "Library",
@@ -140,6 +172,7 @@
     "buyConfirmBtn": "Yes",
     "buySuccess": "Book purchased successfully",
     "buyFailed": "Failed to purchase the book",
-    "notEnoughStars": "Not enough Zukko stars"
+    "notEnoughStars": "Not enough Zukko stars",
+    "viewFullDescription": "View full description"
   }
 }

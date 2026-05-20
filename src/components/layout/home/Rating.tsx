@@ -17,9 +17,9 @@ const TOP3_STYLES = [
 ]
 
 const RANK_BADGE = [
-  "bg-gradient-to-br from-yellow-400 to-amber-500 text-white shadow-amber-200 dark:shadow-amber-500/30",
-  "bg-gradient-to-br from-slate-300 to-slate-400 text-white shadow-slate-200 dark:shadow-slate-500/30",
-  "bg-gradient-to-br from-orange-400 to-amber-600 text-white shadow-orange-200 dark:shadow-orange-500/30",
+  "bg-gradient-to-br from-yellow-400 to-amber-500 text-white",
+  "bg-gradient-to-br from-slate-300 to-slate-400 text-white",
+  "bg-gradient-to-br from-orange-400 to-amber-600 text-white",
 ]
 
 function Skeleton({ className }: { className?: string }) {
@@ -28,7 +28,7 @@ function Skeleton({ className }: { className?: string }) {
 
 function RatingSkeleton() {
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[2rem] p-6 space-y-4 shadow-lg">
+    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-5 space-y-4" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
       <div className="flex items-center gap-2">
         <Skeleton className="h-5 w-5 rounded-full" />
         <Skeleton className="h-5 w-32" />
@@ -66,11 +66,11 @@ export default function Rating() {
   const currentUserMember = currentUserRank >= 0 ? sorted[currentUserRank] : null
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[2rem] p-6 shadow-lg">
-      <div className="flex items-center gap-2 mb-5">
+    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-5" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+      <div className="flex items-center gap-2 mb-4">
         <Trophy className="w-5 h-5 text-amber-500" />
-        <h3 className="font-black text-slate-900 dark:text-white">{t("group.groupmates")} rating</h3>
-        <span className="ml-auto text-xs font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
+        <h3 className="font-bold text-slate-900 dark:text-white text-sm">{t("group.groupmates")} rating</h3>
+        <span className="ml-auto text-xs font-semibold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
           {members.length}
         </span>
       </div>
@@ -79,7 +79,7 @@ export default function Rating() {
         <p className="text-sm text-slate-400 text-center py-8">{t("group.noGroupmates")}</p>
       ) : (
         <>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {top10.map((member, index) => {
               const initials = `${member.name?.[0] ?? ""}${member.surname?.[0] ?? ""}`.toUpperCase()
               const isTop3 = index < 3
@@ -89,42 +89,42 @@ export default function Rating() {
                   key={member.id}
                   className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-all ${
                     isMe
-                      ? "border-2 border-blue-400 bg-blue-50 dark:bg-blue-500/10"
+                      ? "border-2 border-[#2D6BFF]/40 bg-[#f2f3ff] dark:bg-blue-500/10"
                       : isTop3
                         ? TOP3_STYLES[index]
-                        : "border border-transparent"
+                        : "border border-transparent hover:bg-slate-50 dark:hover:bg-slate-800/50"
                   }`}
                 >
                   {isTop3 ? (
-                    <span className={`w-7 h-7 flex items-center justify-center rounded-lg text-xs font-black shadow-md shrink-0 ${RANK_BADGE[index]}`}>
+                    <span className={`w-6 h-6 flex items-center justify-center rounded-lg text-xs font-black shadow-sm shrink-0 ${RANK_BADGE[index]}`}>
                       {index + 1}
                     </span>
                   ) : (
-                    <span className="w-7 text-center text-sm font-black text-slate-400 shrink-0">
+                    <span className="w-6 text-center text-xs font-bold text-slate-400 shrink-0">
                       {index + 1}
                     </span>
                   )}
 
                   <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 ${
                     isMe
-                      ? "bg-gradient-to-br from-blue-600 to-indigo-600 ring-2 ring-blue-400 ring-offset-1"
-                      : "bg-gradient-to-br from-blue-500 to-indigo-600"
+                      ? "bg-gradient-to-br from-[#2D6BFF] to-indigo-600 ring-2 ring-[#2D6BFF]/40 ring-offset-1"
+                      : "bg-gradient-to-br from-[#2D6BFF] to-indigo-600"
                   }`}>
                     <span className="text-white font-black text-xs">{initials}</span>
                   </div>
 
-                  <span className="flex-1 text-sm font-bold text-slate-800 dark:text-slate-200 truncate">
+                  <span className="flex-1 text-sm font-medium text-slate-800 dark:text-slate-200 truncate">
                     {member.name} {member.surname}
                     {isMe && (
-                      <span className="ml-2 text-xs font-bold text-blue-500 bg-blue-100 dark:bg-blue-500/20 px-1.5 py-0.5 rounded-md">
+                      <span className="ml-1.5 text-[10px] font-bold text-[#2D6BFF] bg-[#f2f3ff] dark:bg-blue-500/20 px-1.5 py-0.5 rounded-md">
                         You
                       </span>
                     )}
                   </span>
 
                   <div className="flex items-center gap-1 shrink-0">
-                    <Flame className="w-4 h-4 text-orange-500" />
-                    <span className="text-sm font-black text-orange-500">{member.strike ?? 0}</span>
+                    <Flame className="w-3.5 h-3.5 text-orange-500" />
+                    <span className="text-sm font-bold text-orange-500">{member.strike ?? 0}</span>
                   </div>
                 </div>
               )
@@ -135,27 +135,27 @@ export default function Rating() {
             <>
               <div className="my-3 flex items-center gap-2">
                 <div className="flex-1 h-px bg-slate-100 dark:bg-slate-800" />
-                <span className="text-xs text-slate-400 font-medium px-2">Your rank</span>
+                <span className="text-[10px] text-slate-400 font-medium px-2">Your rank</span>
                 <div className="flex-1 h-px bg-slate-100 dark:bg-slate-800" />
               </div>
-              <div className="flex items-center gap-3 px-3 py-2 rounded-xl border-2 border-blue-400 bg-blue-50 dark:bg-blue-500/10">
-                <span className="w-7 text-center text-sm font-black text-blue-600 shrink-0">
+              <div className="flex items-center gap-3 px-3 py-2 rounded-xl border-2 border-[#2D6BFF]/40 bg-[#f2f3ff] dark:bg-blue-500/10">
+                <span className="w-6 text-center text-xs font-bold text-[#2D6BFF] shrink-0">
                   {currentUserRank + 1}
                 </span>
-                <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl ring-2 ring-blue-400 ring-offset-1 flex items-center justify-center shrink-0">
+                <div className="h-8 w-8 bg-gradient-to-br from-[#2D6BFF] to-indigo-600 rounded-xl ring-2 ring-[#2D6BFF]/40 ring-offset-1 flex items-center justify-center shrink-0">
                   <span className="text-white font-black text-xs">
                     {`${currentUserMember.name?.[0] ?? ""}${currentUserMember.surname?.[0] ?? ""}`.toUpperCase()}
                   </span>
                 </div>
-                <span className="flex-1 text-sm font-bold text-blue-700 dark:text-blue-400 truncate">
+                <span className="flex-1 text-sm font-medium text-[#2D6BFF] dark:text-blue-400 truncate">
                   {currentUserMember.name} {currentUserMember.surname}
-                  <span className="ml-2 text-xs font-bold text-blue-500 bg-blue-100 dark:bg-blue-500/20 px-1.5 py-0.5 rounded-md">
+                  <span className="ml-1.5 text-[10px] font-bold text-[#2D6BFF] bg-[#f2f3ff] dark:bg-blue-500/20 px-1.5 py-0.5 rounded-md">
                     You
                   </span>
                 </span>
                 <div className="flex items-center gap-1 shrink-0">
-                  <Image src={FireIcon} alt="" className="w-4 h-4" />
-                  <span className="text-sm font-black text-orange-500">{currentUserMember.strike ?? 0}</span>
+                  <Image src={FireIcon} alt="" className="w-3.5 h-3.5" />
+                  <span className="text-sm font-bold text-orange-500">{currentUserMember.strike ?? 0}</span>
                 </div>
               </div>
             </>

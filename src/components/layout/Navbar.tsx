@@ -50,7 +50,6 @@ const getZukkoStars = (...sources: Array<StarSource | null | undefined>) => {
 
     if (value != null) return formatNumber(value)
   }
-
   return "0"
 }
 
@@ -83,13 +82,21 @@ export default function Header() {
   const zukkoStars = getZukkoStars(data?.profile, user)
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md">
+    <header
+      className="sticky top-0 z-30 w-full border-b border-slate-100 dark:border-slate-800"
+      style={{ background: "rgba(250,248,255,0.85)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
+    >
       <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-2 sm:gap-4">
 
         <div className="flex items-center gap-3">
           <Link href="/home" className="flex items-center gap-2 lg:hidden">
-            <Image className="w-10 h-10 rounded-xl object-cover" src={Logo} alt="Zukkoma" />
-            <span className="text-lg font-black text-slate-900 dark:text-white tracking-tight">ZUKKOMA</span>
+            <Image className="w-9 h-9 rounded-xl object-cover" src={Logo} alt="Zukkoma" />
+            <span
+              className="text-lg font-black text-slate-900 dark:text-white tracking-tight"
+              style={{ fontFamily: "var(--font-manrope, 'Manrope', sans-serif)" }}
+            >
+              ZUKKOMA
+            </span>
           </Link>
         </div>
 
@@ -99,66 +106,64 @@ export default function Header() {
             <div className="h-9 w-28 bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse hidden sm:block" />
           ) : (
             <>
-              <div className="hidden sm:flex items-center gap-2 bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 px-3 py-1.5 rounded-xl">
-                <Star className="w-4 h-4 fill-current text-blue-600 dark:text-blue-400 shrink-0" />
-                <span className="text-sm font-bold text-blue-700 dark:text-blue-400 whitespace-nowrap">
+              <div className="hidden sm:flex items-center gap-2 bg-[#f2f3ff] dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 px-3 py-1.5 rounded-xl">
+                <Star className="w-3.5 h-3.5 fill-current text-[#2D6BFF] dark:text-blue-400 shrink-0" />
+                <span className="text-sm font-semibold text-[#2D6BFF] dark:text-blue-400 whitespace-nowrap">
                   {zukkoStars} <span className="text-xs font-medium opacity-70">zukko</span>
                 </span>
               </div>
 
-              <div className="hidden sm:flex items-center gap-2 bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 px-3 py-1.5 rounded-xl">
-                <Wallet className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
-                <span className="text-sm font-bold text-amber-700 dark:text-amber-400 whitespace-nowrap">
+              <div className="hidden sm:flex items-center gap-2 bg-[#FFF8E7] dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 px-3 py-1.5 rounded-xl">
+                <Wallet className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                <span className="text-sm font-semibold text-amber-700 dark:text-amber-400 whitespace-nowrap">
                   {wallet} <span className="text-xs font-medium opacity-70">so&apos;m</span>
                 </span>
               </div>
             </>
           )}
 
-          {/* Til almashtiruvchi */}
           <LanguageSwitcher />
 
           {/* Bell */}
           <Button
             variant="ghost"
             size="icon"
-            className="relative h-9 w-9 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl"
+            className="relative h-9 w-9 text-slate-400 hover:text-slate-600 hover:bg-[#f2f3ff] dark:hover:bg-slate-800 rounded-xl"
           >
             <Bell className="w-5 h-5" />
-            <span className="absolute top-2 right-2 w-2 h-2 bg-blue-600 rounded-full border-2 border-white dark:border-slate-950 animate-pulse" />
+            <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-[#2D6BFF] rounded-full border border-white dark:border-slate-950 animate-pulse" />
           </Button>
 
           {/* Avatar + dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2 p-1 pr-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-2xl transition-all outline-none group">
-                <Avatar className="h-8 w-8 border-2 border-white dark:border-slate-800 shadow-sm group-hover:border-blue-200 transition-all">
-                  <AvatarFallback className="bg-gradient-to-br from-blue-600 to-indigo-600 text-white text-xs font-black">
+              <button className="flex items-center gap-2 p-1 pr-2.5 hover:bg-[#f2f3ff] dark:hover:bg-slate-800 rounded-2xl transition-all outline-none group">
+                <Avatar className="h-8 w-8 border-2 border-white dark:border-slate-800 shadow-sm group-hover:border-[#2D6BFF]/30 transition-all">
+                  <AvatarFallback className="bg-gradient-to-br from-[#2D6BFF] to-indigo-600 text-white text-xs font-black">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
                 <div className="hidden sm:flex flex-col items-start">
-                  <span className="text-xs font-black text-slate-900 dark:text-white leading-tight max-w-[300px] truncate">
+                  <span className="text-xs font-bold text-slate-900 dark:text-white leading-tight max-w-[200px] truncate">
                     {fullName || "—"}
                   </span>
                   <span className="text-[10px] text-slate-400 font-medium">O&apos;quvchi</span>
                 </div>
               </button>
             </DropdownMenuTrigger>
-            
 
-            <DropdownMenuContent className="w-60 mt-2 p-2 rounded-2xl shadow-2xl border-slate-100 dark:border-slate-800" align="end">
-              {/* Zukko star + Hamyon mobile da ko'rinadi */}
+            <DropdownMenuContent className="w-60 mt-2 p-2 rounded-2xl shadow-xl border-slate-100 dark:border-slate-800" align="end">
+              {/* Mobile: Zukko + Wallet */}
               <div className="sm:hidden grid grid-cols-2 gap-2 mx-1 mb-2">
-                <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 px-3 py-2 rounded-xl">
-                  <Star className="w-4 h-4 fill-current text-blue-600 dark:text-blue-400 shrink-0" />
-                  <span className="text-sm font-bold text-blue-700 dark:text-blue-400 truncate">
+                <div className="flex items-center gap-2 bg-[#f2f3ff] dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 px-3 py-2 rounded-xl">
+                  <Star className="w-3.5 h-3.5 fill-current text-[#2D6BFF] dark:text-blue-400 shrink-0" />
+                  <span className="text-sm font-semibold text-[#2D6BFF] dark:text-blue-400 truncate">
                     {zukkoStars}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 px-3 py-2 rounded-xl">
-                  <Wallet className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
-                  <span className="text-sm font-bold text-amber-700 dark:text-amber-400 truncate">
+                <div className="flex items-center gap-2 bg-[#FFF8E7] dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 px-3 py-2 rounded-xl">
+                  <Wallet className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                  <span className="text-sm font-semibold text-amber-700 dark:text-amber-400 truncate">
                     {wallet} so&apos;m
                   </span>
                 </div>
@@ -167,13 +172,13 @@ export default function Header() {
               <DropdownMenuSeparator className="sm:hidden bg-slate-100 dark:bg-slate-800 mb-1" />
 
               <div className="p-1 space-y-0.5">
-                <DropdownMenuItem asChild className="rounded-xl cursor-pointer gap-3 p-2.5 text-slate-600 dark:text-slate-400 focus:text-blue-600 focus:bg-blue-50 dark:focus:bg-blue-500/10">
+                <DropdownMenuItem asChild className="rounded-xl cursor-pointer gap-3 p-2.5 text-slate-600 dark:text-slate-400 focus:text-[#2D6BFF] focus:bg-[#f2f3ff] dark:focus:bg-blue-500/10">
                   <Link href="/profile" className="flex items-center gap-3">
                     <User className="w-4 h-4" />
                     <span className="font-medium">{t("nav.myProfile")}</span>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="rounded-xl cursor-pointer gap-3 p-2.5 text-slate-600 dark:text-slate-400 focus:text-blue-600 focus:bg-blue-50 dark:focus:bg-blue-500/10">
+                <DropdownMenuItem className="rounded-xl cursor-pointer gap-3 p-2.5 text-slate-600 dark:text-slate-400 focus:text-[#2D6BFF] focus:bg-[#f2f3ff] dark:focus:bg-blue-500/10">
                   <Settings className="w-4 h-4" />
                   <span className="font-medium">{t("nav.settings")}</span>
                 </DropdownMenuItem>
@@ -187,7 +192,7 @@ export default function Header() {
                   className="rounded-xl cursor-pointer gap-3 p-2.5 text-red-600 focus:bg-red-50 dark:focus:bg-red-500/10 focus:text-red-600"
                 >
                   <LogOut className="w-4 h-4" />
-                  <span className="font-bold">{t("nav.logout")}</span>
+                  <span className="font-semibold">{t("nav.logout")}</span>
                 </DropdownMenuItem>
               </div>
             </DropdownMenuContent>
@@ -197,5 +202,3 @@ export default function Header() {
     </header>
   )
 }
-
-//frg

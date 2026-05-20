@@ -8,7 +8,8 @@
     "all": "Barchasi",
     "back": "Orqaga",
     "saving": "Saqlanmoqda...",
-    "sending": "Yuborilmoqda..."
+    "sending": "Yuborilmoqda...",
+    "balance": "Balans"
   },
   "auth": {
     "title": "Kirish",
@@ -48,14 +49,33 @@
     "lesson": "dars",
     "nextLesson": "Keyingi dars",
     "activeStudent": "Faol talaba",
-    "dayStreak": "kunlik streak"
+    "dayStreak": "kunlik streak",
+    "greeting": "Salom,",
+    "heroSubtitle": "Bugun ham bilim va mahoratlaringizni oshiring!",
+    "continueLesson": "Darsni davom ettirish",
+    "viewSchedule": "Jadval",
+    "walletBalance": "Hamyon",
+    "zukkoStars": "Zukko yulduzlar",
+    "allTime": "Hammasi",
+    "quickActions": "Tezkor bo'limlar",
+    "libraryDesc": "Kitoblar va resurslar",
+    "myGroupDesc": "Guruhdosh do'stlar",
+    "examsDesc": "Imtihon natijalari",
+    "needHelp": "Yordam kerakmi?",
+    "supportDesc": "Savollaringiz bo'lsa, administrator bilan bog'laning",
+    "contactAdmin": "Murojaat qilish"
   },
   "attendance": {
     "title": "Davomat",
+    "subtitle": "Davomatingizni real vaqtda kuzating",
     "present": "Keldi",
     "absent": "Kelmadi",
     "late": "Kechikdi",
-    "reasoned": "Sababli"
+    "reasoned": "Sababli",
+    "total": "Jami",
+    "lessonsThisMonth": "Bu oyda darslar",
+    "attendanceRate": "davomat",
+    "lateSubtitle": "Kechikishlar"
   },
   "exams": {
     "title": "Imtihonlar",
@@ -78,13 +98,18 @@
     "startError": "Imtihonni boshlashda xatolik",
     "linkSuccess": "Havola muvaffaqiyatli yuborildi!",
     "linkError": "Yuborishda xatolik yuz berdi",
-    "examDefault": "Imtihon"
+    "examDefault": "Imtihon",
+    "tabAll": "Barchasi",
+    "tabActive": "Faol",
+    "tabFinished": "Yakunlangan",
+    "tabPending": "Kutilmoqda"
   },
   "profile": {
     "title": "Profil",
     "security": "Xavfsizlik",
     "info": "Ma'lumotlar",
     "personalInfo": "Shaxsiy ma'lumotlar",
+    "achievements": "Yutuqlar",
     "readOnly": "Ma'lumotlarni faqat administrator o'zgartira oladi",
     "firstName": "Ism",
     "lastName": "Familiya",
@@ -114,7 +139,14 @@
     "lessons": "Darsliklarim",
     "groupmates": "Guruhdoshlar",
     "noGroupmates": "Guruhdoshlar topilmadi",
-    "lessonsCompleted": "ta dars bajarildi"
+    "lessonsCompleted": "ta dars bajarildi",
+    "students": "Talabalar",
+    "schedule": "Jadval",
+    "announcements": "E'lonlar",
+    "leaderboard": "Reyting",
+    "leaderboardDesc": "Eng faol talabalar",
+    "showAll": "Hammasini ko'rish",
+    "sortByRating": "Reytingga ko'ra"
   },
   "library": {
     "title": "Kutubxona",
@@ -140,6 +172,7 @@
     "buyConfirmBtn": "Ha",
     "buySuccess": "Kitob muvaffaqiyatli sotib olindi",
     "buyFailed": "Kitob sotib olinmadi",
-    "notEnoughStars": "Zukko star yetarli emas"
+    "notEnoughStars": "Zukko star yetarli emas",
+    "viewFullDescription": "To'liq ko'rish"
   }
 }

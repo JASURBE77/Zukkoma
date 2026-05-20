@@ -3,265 +3,365 @@
 import Image from "next/image"
 import React, { useState, useEffect } from "react"
 import FireIcon from "../../../assets/fire-svgrepo-com.svg"
-import { Wallet, Users, BookOpen, TrendingUp, CheckCircle2, XCircle, Clock, ChevronRight } from "lucide-react"
 import { useSelector } from "react-redux"
 import { RootState } from "@/store/store"
 import Link from "next/link"
 import { useTranslation } from "react-i18next"
+import {
+  CheckCircle2, XCircle, Clock, AlertCircle,
+  ArrowRight, Library, ClipboardList, TrendingUp,
+  Wallet, Users, BookOpen, Star,
+} from "lucide-react"
 
-/* ── Skeleton bloki ────────────────────────────────────────── */
-function Skeleton({ className }: { className?: string }) {
-  return <div className={`bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse ${className}`} />
+/* ── Mesh gradient style ─────────────────────────────────── */
+const meshStyle: React.CSSProperties = {
+  backgroundColor: "#2d6bff",
+  backgroundImage: `
+    radial-gradient(at 0% 0%, hsla(222, 100%, 70%, 1) 0, transparent 50%),
+    radial-gradient(at 50% 0%, hsla(210, 100%, 60%, 1) 0, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(200, 100%, 70%, 1) 0, transparent 50%)
+  `,
 }
 
-function StatsSkeleton() {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      {[0, 1, 2].map(i => (
-        <div key={i} className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1.5rem] p-6 flex items-center gap-4">
-          <Skeleton className="h-12 w-12 shrink-0" />
-          <div className="flex-1 space-y-2">
-            <Skeleton className="h-3.5 w-24" />
-            <Skeleton className="h-6 w-16" />
-          </div>
-        </div>
-      ))}
-    </div>
-  )
+const cardShadow: React.CSSProperties = { boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }
+
+/* ── Skeleton ──────────────────────────────────────────────── */
+function Sk({ className }: { className?: string }) {
+  return <div className={`bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse ${className ?? ""}`} />
 }
 
-function BottomSkeleton() {
+function BannerSkeleton() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[2rem] p-6 flex flex-col gap-4">
-        <div className="flex items-center gap-3">
-          <Skeleton className="h-12 w-12 shrink-0" />
-          <div className="flex-1 space-y-2">
-            <Skeleton className="h-4 w-32" />
-            <Skeleton className="h-3 w-20" />
-          </div>
-        </div>
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-10 w-full" />
+    <div className="space-y-6">
+      <Sk className="h-48 w-full rounded-3xl" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[0,1,2,3].map(i => <Sk key={i} className="h-32 rounded-2xl" />)}
       </div>
-      <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[2rem] p-6 flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-4 w-36" />
-          <Skeleton className="h-3 w-16" />
-        </div>
-        {[0, 1, 2, 3].map(i => (
-          <div key={i} className="flex items-center justify-between">
-            <Skeleton className="h-3.5 w-20" />
-            <Skeleton className="h-6 w-20 rounded-full" />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="lg:col-span-8 space-y-5">
+          <div className="grid grid-cols-3 gap-4">
+            {[0,1,2].map(i => <Sk key={i} className="h-32 rounded-2xl" />)}
           </div>
-        ))}
-      </div>
-      <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[2rem] p-6 flex flex-col gap-4">
-        <Skeleton className="h-4 w-28" />
-        <div className="space-y-1.5">
-          <Skeleton className="h-3 w-16" />
-          <Skeleton className="h-4 w-40" />
+          <Sk className="h-52 rounded-2xl" />
         </div>
-        <div className="space-y-2">
-          <div className="flex justify-between">
-            <Skeleton className="h-3 w-20" />
-            <Skeleton className="h-3 w-16" />
-          </div>
-          <Skeleton className="h-2 w-full" />
+        <div className="lg:col-span-4 space-y-5">
+          <Sk className="h-52 rounded-2xl" />
+          <Sk className="h-36 rounded-2xl" />
         </div>
-        <Skeleton className="h-14 w-full" />
       </div>
     </div>
   )
 }
 
-/* ── Asosiy komponent ──────────────────────────────────────── */
+/* ── Component ────────────────────────────────────────────── */
 const Banner = () => {
   const { data, loading } = useSelector((state: RootState) => state.home)
   const { t } = useTranslation()
 
-  const statusConfig = {
-    present:  { label: t("attendance.present"),  color: "bg-emerald-100 text-emerald-700", icon: CheckCircle2 },
-    absent:   { label: t("attendance.absent"),   color: "bg-red-100 text-red-700",         icon: XCircle      },
-    late:     { label: t("attendance.late"),     color: "bg-amber-100 text-amber-700",     icon: Clock        },
-    reasoned: { label: t("attendance.reasoned"), color: "bg-blue-100 text-blue-700",       icon: CheckCircle2 },
+  const statusColor: Record<string, string> = {
+    present:  "bg-emerald-100 text-emerald-700 border-emerald-200",
+    absent:   "bg-red-100 text-red-700 border-red-200",
+    late:     "bg-amber-100 text-amber-700 border-amber-200",
+    reasoned: "bg-[#f2f3ff] text-[#2D6BFF] border-blue-100",
+  }
+  const statusIcon = { present: CheckCircle2, absent: XCircle, late: Clock, reasoned: AlertCircle }
+  const statusLabel: Record<string, string> = {
+    present: t("attendance.present"), absent: t("attendance.absent"),
+    late: t("attendance.late"), reasoned: t("attendance.reasoned"),
   }
 
-  const iftorVaqti = "18:45:00"
   const [timeLeft, setTimeLeft] = useState("")
-
   useEffect(() => {
+    const iftorVaqti = "18:45:00"
     const timer = setInterval(() => {
       const hozir = new Date()
-      const bugunStr = hozir.toISOString().split("T")[0]
-      const target = new Date(`${bugunStr}T${iftorVaqti}`)
-      const farq = target.getTime() - hozir.getTime()
-      if (farq <= 0) {
-        setTimeLeft("00:00:00")
-        clearInterval(timer)
-      } else {
-        const soat   = Math.floor((farq / (1000 * 60 * 60)) % 24)
-        const minut  = Math.floor((farq / 1000 / 60) % 60)
-        const sekund = Math.floor((farq / 1000) % 60)
-        setTimeLeft(
-          `${String(soat).padStart(2, "0")}:${String(minut).padStart(2, "0")}:${String(sekund).padStart(2, "0")}`
-        )
-      }
+      const target = new Date(`${hozir.toISOString().split("T")[0]}T${iftorVaqti}`)
+      const diff = target.getTime() - hozir.getTime()
+      if (diff <= 0) { setTimeLeft("00:00:00"); clearInterval(timer); return }
+      const h = Math.floor(diff / 3600000)
+      const m = Math.floor((diff % 3600000) / 60000)
+      const s = Math.floor((diff % 60000) / 1000)
+      setTimeLeft(`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`)
     }, 1000)
     return () => clearInterval(timer)
-  }, [iftorVaqti])
+  }, [])
+
+  if (loading && !data) return <BannerSkeleton />
+
+  const firstName = data?.profile.fullName.split(" ")[0] ?? "Salom"
+  const walletFormatted = data?.profile.wallet != null
+    ? Math.floor(data.profile.wallet).toLocaleString("uz-UZ")
+    : "0"
 
   return (
     <div className="space-y-6">
 
-      {/* ── Statistika ─────────────────────────────────── */}
-      {loading && !data ? <StatsSkeleton /> : data ? (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1.5rem] p-6 shadow-lg flex items-center gap-4">
-            <div className="h-12 w-12 bg-blue-50 dark:bg-blue-500/10 rounded-2xl flex items-center justify-center shrink-0">
-              <TrendingUp className="w-6 h-6 text-blue-600" />
+      {/* ── Hero Banner ──────────────────────────────────── */}
+      <section
+        className="relative overflow-hidden rounded-3xl p-8 sm:p-10 text-white"
+        style={meshStyle}
+      >
+        <div className="relative z-10">
+          <p className="text-white/70 text-sm font-medium mb-1">{t("home.greeting")}</p>
+          <h2
+            className="text-3xl sm:text-4xl font-black mb-2"
+            style={{ fontFamily: "var(--font-manrope,'Manrope',sans-serif)", letterSpacing: "-0.02em" }}
+          >
+            {firstName}! 👋
+          </h2>
+          <p className="text-white/80 text-base max-w-md leading-relaxed">
+            {t("home.heroSubtitle")}
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href="/my-group"
+              className="flex items-center gap-2 bg-white text-[#2D6BFF] px-6 py-2.5 rounded-xl font-bold hover:bg-[#f2f3ff] transition-all active:scale-[0.98] text-sm"
+              style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.12)" }}
+            >
+              {t("home.continueLesson")} <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/attendance"
+              className="flex items-center gap-2 bg-white/20 backdrop-blur-md text-white border border-white/30 px-6 py-2.5 rounded-xl font-bold hover:bg-white/30 transition-all active:scale-[0.98] text-sm"
+            >
+              {t("home.viewSchedule")}
+            </Link>
+          </div>
+        </div>
+        <div className="absolute -right-12 -bottom-20 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute right-16 top-0 w-40 h-40 bg-blue-300/20 rounded-full blur-2xl pointer-events-none" />
+        {data && (data.profile.strike ?? 0) > 0 && (
+          <div className="absolute top-5 right-5 flex items-center gap-1.5 bg-white/20 backdrop-blur-sm border border-white/30 px-3 py-1.5 rounded-full">
+            <Image src={FireIcon} alt="" className="w-4 h-4" />
+            <span className="text-white font-bold text-sm">{data.profile.strike} {t("home.dayStreak")}</span>
+          </div>
+        )}
+      </section>
+
+      {/* ── 4 Stats Cards ────────────────────────────────── */}
+      {data && (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Wallet */}
+          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-[#e1e1ee]/50 dark:border-slate-800 hover:shadow-md transition-shadow" style={cardShadow}>
+            <div className="flex items-start justify-between mb-3">
+              <div className="w-11 h-11 rounded-xl bg-[#2D6BFF]/10 flex items-center justify-center">
+                <Wallet className="w-5 h-5 text-[#2D6BFF]" />
+              </div>
+              <span className="text-xs font-bold text-[#ba1a1a] bg-[#ffdad6]/50 px-2 py-0.5 rounded-full">
+                {t("common.balance")}
+              </span>
             </div>
-            <div>
-              <p className="text-sm text-slate-500 font-medium">{t("home.attendancePercent")}</p>
-              <p className="text-2xl font-black text-slate-900 dark:text-white">
-                {data.stats.attendancePercentage}<span className="text-base font-bold text-slate-400">%</span>
-              </p>
-            </div>
+            <p className="text-xs text-slate-500 font-medium mb-0.5">{t("home.walletBalance")}</p>
+            <p className="text-xl font-black text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-manrope,'Manrope',sans-serif)" }}>
+              {walletFormatted}
+              <span className="text-sm font-medium text-slate-400 ml-1">{t("common.som")}</span>
+            </p>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1.5rem] p-6 shadow-lg flex items-center gap-4">
-            <div className="h-12 w-12 bg-emerald-50 dark:bg-emerald-500/10 rounded-2xl flex items-center justify-center shrink-0">
-              <BookOpen className="w-6 h-6 text-emerald-600" />
+          {/* Attendance */}
+          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-[#e1e1ee]/50 dark:border-slate-800 hover:shadow-md transition-shadow" style={cardShadow}>
+            <div className="flex items-start justify-between mb-3">
+              <div className="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-emerald-600" />
+              </div>
+              <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+                +{data.stats.attendancePercentage}%
+              </span>
             </div>
-            <div>
-              <p className="text-sm text-slate-500 font-medium">{t("home.totalLessons")}</p>
-              <p className="text-2xl font-black text-slate-900 dark:text-white">{data.stats.totalLessons}</p>
-            </div>
+            <p className="text-xs text-slate-500 font-medium mb-0.5">{t("home.attendancePercent")}</p>
+            <p className="text-xl font-black text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-manrope,'Manrope',sans-serif)" }}>
+              {data.stats.presentCount}<span className="text-sm font-medium text-slate-400">/{data.stats.totalLessons}</span>
+            </p>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1.5rem] p-6 shadow-lg flex items-center gap-4">
-            <div className="h-12 w-12 bg-violet-50 dark:bg-violet-500/10 rounded-2xl flex items-center justify-center shrink-0">
-              <Users className="w-6 h-6 text-violet-600" />
+          {/* Stars */}
+          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-[#e1e1ee]/50 dark:border-slate-800 hover:shadow-md transition-shadow" style={cardShadow}>
+            <div className="flex items-start justify-between mb-3">
+              <div className="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center">
+                <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
+              </div>
+              <span className="text-xs font-bold text-[#2D6BFF] bg-[#f2f3ff] px-2 py-0.5 rounded-full">
+                Zukko
+              </span>
             </div>
-            <div>
-              <p className="text-sm text-slate-500 font-medium">{t("home.attended")}</p>
-              <p className="text-2xl font-black text-slate-900 dark:text-white">
-                {data.stats.presentCount}
-                <span className="text-base font-bold text-slate-400"> / {data.stats.totalLessons}</span>
-              </p>
+            <p className="text-xs text-slate-500 font-medium mb-0.5">{t("home.zukkoStars")}</p>
+            <p className="text-xl font-black text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-manrope,'Manrope',sans-serif)" }}>
+              {((data.profile as unknown as Record<string,number>)?.zukkoStar ?? (data.profile as unknown as Record<string,number>)?.zukkoStars ?? 0).toLocaleString()}
+            </p>
+          </div>
+
+          {/* Total Lessons */}
+          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-[#e1e1ee]/50 dark:border-slate-800 hover:shadow-md transition-shadow" style={cardShadow}>
+            <div className="flex items-start justify-between mb-3">
+              <div className="w-11 h-11 rounded-xl bg-violet-50 flex items-center justify-center">
+                <BookOpen className="w-5 h-5 text-violet-600" />
+              </div>
+              <span className="text-xs font-bold text-violet-700 bg-violet-50 px-2 py-0.5 rounded-full">
+                {t("home.allTime")}
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 font-medium mb-0.5">{t("home.totalLessons")}</p>
+            <p className="text-xl font-black text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-manrope,'Manrope',sans-serif)" }}>
+              {data.stats.totalLessons}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* ── Main Grid ────────────────────────────────────── */}
+      {data && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+          {/* Left 8/12 */}
+          <div className="lg:col-span-8 space-y-6">
+
+            {/* Quick Actions */}
+            <section>
+              <h4 className="font-bold text-slate-900 dark:text-white mb-3 text-sm" style={{ fontFamily: "var(--font-manrope,'Manrope',sans-serif)" }}>
+                {t("home.quickActions")}
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {[
+                  { href: "/library",    icon: Library,      title: t("nav.library"),    sub: t("home.libraryDesc")  },
+                  { href: "/my-group",   icon: Users,         title: t("nav.myGroup"),    sub: t("home.myGroupDesc")  },
+                  { href: "/exams",      icon: ClipboardList, title: t("nav.exams"),      sub: t("home.examsDesc")    },
+                ].map(({ href, icon: Icon, title, sub }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    className="group bg-white dark:bg-slate-900 p-5 rounded-2xl border border-[#e1e1ee]/50 dark:border-slate-800 hover:bg-[#2D6BFF] transition-all cursor-pointer"
+                    style={cardShadow}
+                  >
+                    <Icon className="w-7 h-7 text-[#2D6BFF] group-hover:text-white transition-colors mb-3" />
+                    <p className="font-bold text-slate-900 dark:text-white group-hover:text-white transition-colors text-sm">{title}</p>
+                    <p className="text-xs text-slate-500 group-hover:text-white/70 transition-colors mt-0.5">{sub}</p>
+                  </Link>
+                ))}
+              </div>
+            </section>
+
+            {/* Recent Attendance Activity */}
+            <section>
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="font-bold text-slate-900 dark:text-white text-sm" style={{ fontFamily: "var(--font-manrope,'Manrope',sans-serif)" }}>
+                  {t("home.recentAttendance")}
+                </h4>
+                <Link href="/attendance" className="text-[#2D6BFF] text-xs font-semibold hover:underline">
+                  {t("common.all")}
+                </Link>
+              </div>
+              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-[#e1e1ee]/50 dark:border-slate-800 overflow-hidden" style={cardShadow}>
+                <div className="divide-y divide-[#f2f3ff] dark:divide-slate-800">
+                  {data.attendance.slice(0, 5).map((item, i) => {
+                    const Icon = statusIcon[item.status as keyof typeof statusIcon] ?? XCircle
+                    const colorCls = statusColor[item.status] ?? statusColor.absent
+                    const label = statusLabel[item.status] ?? item.status
+                    const d = new Date(item.date)
+                    return (
+                      <div key={i} className="flex items-center gap-4 px-5 py-3.5 hover:bg-[#f2f3ff]/50 dark:hover:bg-slate-800/50 transition-colors">
+                        <div className="mt-0.5 w-2 h-2 rounded-full shrink-0"
+                          style={{ background: item.status === "present" ? "#10B981" : item.status === "absent" ? "#ba1a1a" : item.status === "late" ? "#F59E0B" : "#2D6BFF" }}
+                        />
+                        <div className="flex-1">
+                          <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                            {d.toLocaleDateString("uz-UZ", { day: "2-digit", month: "long", year: "numeric" })}
+                          </p>
+                          {item.comment && <p className="text-xs text-slate-400 mt-0.5">{item.comment}</p>}
+                        </div>
+                        <span className={`flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-lg border ${colorCls}`}>
+                          <Icon className="w-3 h-3" />
+                          {label}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </section>
+          </div>
+
+          {/* Right 4/12 */}
+          <div className="lg:col-span-4 space-y-5">
+
+            {/* Current Progress */}
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-[#e1e1ee]/50 dark:border-slate-800" style={cardShadow}>
+              <h4 className="font-bold text-slate-900 dark:text-white text-sm mb-4" style={{ fontFamily: "var(--font-manrope,'Manrope',sans-serif)" }}>
+                {t("home.currentProgress")}
+              </h4>
+
+              {/* Profile row */}
+              <div className="flex items-center gap-3 mb-4 p-3 bg-[#f2f3ff] dark:bg-blue-500/10 rounded-xl">
+                <div className="h-10 w-10 bg-gradient-to-br from-[#2D6BFF] to-indigo-600 rounded-xl flex items-center justify-center shrink-0">
+                  <span className="text-white font-black text-sm">
+                    {data.profile.fullName.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase()}
+                  </span>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-900 dark:text-white">{data.profile.fullName}</p>
+                  <p className="text-xs text-slate-500">{data.profile.groupName}</p>
+                </div>
+              </div>
+
+              {/* Active status */}
+              <div className={`flex items-center gap-2 rounded-xl px-3 py-2 mb-3 ${data.profile.isActive ? "bg-emerald-50 border border-emerald-100" : "bg-slate-100 border border-slate-200"}`}>
+                <div className={`w-2 h-2 rounded-full shrink-0 ${data.profile.isActive ? "bg-emerald-500" : "bg-slate-400"}`} />
+                <span className={`text-xs font-semibold ${data.profile.isActive ? "text-emerald-700" : "text-slate-500"}`}>
+                  {data.profile.isActive ? t("home.activeStudent") : t("common.inactive")}
+                </span>
+              </div>
+
+              {/* Course */}
+              <div className="mb-3">
+                <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider mb-0.5">{t("home.course")}</p>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">{data.currentProgress.methodologyName}</p>
+              </div>
+
+              {/* Progress bar */}
+              <div className="space-y-1.5 mb-3">
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-500">{t("home.completed")}</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{data.currentProgress.completedLessonsCount} {t("home.lesson")}</span>
+                </div>
+                <div className="h-2 bg-[#f2f3ff] rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-700"
+                    style={{
+                      background: "linear-gradient(90deg, #2D6BFF, #708cfd)",
+                      width: `${Math.min((data.currentProgress.completedLessonsCount / (data.currentProgress.completedLessonsCount + 1)) * 100, 100)}%`
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Next lesson */}
+              <div className="bg-[#f2f3ff] dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 rounded-xl p-3">
+                <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider mb-0.5">{t("home.nextLesson")}</p>
+                <p className="text-sm font-bold text-[#2D6BFF] dark:text-blue-400">
+                  {data.currentProgress.nextLesson.order}. {data.currentProgress.nextLesson.title}
+                </p>
+              </div>
+            </div>
+
+            {/* Support banner */}
+            <div className="bg-[#e7e7f4] dark:bg-slate-800 rounded-2xl p-5 relative overflow-hidden">
+              <div className="relative z-10">
+                <h4 className="font-bold text-slate-900 dark:text-white mb-1 text-sm" style={{ fontFamily: "var(--font-manrope,'Manrope',sans-serif)" }}>
+                  {t("home.needHelp")}
+                </h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
+                  {t("home.supportDesc")}
+                </p>
+                <button className="flex items-center gap-2 bg-[#2D6BFF] text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-[#1E5AE8] transition-all"
+                  style={{ boxShadow: "0 4px 12px rgba(45,107,255,0.25)" }}
+                >
+                  {t("home.contactAdmin")}
+                </button>
+              </div>
+              <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-[#2D6BFF]/10 rounded-full blur-xl" />
             </div>
           </div>
         </div>
-      ) : null}
-
-      {/* ── Profil + Davomatlar + Progress ─────────────── */}
-      {loading && !data ? <BottomSkeleton /> : data ? (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-          {/* Profil */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[2rem] p-6 shadow-lg flex flex-col gap-4">
-            <div className="flex items-center gap-3">
-              <div className="h-12 w-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-md shrink-0">
-                <span className="text-white font-black text-lg">
-                  {data.profile.fullName.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase()}
-                </span>
-              </div>
-              <div>
-                <p className="font-black text-slate-900 dark:text-white">{data.profile.fullName}</p>
-                <p className="text-sm text-slate-500">{data.profile.groupName}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 rounded-xl p-3">
-              <Wallet className="w-4 h-4 text-amber-600 shrink-0" />
-              <span className="text-sm font-bold text-amber-700 dark:text-amber-400">
-                {data.profile.wallet.toLocaleString()} {t("common.som")}
-              </span>
-            </div>
-
-            <div className={`flex items-center gap-2 rounded-xl p-3 ${data.profile.isActive ? "bg-emerald-50 dark:bg-emerald-500/10" : "bg-slate-100 dark:bg-slate-800"}`}>
-              <div className={`w-2 h-2 rounded-full shrink-0 ${data.profile.isActive ? "bg-emerald-500" : "bg-slate-400"}`} />
-              <span className={`text-sm font-bold ${data.profile.isActive ? "text-emerald-700 dark:text-emerald-400" : "text-slate-500"}`}>
-                {data.profile.isActive ? t("home.activeStudent") : t("common.inactive")}
-              </span>
-            </div>
-
-            {(data.profile.strike ?? 0) > 0 && (
-              <div className="flex items-center gap-2 bg-orange-50 dark:bg-orange-500/10 border border-orange-100 dark:border-orange-500/20 rounded-xl p-3">
-                <Image src={FireIcon} alt="" className="w-4 h-4" />
-                <span className="text-sm font-bold text-orange-700 dark:text-orange-400">
-                  {data.profile.strike} {t("home.dayStreak")}
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* So'nggi davomatlar */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[2rem] p-6 shadow-lg flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <h3 className="font-black text-slate-900 dark:text-white">{t("home.recentAttendance")}</h3>
-              <Link href="/attendance" className="text-xs text-blue-600 font-bold flex items-center gap-1 hover:underline">
-                {t("common.all")} <ChevronRight className="w-3 h-3" />
-              </Link>
-            </div>
-            <div className="space-y-1.5">
-              {data.attendance.slice(0, 4).map((item, i) => {
-                const cfg = statusConfig[item.status] ?? statusConfig.absent
-                const Icon = cfg.icon
-                return (
-                  <div key={i} className="flex items-center justify-between py-1">
-                    <span className="text-sm text-slate-500 font-medium">
-                      {new Date(item.date).toLocaleDateString("uz-UZ", { day: "2-digit", month: "short" })}
-                    </span>
-                    <span className={`flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full ${cfg.color}`}>
-                      <Icon className="w-3 h-3" />
-                      {cfg.label}
-                    </span>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* Joriy progress */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[2rem] p-6 shadow-lg flex flex-col gap-4">
-            <h3 className="font-black text-slate-900 dark:text-white">{t("home.currentProgress")}</h3>
-            <div>
-              <p className="text-xs text-slate-500 font-medium mb-0.5">{t("home.course")}</p>
-              <p className="font-bold text-slate-900 dark:text-white">{data.currentProgress.methodologyName}</p>
-            </div>
-
-            <div className="space-y-1.5">
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-500 font-medium">{t("home.completed")}</span>
-                <span className="font-bold text-slate-900 dark:text-white">
-                  {data.currentProgress.completedLessonsCount} {t("home.lesson")}
-                </span>
-              </div>
-              <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-blue-600 rounded-full transition-all duration-700"
-                  style={{
-                    width: `${Math.min(
-                      (data.currentProgress.completedLessonsCount /
-                        (data.currentProgress.completedLessonsCount + 1)) * 100,
-                      100
-                    )}%`
-                  }}
-                />
-              </div>
-            </div>
-
-            <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 rounded-xl p-3">
-              <p className="text-xs text-slate-500 font-medium mb-0.5">{t("home.nextLesson")}</p>
-              <p className="text-sm font-black text-blue-700 dark:text-blue-400">
-                {data.currentProgress.nextLesson.order}. {data.currentProgress.nextLesson.title}
-              </p>
-            </div>
-          </div>
-
-        </div>
-      ) : null}
+      )}
     </div>
   )
 }

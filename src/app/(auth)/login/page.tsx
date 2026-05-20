@@ -43,14 +43,14 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f8fafc] dark:bg-[#020617] p-4 lg:p-0">
+    <div className="min-h-screen flex items-center justify-center bg-[#faf8ff] dark:bg-[#020617] p-4 lg:p-0">
 
       {/* Til almashtiruvchi — yuqori o'ng burchak */}
       <div className="fixed top-4 right-4 z-50">
         <LanguageSwitcher />
       </div>
 
-      <div className="w-full max-w-6xl grid lg:grid-cols-2 min-h-[500px] bg-white dark:bg-slate-900 shadow-2xl rounded-[2.5rem] overflow-hidden border border-slate-100 dark:border-slate-800">
+      <div className="w-full max-w-6xl grid lg:grid-cols-2 min-h-[500px] bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-100 dark:border-slate-800" style={{ boxShadow: "0 8px 40px rgba(0,0,0,0.08)" }}>
 
         <div
           className="relative hidden lg:flex flex-col justify-between p-12 overflow-hidden"
@@ -92,7 +92,7 @@ export default function LoginPage() {
                     value={login}
                     onChange={(e) => setLogin(e.target.value)}
                     required
-                    className="h-12 px-4 bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 rounded-xl transition-all"
+                    className="h-12 px-4 bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-[#2D6BFF] rounded-xl transition-all"
                   />
                 </div>
 
@@ -108,12 +108,12 @@ export default function LoginPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="h-12 px-4 bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 rounded-xl pr-12 transition-all"
+                      className="h-12 px-4 bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-[#2D6BFF] rounded-xl pr-12 transition-all"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#2D6BFF]"
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
@@ -124,7 +124,8 @@ export default function LoginPage() {
               <Button
                 type="submit"
                
-                className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                className="w-full h-12 bg-[#2D6BFF] hover:bg-[#1E5AE8] text-white font-semibold rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                style={{ boxShadow: "0 4px 16px rgba(45,107,255,0.3)" }}
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -138,7 +139,7 @@ export default function LoginPage() {
               <div className="text-center pt-4 border-t border-slate-100 dark:border-slate-800">
                 <p className="text-sm text-slate-500 dark:text-slate-400">
                   {t("auth.noAccount")}{" "}
-                  <button type="button" className="text-blue-600 font-black hover:underline underline-offset-4">
+                  <button type="button" className="text-[#2D6BFF] font-bold hover:underline underline-offset-4">
                     {t("auth.register")}
                   </button>
                 </p>
