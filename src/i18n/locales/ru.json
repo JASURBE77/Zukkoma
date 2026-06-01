@@ -22,6 +22,7 @@
     "register": "Зарегистрироваться",
     "copyright": "© 2024 Zukkoma. Все права защищены.",
     "loginSuccess": "Вы успешно вошли в систему!",
+    "passwordPlaceholder":"введите свой пароль",
     "loginError": "Неверный логин или пароль!"
   },
   "nav": {
@@ -104,6 +105,13 @@
     "tabFinished": "Завершённые",
     "tabPending": "Ожидаемые"
   },
+  "OfflinePage": {
+    "title": "Вы не lсети",
+    "description": "Проверьте интернет-соединение, чтобы продолжить обучение.",
+    "buttonRetry": "Повторить попытку",
+    "buttonChecking": "Проверка...",
+    "libraryNotice": "Вы по-прежнему можете получить доступ к <span class=\"text-blue-600 font-semibold hover:underline cursor-pointer\">скачанным книгам</span> в Библиотеке."
+  },
   "profile": {
     "title": "Профиль",
     "security": "Безопасность",
@@ -117,6 +125,7 @@
     "phone": "Телефон",
     "username": "Имя пользователя",
     "group": "Группа",
+    "devices": "Устройство",
     "changePassword": "Изменить пароль",
     "changePasswordStep1": "Введите новый пароль, код будет отправлен на вашу почту",
     "changePasswordStep2": "Введите 4-значный код, отправленный на вашу почту",

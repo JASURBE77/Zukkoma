@@ -7,6 +7,7 @@ import { useSelector } from "react-redux"
 import { RootState } from "@/store/store"
 import Link from "next/link"
 import { useTranslation } from "react-i18next"
+import dayjs from "dayjs"
 import {
   CheckCircle2, XCircle, Clock, AlertCircle,
   ArrowRight, Library, ClipboardList, TrendingUp,
@@ -52,8 +53,6 @@ function BannerSkeleton() {
     </div>
   )
 }
-
-/* ── Component ────────────────────────────────────────────── */
 const Banner = () => {
   const { data, loading } = useSelector((state: RootState) => state.home)
   const { t } = useTranslation()
@@ -96,7 +95,6 @@ const Banner = () => {
   return (
     <div className="space-y-6">
 
-      {/* ── Hero Banner ──────────────────────────────────── */}
       <section
         className="relative overflow-hidden rounded-3xl p-8 sm:p-10 text-white"
         style={meshStyle}
@@ -138,7 +136,6 @@ const Banner = () => {
         )}
       </section>
 
-      {/* ── 4 Stats Cards ────────────────────────────────── */}
       {data && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Wallet */}
@@ -264,7 +261,7 @@ const Banner = () => {
                         />
                         <div className="flex-1">
                           <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                            {d.toLocaleDateString("uz-UZ", { day: "2-digit", month: "long", year: "numeric" })}
+                            {dayjs(d).locale("uz").format("D MMMM, dddd")}
                           </p>
                           {item.comment && <p className="text-xs text-slate-400 mt-0.5">{item.comment}</p>}
                         </div>
@@ -351,11 +348,11 @@ const Banner = () => {
                 <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
                   {t("home.supportDesc")}
                 </p>
-                <button className="flex items-center gap-2 bg-[#2D6BFF] text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-[#1E5AE8] transition-all"
+                <a target="_blank" href="https://t.me/zukkoma_help_bot" className="flex items-center gap-2 bg-[#2D6BFF] text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-[#1E5AE8] transition-all"
                   style={{ boxShadow: "0 4px 12px rgba(45,107,255,0.25)" }}
                 >
                   {t("home.contactAdmin")}
-                </button>
+                </a>
               </div>
               <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-[#2D6BFF]/10 rounded-full blur-xl" />
             </div>

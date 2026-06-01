@@ -3,7 +3,7 @@ import { Manrope, Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
 import { Toaster } from "@/components/ui/sonner";
-
+import OfflineProvider from "@/components/OfflineProvider";
 const manrope = Manrope({
   variable: "--font-manrope",
   subsets: ["latin"],
@@ -47,20 +47,26 @@ export const metadata: Metadata = {
   },
 };
 
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+ 
+
   return (
     <html lang="uz">
       <body
         className={`${manrope.variable} ${inter.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers>
+    <OfflineProvider>
+          <Providers>
           {children}
           <Toaster richColors position="top-right" />
         </Providers>
+    </OfflineProvider>
       </body>
     </html>
   );

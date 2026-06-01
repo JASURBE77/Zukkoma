@@ -83,8 +83,7 @@ export default function Header() {
 
   return (
     <header
-      className="sticky top-0 z-30 w-full border-b border-slate-100 dark:border-slate-800"
-      style={{ background: "rgba(250,248,255,0.85)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
+      className="sticky top-0 z-30 w-full border-b border-slate-100 dark:border-slate-800 bg-[#F8FAFC]"
     >
       <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-2 sm:gap-4">
 

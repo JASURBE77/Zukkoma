@@ -22,6 +22,7 @@
     "register": "Register",
     "copyright": "© 2024 Zukkoma. All rights reserved.",
     "loginSuccess": "Successfully signed in!",
+    "passwordPlaceholder": "enter your password",
     "loginError": "Invalid username or password!"
   },
   "nav": {
@@ -115,6 +116,7 @@
     "lastName": "Last Name",
     "age": "Age",
     "phone": "Phone",
+    "devices": "Devices",
     "username": "Username",
     "group": "Group",
     "changePassword": "Change Password",
@@ -133,6 +135,13 @@
     "otpRequired": "Enter the 4-digit code",
     "otpSentSuccess": "Verification code sent to your email!",
     "passwordUpdateSuccess": "Password updated successfully!"
+  },
+  "OfflinePage": {
+    "title": "You are offline",
+    "description": "Check your internet connection to continue your learning journey.",
+    "buttonRetry": "Try Again",
+    "buttonChecking": "Checking...",
+    "libraryNotice": "You can still access your <span class=\"text-blue-600 font-semibold hover:underline cursor-pointer\">downloaded books</span> in the Library."
   },
   "group": {
     "friends": "My Friends",

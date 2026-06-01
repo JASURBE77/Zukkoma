@@ -45,7 +45,6 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#faf8ff] dark:bg-[#020617] p-4 lg:p-0">
 
-      {/* Til almashtiruvchi — yuqori o'ng burchak */}
       <div className="fixed top-4 right-4 z-50">
         <LanguageSwitcher />
       </div>
@@ -69,7 +68,7 @@ export default function LoginPage() {
 
         <div className="flex items-center justify-center relative p-6 sm:p-8 lg:p-16 bg-white dark:bg-slate-900">
           <div className="w-full max-w-sm space-y-6 sm:space-y-8">
-            <Image src={Logo} alt="zukkoma logo" width={48} height={48} className="absolute top-4 right-6 w-12 h-12 rounded-xl object-cover" />
+              <Image src={Logo} alt="zukkoma logo" width={48} height={48} className="absolute top-4 right-6 w-15 md:w-30 rounded-xl object-cover" />
             <div className="space-y-2 text-center lg:text-left">
               <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
                 {t("auth.title")}
@@ -104,7 +103,7 @@ export default function LoginPage() {
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
-                      placeholder="••••••••"
+                      placeholder={t("auth.passwordPlaceholder")}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
@@ -135,15 +134,6 @@ export default function LoginPage() {
                   </>
                 )}
               </Button>
-
-              <div className="text-center pt-4 border-t border-slate-100 dark:border-slate-800">
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  {t("auth.noAccount")}{" "}
-                  <button type="button" className="text-[#2D6BFF] font-bold hover:underline underline-offset-4">
-                    {t("auth.register")}
-                  </button>
-                </p>
-              </div>
             </form>
           </div>
         </div>

@@ -22,6 +22,7 @@
     "register": "Ro'yxatdan o'ting",
     "copyright": "© 2024 Zukkoma. Barcha huquqlar himoyalangan.",
     "loginSuccess": "Tizimga muvaffaqiyatli kirdingiz!",
+    "passwordPlaceholder":"parolingizni kiriting",
     "loginError": "Login yoki parol noto'g'ri!"
   },
   "nav": {
@@ -104,6 +105,13 @@
     "tabFinished": "Yakunlangan",
     "tabPending": "Kutilmoqda"
   },
+  "OfflinePage": {
+    "title": "Siz tarmoqdan uzildingiz",
+    "description": "O'quv jarayonini davom ettirish uchun internet ulanishini tekshiring.",
+    "buttonRetry": "Qayta urinish",
+    "buttonChecking": "Tekshirilmoqda...",
+    "libraryNotice": "Kutubxonadagi <span class=\"text-blue-600 font-semibold hover:underline cursor-pointer\">yuklab olingan kitoblardan</span> offline rejimda ham foydalanishingiz mumkin."
+  },
   "profile": {
     "title": "Profil",
     "security": "Xavfsizlik",
@@ -113,6 +121,7 @@
     "readOnly": "Ma'lumotlarni faqat administrator o'zgartira oladi",
     "firstName": "Ism",
     "lastName": "Familiya",
+    "devices": "Qurilmalar",
     "age": "Yosh",
     "phone": "Telefon",
     "username": "Foydalanuvchi nomi",
