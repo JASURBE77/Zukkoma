@@ -6,8 +6,10 @@ import { AppDispatch } from "@/store/store"
 import { fetchHomeData } from "@/store/slice/homeSlice"
 import Image from "next/image"
 import Logo from "../../assets/zukkoma.jpg"
+import { useTranslation } from "react-i18next"
 
 export default function PageLoader({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
 
   const [visible, setVisible] = useState(true)
@@ -54,7 +56,7 @@ export default function PageLoader({ children }: { children: React.ReactNode }) 
                 ZUKKOMA
               </h1>
               <p className="text-sm text-slate-400 font-medium">
-                O&apos;quv markazi platformasi
+                {t("pageLoader.subtitle")}
               </p>
             </div>
 

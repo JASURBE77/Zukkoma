@@ -9,8 +9,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowLeft, Loader2, Trophy, ClipboardList, CalendarCheck } from "lucide-react"
 import { motion } from "framer-motion"
+import { useTranslation } from "react-i18next"
 
 export default function ExamHistoryPage() {
+  const { t }         = useTranslation()
   const dispatch      = useDispatch<AppDispatch>()
   const router        = useRouter()
   const { historyList, historyLoading } = useSelector((state: RootState) => state.history)
@@ -38,11 +40,11 @@ export default function ExamHistoryPage() {
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="sm" onClick={() => router.push("/exams")} className="gap-2 text-slate-500">
           <ArrowLeft className="h-4 w-4" />
-          Orqaga
+          {t("common.back")}
         </Button>
         <div>
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white">Imtihon tarixi</h1>
-          <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">Topshirilgan barcha imtihonlar</p>
+          <h1 className="text-2xl font-black text-slate-900 dark:text-white">{t("examHistory.title")}</h1>
+          <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{t("examHistory.subtitle")}</p>
         </div>
       </div>
 
@@ -50,7 +52,7 @@ export default function ExamHistoryPage() {
       {historyList.length === 0 && (
         <div className="flex h-52 flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
           <ClipboardList className="h-10 w-10 text-slate-300" />
-          <p className="text-sm font-medium text-slate-400">Hali imtihon topshirilmagan</p>
+          <p className="text-sm font-medium text-slate-400">{t("examHistory.empty")}</p>
         </div>
       )}
 
@@ -88,7 +90,7 @@ export default function ExamHistoryPage() {
                   </div>
                 </div>
                 <div className="rounded-lg bg-green-50 dark:bg-green-500/10 px-3 py-2 text-center text-xs font-bold text-green-700 dark:text-green-400">
-                  Yakunlandi — batafsil ko'rish
+                  {t("examHistory.finished")}
                 </div>
               </CardContent>
             </Card>

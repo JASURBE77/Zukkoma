@@ -183,5 +183,72 @@
     "buyFailed": "Failed to purchase the book",
     "notEnoughStars": "Not enough Zukko stars",
     "viewFullDescription": "View full description"
+  },
+  "examHistory": {
+    "title": "Exam History",
+    "subtitle": "All submitted exams",
+    "empty": "No exams submitted yet",
+    "finished": "Finished — view details",
+    "notFound": "Data not found",
+    "score": "Score",
+    "maxScore": "Max score",
+    "question": "Question",
+    "result": "Result",
+    "passed": "You passed successfully!",
+    "failed": "You did not pass the exam",
+    "answers": "Answers",
+    "you": "You",
+    "correct": "Correct",
+    "ball": "pts"
+  },
+  "lessonDetail": {
+    "notFound": "Lesson not found",
+    "completed": "Completed",
+    "notCompleted": "Not completed"
+  },
+  "member": {
+    "fullName": "Full name",
+    "birthDate": "Date of birth",
+    "status": "Status"
+  },
+  "studentExam": {
+    "answerError": "Failed to submit the answer",
+    "finishError": "Failed to finish the exam",
+    "ballSuffix": "pts",
+    "finished": "Exam finished!",
+    "backToExams": "Back to exams",
+    "retry": "Try again",
+    "question": "Question",
+    "finishExam": "Finish exam",
+    "next": "Next"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist or may have been moved. Try returning to the home page.",
+    "home": "Home",
+    "tagline": "Education Platform"
+  },
+  "devices": {
+    "title": "Devices",
+    "subtitle": "View active sessions connected to your account and keep your security in check.",
+    "activeSessions": "Active sessions list",
+    "thisDevice": "This device",
+    "unknownDevice": "Unknown device",
+    "system": "System:",
+    "unknownOs": "Unknown OS",
+    "unknownCountry": "Unknown country",
+    "ipAddress": "IP Address:",
+    "browser": "Browser:",
+    "unknown": "Unknown",
+    "expel": "Log out",
+    "activeSession": "Active session",
+    "modalTitle": "Log out of device",
+    "modalDesc": "Do you want to log this device out of the system? Logging back in will require your username and password.",
+    "cancel": "Cancel",
+    "expelling": "Logging out...",
+    "confirmExpel": "Yes, log out"
+  },
+  "pageLoader": {
+    "subtitle": "Learning Center Platform"
   }
 }

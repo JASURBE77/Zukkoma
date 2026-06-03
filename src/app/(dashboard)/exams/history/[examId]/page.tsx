@@ -10,12 +10,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, Trophy, CheckCircle2, XCircle, Loader2, AlertCircle, CalendarCheck } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion } from "framer-motion"
+import { useTranslation } from "react-i18next"
 
 function Sk({ className }: { className?: string }) {
   return <div className={`bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse ${className}`} />
 }
 
 export default function ExamHistoryDetailPage() {
+  const { t } = useTranslation()
   const { examId } = useParams<{ examId: string }>()
   const dispatch = useDispatch<AppDispatch>()
   const router = useRouter()
@@ -42,10 +44,10 @@ export default function ExamHistoryDetailPage() {
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
         <AlertCircle className="w-10 h-10 text-red-400" />
         <p className="text-slate-500 font-medium text-center max-w-xs">
-          {error ?? "Ma'lumot topilmadi"}
+          {error ?? t("examHistory.notFound")}
         </p>
         <Button variant="outline" onClick={() => router.back()} className="gap-2 rounded-xl">
-          <ArrowLeft className="w-4 h-4" /> Orqaga
+          <ArrowLeft className="w-4 h-4" /> {t("common.back")}
         </Button>
       </div>
     )
@@ -69,7 +71,7 @@ export default function ExamHistoryDetailPage() {
         onClick={() => router.back()}
         className="gap-2 text-slate-500 -ml-2"
       >
-        <ArrowLeft className="h-4 w-4" /> Orqaga
+        <ArrowLeft className="h-4 w-4" /> {t("common.back")}
       </Button>
 
       {/* Natija kartasi */}
@@ -101,26 +103,26 @@ export default function ExamHistoryDetailPage() {
                   <p className="text-2xl font-black text-slate-900 dark:text-white">
                     {Math.round(totalGathered)}
                   </p>
-                  <p className="text-xs text-slate-400 font-medium">Ball</p>
+                  <p className="text-xs text-slate-400 font-medium">{t("examHistory.score")}</p>
                 </div>
                 <div className="bg-green-50 dark:bg-green-500/10 rounded-2xl p-3 text-center">
                   <p className="text-2xl font-black text-green-700 dark:text-green-400">
                     {Math.round(totalMax)}
                   </p>
-                  <p className="text-xs text-slate-400 font-medium">Maks ball</p>
+                  <p className="text-xs text-slate-400 font-medium">{t("examHistory.maxScore")}</p>
                 </div>
                 <div className="bg-blue-50 dark:bg-blue-500/10 rounded-2xl p-3 text-center">
                   <p className="text-2xl font-black text-blue-700 dark:text-blue-400">
                     {historyDetail.results.length}
                   </p>
-                  <p className="text-xs text-slate-400 font-medium">Savol</p>
+                  <p className="text-xs text-slate-400 font-medium">{t("examHistory.question")}</p>
                 </div>
               </div>
 
               {/* Progress bar */}
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs font-semibold text-slate-400">
-                  <span>Natija</span>
+                  <span>{t("examHistory.result")}</span>
                   <span>{percentage}%</span>
                 </div>
                 <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
@@ -139,7 +141,7 @@ export default function ExamHistoryDetailPage() {
                   ? "bg-green-50 text-green-700 dark:bg-green-500/10 dark:text-green-400"
                   : "bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400"
               )}>
-                {isPassed ? "Muvaffaqiyatli o'tdingiz!" : "Imtihondan o'ta olmadingiz"}
+                {isPassed ? t("examHistory.passed") : t("examHistory.failed")}
               </div>
             </div>
           </div>
@@ -150,7 +152,7 @@ export default function ExamHistoryDetailPage() {
       {historyDetail.results.length > 0 && (
         <Card className="rounded-[2rem] border-slate-100 dark:border-slate-800 shadow-xl">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-black">Javoblar</CardTitle>
+            <CardTitle className="text-lg font-black">{t("examHistory.answers")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 pb-6">
             {historyDetail.results.map((result, i) => {
@@ -188,14 +190,14 @@ export default function ExamHistoryDetailPage() {
                       "text-xs font-medium",
                       isCorrect ? "text-green-700 dark:text-green-400" : "text-red-600 dark:text-red-400"
                     )}>
-                      Siz: {selectedOption?.text ?? "—"}
+                      {t("examHistory.you")}: {selectedOption?.text ?? "—"}
                     </p>
                     {!isCorrect && (
                       <p className="text-xs font-medium text-green-700 dark:text-green-400">
-                        To'g'ri: {correctOption?.text ?? "—"}
+                        {t("examHistory.correct")}: {correctOption?.text ?? "—"}
                       </p>
                     )}
-                    <p className="text-xs text-slate-400">{Math.round(Number(result.gatheredBall))} / {Math.round(Number(result.maxBall))} ball</p>
+                    <p className="text-xs text-slate-400">{Math.round(Number(result.gatheredBall))} / {Math.round(Number(result.maxBall))} {t("examHistory.ball")}</p>
                   </div>
                 </motion.div>
               )

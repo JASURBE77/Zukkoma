@@ -9,8 +9,10 @@ import { fetchMe } from "@/store/slice/userSlice"
 import { ArrowLeft, CheckCircle2, Circle, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
+import { useTranslation } from "react-i18next"
 
 export default function LessonPage() {
+  const { t } = useTranslation()
   const { lessonId } = useParams()
   const router = useRouter()
   const dispatch = useDispatch<AppDispatch>()
@@ -46,9 +48,9 @@ export default function LessonPage() {
   if (!lesson) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <p className="text-slate-500 font-medium">Dars topilmadi</p>
+        <p className="text-slate-500 font-medium">{t("lessonDetail.notFound")}</p>
         <Button variant="outline" onClick={() => router.back()} className="rounded-xl gap-2">
-          <ArrowLeft className="w-4 h-4" /> Orqaga
+          <ArrowLeft className="w-4 h-4" /> {t("common.back")}
         </Button>
       </div>
     )
@@ -66,7 +68,7 @@ export default function LessonPage() {
         onClick={() => router.back()}
         className="rounded-xl gap-2"
       >
-        <ArrowLeft className="w-4 h-4" /> Orqaga
+        <ArrowLeft className="w-4 h-4" /> {t("common.back")}
       </Button>
 
       <motion.div
@@ -89,7 +91,7 @@ export default function LessonPage() {
             ) : (
               <Circle className="w-4 h-4" />
             )}
-            {lesson.isCompleted ? "Bajarildi" : "Bajarilmadi"}
+            {lesson.isCompleted ? t("lessonDetail.completed") : t("lessonDetail.notCompleted")}
           </span>
         </div>
 

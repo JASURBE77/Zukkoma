@@ -11,12 +11,14 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowLeft, Wallet, ShieldCheck, User, Calendar, Loader2, AlertCircle } from "lucide-react"
 import { motion } from "framer-motion"
+import { useTranslation } from "react-i18next"
 
 function Sk({ className }: { className?: string }) {
   return <div className={`bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse ${className}`} />
 }
 
 export default function MemberProfilePage() {
+  const { t } = useTranslation()
   const { userId } = useParams<{ userId: string }>()
   const dispatch = useDispatch<AppDispatch>()
   const router = useRouter()
@@ -54,7 +56,7 @@ export default function MemberProfilePage() {
         <AlertCircle className="w-10 h-10 text-red-400" />
         <p className="text-slate-500 font-medium">{memberError}</p>
         <Button variant="outline" onClick={() => router.back()} className="gap-2 rounded-xl">
-          <ArrowLeft className="w-4 h-4" /> Orqaga
+          <ArrowLeft className="w-4 h-4" /> {t("common.back")}
         </Button>
       </div>
     )
@@ -68,24 +70,24 @@ export default function MemberProfilePage() {
   const infoItems = [
     {
       icon: User,
-      label: "Ism familiya",
+      label: t("member.fullName"),
       value: `${memberProfile.name} ${memberProfile.surname}`,
     },
     {
       icon: Calendar,
-      label: "Tug'ilgan sana",
+      label: t("member.birthDate"),
       value: memberProfile.age || "—",
     },
     {
       icon: ShieldCheck,
-      label: "Holati",
-      value: memberProfile.isActive ? "Faol" : "Nofaol",
+      label: t("member.status"),
+      value: memberProfile.isActive ? t("common.active") : t("common.inactive"),
       isActive: memberProfile.isActive,
     },
     {
       icon: Wallet,
-      label: "Hamyon",
-      value: `${wallet} so'm`,
+      label: t("home.walletBalance"),
+      value: `${wallet} ${t("common.som")}`,
       isWallet: true,
     },
   ]
@@ -104,7 +106,7 @@ export default function MemberProfilePage() {
         className="gap-2 text-slate-500 -ml-2"
       >
         <ArrowLeft className="h-4 w-4" />
-        Orqaga
+        {t("common.back")}
       </Button>
 
       <Card className="rounded-[2rem] border-slate-100 dark:border-slate-800 shadow-xl overflow-hidden">

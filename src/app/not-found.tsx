@@ -1,7 +1,11 @@
+"use client"
+
 import Link from "next/link"
 import { Search, Home, ArrowLeft } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 export default function NotFound() {
+  const { t } = useTranslation()
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center px-6"
@@ -48,11 +52,10 @@ export default function NotFound() {
           className="text-2xl sm:text-3xl font-black text-slate-900 mb-3"
           style={{ fontFamily: "'Manrope', system-ui, sans-serif" }}
         >
-          Sahifa topilmadi
+          {t("notFound.title")}
         </h1>
         <p className="text-slate-500 text-base mb-8 leading-relaxed">
-          Siz izlagan sahifa mavjud emas yoki ko&apos;chirilgan bo&apos;lishi mumkin.
-          <br />Bosh sahifaga qaytib ko&apos;ring.
+          {t("notFound.description")}
         </p>
 
         {/* Actions */}
@@ -62,13 +65,13 @@ export default function NotFound() {
             className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-blue-700 text-white font-bold rounded-xl hover:bg-blue-800 active:scale-[0.98] transition-all"
             style={{ boxShadow: "0 4px 16px rgba(29,78,216,0.3)" }}
           >
-            <Home className="w-4 h-4" /> Bosh sahifa
+            <Home className="w-4 h-4" /> {t("notFound.home")}
           </Link>
           <Link
             href="/login"
             className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border-2 border-[#e1e1ee] text-slate-700 font-bold rounded-xl hover:bg-white hover:border-blue-700/30 active:scale-[0.98] transition-all"
           >
-            <ArrowLeft className="w-4 h-4" /> Orqaga
+            <ArrowLeft className="w-4 h-4" /> {t("common.back")}
           </Link>
         </div>
 
@@ -81,7 +84,7 @@ export default function NotFound() {
           <span className="font-black text-blue-700" style={{ fontFamily: "'Manrope', system-ui, sans-serif" }}>
             ZUKKOMA
           </span>
-          <span className="text-xs text-slate-400 font-medium uppercase tracking-widest">Education Platform</span>
+          <span className="text-xs text-slate-400 font-medium uppercase tracking-widest">{t("notFound.tagline")}</span>
         </div>
       </div>
     </div>

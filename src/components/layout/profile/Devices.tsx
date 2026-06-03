@@ -12,6 +12,7 @@ import {
 import axiosInstance from '@/lib/axiosInstance'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 
 // Rasmlar
 import Apple from "@/assets/apple-icon.png"
@@ -55,6 +56,7 @@ function DevicesSkeleton() {
 }
 
 const DevicesPage = () => {
+  const { t } = useTranslation()
   const osIcons: Record<string, any> = {
     ios: Apple,
     macos: Apple,
@@ -121,9 +123,9 @@ const DevicesPage = () => {
       <div className="mx-auto space-y-6">
 
         <div className='bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200/50 dark:border-slate-800/60 shadow-sm'>
-          <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Qurilmalar</h1>
+          <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">{t("devices.title")}</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Akkauntingizga ulangan faol sessiyalarni ko'ring va xavfsizligingizni nazorat qiling.
+            {t("devices.subtitle")}
           </p>
         </div>
 
@@ -134,7 +136,7 @@ const DevicesPage = () => {
             <div className="flex flex-col sm:flex-row gap-2 justify-between sm:items-center px-1">
               <div className="flex items-center gap-2">
                 <Monitor className="w-5 h-5 text-blue-600 dark:text-blue-500" />
-                <h2 className="text-g font-bold text-slate-800 dark:text-slate-200">Aktiv sessiyalar ro'yxati</h2>
+                <h2 className="text-g font-bold text-slate-800 dark:text-slate-200">{t("devices.activeSessions")}</h2>
               </div>
             </div>
 
@@ -166,17 +168,17 @@ const DevicesPage = () => {
                       </div>
                       <div>
                         <h3 className="font-extrabold text-[16px] text-slate-900 dark:text-white leading-tight flex flex-wrap items-center gap-2">
-                          {session.deviceInfo?.deviceName || "Noma'lum qurilma"}
+                          {session.deviceInfo?.deviceName || t("devices.unknownDevice")}
                           {session.isCurrent && (
                             <span className="text-[11px] bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200/30">
-                              Shu qurilma
+                              {t("devices.thisDevice")}
                             </span>
                           )}
                         </h3>
                         <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-1.5 flex items-center gap-1">
-                          <span className='font-medium text-slate-400 dark:text-slate-500'>Tizim:</span> 
+                          <span className='font-medium text-slate-400 dark:text-slate-500'>{t("devices.system")}</span>
                           <span className="font-semibold text-slate-700 dark:text-slate-300">
-                            {session.deviceInfo?.deviceType || "PC"} • {session.deviceInfo?.os || "Noma'lum OS"}
+                            {session.deviceInfo?.deviceType || "PC"} • {session.deviceInfo?.os || t("devices.unknownOs")}
                           </span>
                         </p>
                       </div>
@@ -187,11 +189,11 @@ const DevicesPage = () => {
                   <div className="space-y-2.5 my-4 border-t border-b border-slate-100 dark:border-slate-800/60 py-3 text-[13px]">
                     <div className="flex items-center gap-2.5 font-medium text-slate-600 dark:text-slate-400">
                       <MapPin className="w-4 h-4 text-slate-400 dark:text-slate-500 shrink-0" />
-                      <span>{session.location?.country || "Noma'lum davlat"}, {session.location?.city || ""}</span>
+                      <span>{session.location?.country || t("devices.unknownCountry")}, {session.location?.city || ""}</span>
                     </div>
                     <div className="flex items-center gap-2.5 font-medium text-slate-600 dark:text-slate-400">
                       <Globe className="w-4 h-4 text-slate-400 dark:text-slate-500 shrink-0" />
-                      <span>IP Manzil: <span className="font-mono bg-slate-50 dark:bg-slate-800/40 px-1.5 py-0.5 rounded text-[12px]">{session.ipAddress}</span></span>
+                      <span>{t("devices.ipAddress")} <span className="font-mono bg-slate-50 dark:bg-slate-800/40 px-1.5 py-0.5 rounded text-[12px]">{session.ipAddress}</span></span>
                     </div>
                     <div className='flex gap-2.5 items-center font-medium text-slate-600 dark:text-slate-400'>
                       <div className="w-4 h-4 relative flex items-center justify-center shrink-0">
@@ -202,7 +204,7 @@ const DevicesPage = () => {
                           fill
                         />
                       </div>
-                      <span>Brouzer: <span className="font-semibold text-slate-700 dark:text-slate-300">{session.deviceInfo?.browser || "Noma'lum"}</span></span>
+                      <span>{t("devices.browser")} <span className="font-semibold text-slate-700 dark:text-slate-300">{session.deviceInfo?.browser || t("devices.unknown")}</span></span>
                     </div>
                   </div>
 
@@ -213,11 +215,11 @@ const DevicesPage = () => {
                         onClick={() => openConfirmModal(session.id)} 
                         className="text-[13px] font-bold text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 flex items-center gap-1.5 transition-all py-1.5 px-3 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-xl active:scale-95"
                       >
-                        <LogOut className="w-4 h-4 rotate-180" /> Chiqarish
+                        <LogOut className="w-4 h-4 rotate-180" /> {t("devices.expel")}
                       </button>
                     ) : (
                       <span className="text-[12px] font-medium text-slate-400 dark:text-slate-500 px-2 py-1 select-none">
-                        Faol seans
+                        {t("devices.activeSession")}
                       </span>
                     )}
                   </div>
@@ -262,9 +264,9 @@ const DevicesPage = () => {
                   <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-slate-900 dark:text-white">Qurilmadan chiqish</h3>
+                  <h3 className="text-lg font-black text-slate-900 dark:text-white">{t("devices.modalTitle")}</h3>
                   <p className="text-sm text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">
-                    Ushbu qurilmani tizimdan chiqarib yubormoqchimisiz? Qayta kirish uchun login va parolni kiritish talab qilinadi.
+                    {t("devices.modalDesc")}
                   </p>
                 </div>
               </div>
@@ -276,7 +278,7 @@ const DevicesPage = () => {
                   onClick={() => setIsModalOpen(false)}
                   className="px-4 py-2.5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-sm rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
-                  Bekor qilish
+                  {t("devices.cancel")}
                 </button>
                 <button
                   type="button"
@@ -284,7 +286,7 @@ const DevicesPage = () => {
                   onClick={confirmExpelling}
                   className="px-5 py-2.5 bg-red-600 text-white font-bold text-sm rounded-xl hover:bg-red-700 active:scale-[0.98] transition-all disabled:opacity-50 shadow-md shadow-red-600/10 flex items-center gap-2"
                 >
-                  {kickLoading ? "Chiqarilmoqda..." : "Ha, chiqarilsin"}
+                  {kickLoading ? t("devices.expelling") : t("devices.confirmExpel")}
                 </button>
               </div>
             </motion.div>

@@ -6,8 +6,10 @@ import { RefreshCw, BookOpen } from "lucide-react"
 import { motion } from "framer-motion"
 import Offline_illustration from "@/assets/Offline-illustration.png"
 import Image from "next/image"
+import { useTranslation } from "react-i18next"
 
 export default function OfflinePage() {
+  const { t } = useTranslation()
   const [mounted, setMounted] = useState(false)
   const [isOnline, setIsOnline] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -58,7 +60,7 @@ export default function OfflinePage() {
           <div className="rounded-2xl">
             <Image
               src={Offline_illustration}
-              alt="Internet aloqasi mavjud emas"
+              alt={t("OfflinePage.title")}
               className="w-full rounded"
               fill
               style={{ objectFit: "contain" }}
@@ -68,12 +70,12 @@ export default function OfflinePage() {
 
         {/* Sarlavha */}
         <h1 className="text-2xl sm:text-[28px] font-bold text-slate-900 dark:text-white mb-3 tracking-tight">
-          Internet aloqasi mavjud emas
+          {t("OfflinePage.title")}
         </h1>
 
         {/* Tavsif */}
         <p className="text-slate-500 dark:text-slate-400 text-[14px] sm:text-[15px] max-w-[320px] mb-8 leading-relaxed">
-          O‘qishni davom ettirish uchun internet aloqangizni tekshiring.
+          {t("OfflinePage.description")}
         </p>
 
         {/* Tugma */}
@@ -85,19 +87,13 @@ export default function OfflinePage() {
           <RefreshCw
             className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
           />
-          {isRefreshing ? "Tekshirilmoqda..." : "Qayta urinish"}
+          {isRefreshing ? t("OfflinePage.buttonChecking") : t("OfflinePage.buttonRetry")}
         </button>
 
         {/* Ma'lumot */}
         <div className="mt-8 flex items-center justify-center gap-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-100 dark:border-slate-800/50 px-4 py-3 rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.02)] text-xs sm:text-sm text-slate-500 dark:text-slate-400">
           <BookOpen className="w-4 h-4 text-blue-600 shrink-0" />
-          <span>
-            Siz hali ham kutubxonadagi{" "}
-            <span className="text-blue-600 font-semibold hover:underline cursor-pointer">
-              yuklab olingan kitoblar
-            </span>
-            dan foydalanishingiz mumkin.
-          </span>
+          <span dangerouslySetInnerHTML={{ __html: t("OfflinePage.libraryNotice") }} />
         </div>
       </motion.div>
     </div>

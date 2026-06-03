@@ -183,5 +183,72 @@
     "buyFailed": "Kitob sotib olinmadi",
     "notEnoughStars": "Zukko star yetarli emas",
     "viewFullDescription": "To'liq ko'rish"
+  },
+  "examHistory": {
+    "title": "Imtihon tarixi",
+    "subtitle": "Topshirilgan barcha imtihonlar",
+    "empty": "Hali imtihon topshirilmagan",
+    "finished": "Yakunlandi — batafsil ko'rish",
+    "notFound": "Ma'lumot topilmadi",
+    "score": "Ball",
+    "maxScore": "Maks ball",
+    "question": "Savol",
+    "result": "Natija",
+    "passed": "Muvaffaqiyatli o'tdingiz!",
+    "failed": "Imtihondan o'ta olmadingiz",
+    "answers": "Javoblar",
+    "you": "Siz",
+    "correct": "To'g'ri",
+    "ball": "ball"
+  },
+  "lessonDetail": {
+    "notFound": "Dars topilmadi",
+    "completed": "Bajarildi",
+    "notCompleted": "Bajarilmadi"
+  },
+  "member": {
+    "fullName": "Ism familiya",
+    "birthDate": "Tug'ilgan sana",
+    "status": "Holati"
+  },
+  "studentExam": {
+    "answerError": "Javob yuborishda xatolik",
+    "finishError": "Imtihonni yakunlashda xatolik",
+    "ballSuffix": "ball",
+    "finished": "Imtihon yakunlandi!",
+    "backToExams": "Imtihonlarga qaytish",
+    "retry": "Qayta urinish",
+    "question": "Savol",
+    "finishExam": "Imtihonni yakunlash",
+    "next": "Keyingi"
+  },
+  "notFound": {
+    "title": "Sahifa topilmadi",
+    "description": "Siz izlagan sahifa mavjud emas yoki ko'chirilgan bo'lishi mumkin. Bosh sahifaga qaytib ko'ring.",
+    "home": "Bosh sahifa",
+    "tagline": "Ta'lim platformasi"
+  },
+  "devices": {
+    "title": "Qurilmalar",
+    "subtitle": "Akkauntingizga ulangan faol sessiyalarni ko'ring va xavfsizligingizni nazorat qiling.",
+    "activeSessions": "Aktiv sessiyalar ro'yxati",
+    "thisDevice": "Shu qurilma",
+    "unknownDevice": "Noma'lum qurilma",
+    "system": "Tizim:",
+    "unknownOs": "Noma'lum OS",
+    "unknownCountry": "Noma'lum davlat",
+    "ipAddress": "IP Manzil:",
+    "browser": "Brouzer:",
+    "unknown": "Noma'lum",
+    "expel": "Chiqarish",
+    "activeSession": "Faol seans",
+    "modalTitle": "Qurilmadan chiqish",
+    "modalDesc": "Ushbu qurilmani tizimdan chiqarib yubormoqchimisiz? Qayta kirish uchun login va parolni kiritish talab qilinadi.",
+    "cancel": "Bekor qilish",
+    "expelling": "Chiqarilmoqda...",
+    "confirmExpel": "Ha, chiqarilsin"
+  },
+  "pageLoader": {
+    "subtitle": "O'quv markazi platformasi"
   }
 }

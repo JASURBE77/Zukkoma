@@ -13,10 +13,12 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
+import { useTranslation } from "react-i18next"
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function StudentExamPage() {
+  const { t }        = useTranslation()
   const dispatch     = useDispatch<AppDispatch>()
   const router       = useRouter()
   const { examSession } = useParams<{ examSession: string }>()
@@ -65,7 +67,7 @@ export default function StudentExamPage() {
     )
 
     if (postAnswer.rejected.match(result)) {
-      toast.error(result.payload ?? "Javob yuborishda xatolik")
+      toast.error(result.payload ?? t("studentExam.answerError"))
       return
     }
 
@@ -97,7 +99,7 @@ export default function StudentExamPage() {
     const result = await dispatch(finishExam(examSession))
 
     if (finishExam.rejected.match(result)) {
-      toast.error(result.payload ?? "Imtihonni yakunlashda xatolik")
+      toast.error(result.payload ?? t("studentExam.finishError"))
     }
   }
 
@@ -117,16 +119,16 @@ export default function StudentExamPage() {
               <Trophy className="h-10 w-10 text-green-600 dark:text-green-400" />
             </div>
             <CardTitle className="mt-4 text-3xl font-black text-slate-900 dark:text-white">
-              {score} ball
+              {score} {t("studentExam.ballSuffix")}
             </CardTitle>
-            <p className="text-sm text-slate-500">Imtihon yakunlandi!</p>
+            <p className="text-sm text-slate-500">{t("studentExam.finished")}</p>
           </CardHeader>
           <CardContent className="pb-8">
             <Button
               className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white"
               onClick={() => router.push("/exams")}
             >
-              Imtihonlarga qaytish
+              {t("studentExam.backToExams")}
             </Button>
           </CardContent>
         </Card>
@@ -151,7 +153,7 @@ export default function StudentExamPage() {
       <div className="flex h-64 flex-col items-center justify-center gap-3">
         <AlertCircle className="h-10 w-10 text-red-400" />
         <p className="text-sm font-medium text-slate-500">{error}</p>
-        <Button variant="outline" onClick={() => loadQuestions(page)}>Qayta urinish</Button>
+        <Button variant="outline" onClick={() => loadQuestions(page)}>{t("studentExam.retry")}</Button>
       </div>
     )
   }
@@ -172,7 +174,7 @@ export default function StudentExamPage() {
       {/* Progress */}
       <div className="space-y-2">
         <div className="flex items-center justify-between text-sm font-semibold text-slate-500">
-          <span>Savol {totalAnswered + 1} / {totalQuestions || "..."}</span>
+          <span>{t("studentExam.question")} {totalAnswered + 1} / {totalQuestions || "..."}</span>
           <span>{Math.round(((totalAnswered) / (totalQuestions || 1)) * 100)}%</span>
         </div>
         <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
@@ -238,7 +240,7 @@ export default function StudentExamPage() {
             onClick={handleFinish}
           >
             {actionLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-            Imtihonni yakunlash
+            {t("studentExam.finishExam")}
           </Button>
         ) : (
           <Button
@@ -250,7 +252,7 @@ export default function StudentExamPage() {
               ? <Loader2 className="h-4 w-4 animate-spin" />
               : <ChevronRight className="h-4 w-4" />
             }
-            Keyingi
+            {t("studentExam.next")}
           </Button>
         )}
       </div>
