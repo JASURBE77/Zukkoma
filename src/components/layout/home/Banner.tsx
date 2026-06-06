@@ -7,6 +7,7 @@ import { useSelector } from "react-redux"
 import { RootState } from "@/store/store"
 import Link from "next/link"
 import { useTranslation } from "react-i18next"
+import { EmptyState } from "@/components/ui/empty-state"
 import dayjs from "dayjs"
 import {
   CheckCircle2, XCircle, Clock, AlertCircle,
@@ -135,6 +136,9 @@ const Banner = () => {
           </div>
         )}
       </section>
+
+      {/* Backenddan ma'lumot kelmaganda bo'sh qolmasin */}
+      {!data && <EmptyState />}
 
       {data && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

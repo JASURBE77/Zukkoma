@@ -1,9 +1,9 @@
-import { AuthStore, Login, LoginResponse } from "@/types"
+import { AuthStore, Login, LoginError, LoginResponse } from "@/types"
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import axios from "axios"
 import axiosInstance from "@/lib/axiosInstance"
 
-export const loginUser = createAsyncThunk<LoginResponse, Login, { rejectValue: string }>(
+export const loginUser = createAsyncThunk<LoginResponse, Login, { rejectValue: LoginError }>(
   "auth/loginUser",
   async (data: Login, { rejectWithValue }) => {
     try {
@@ -11,18 +11,24 @@ export const loginUser = createAsyncThunk<LoginResponse, Login, { rejectValue: s
       return res.data
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        return rejectWithValue(error.response?.data?.message || "Login failed")
+        return rejectWithValue({
+          message: error.response?.data?.message || "Login failed",
+          locked: error.response?.status === 423,
+        })
       }
-      return rejectWithValue("Login failed")
+      return rejectWithValue({ message: "Login failed", locked: false })
     }
   }
 )
+
+const LOCK_DURATION_MS = 5 * 60 * 1000
 
 const initialState: AuthStore = {
   token: null,
   role: null,
   loading: false,
-  error: null
+  error: null,
+  lockedUntil: null
 }
 
 const authSlice = createSlice({
@@ -33,6 +39,10 @@ const authSlice = createSlice({
       state.token = null
       state.role = null
       state.error = null
+      state.lockedUntil = null
+    },
+    clearLock: (state) => {
+      state.lockedUntil = null
     }
   },
   extraReducers: (builder) => {
@@ -45,13 +55,15 @@ const authSlice = createSlice({
         state.loading = false
         state.token = action.payload.accessToken
         state.role = action.payload.role
+        state.lockedUntil = null
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false
-        state.error = action.payload ?? "Xatolik yuz berdi"
+        state.error = action.payload?.message ?? "Xatolik yuz berdi"
+        if (action.payload?.locked) state.lockedUntil = Date.now() + LOCK_DURATION_MS
       })
   }
 })
 
-export const { logout } = authSlice.actions
+export const { logout, clearLock } = authSlice.actions
 export default authSlice.reducer

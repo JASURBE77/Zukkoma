@@ -6,12 +6,12 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Eye, EyeOff, ArrowRight } from "lucide-react"
-import Logo from "../../../assets/zukkoma.jpg"
+import { Eye, EyeOff, ArrowRight, Lock } from "lucide-react"
+import Logo from "../../../assets/zukkoma.png"
 import LoginBanner from "../../../assets/LoginImg.svg"
 import Image from "next/image"
 import BannerText from "../../../assets/text.svg"
-import { loginUser } from "@/store/slice/authSlice"
+import { loginUser, clearLock } from "@/store/slice/authSlice"
 import { AppDispatch, RootState } from "@/store/store"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
@@ -21,24 +21,47 @@ export default function LoginPage() {
   const [login, setLogin] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
+  const [remaining, setRemaining] = useState(0)
 
   const dispatch = useDispatch<AppDispatch>()
   const router = useRouter()
-  const { loading, error, token } = useSelector((state: RootState) => state.auth)
+  const { loading, token, lockedUntil } = useSelector((state: RootState) => state.auth)
   const { t } = useTranslation()
 
   useEffect(() => {
     if (token) router.replace("/home")
   }, [token, router])
 
+  // 423 lock countdown
+  useEffect(() => {
+    if (!lockedUntil) {
+      setRemaining(0)
+      return
+    }
+
+    const tick = () => {
+      const left = Math.max(0, Math.ceil((lockedUntil - Date.now()) / 1000))
+      setRemaining(left)
+      if (left <= 0) dispatch(clearLock())
+    }
+
+    tick()
+    const id = setInterval(tick, 1000)
+    return () => clearInterval(id)
+  }, [lockedUntil, dispatch])
+
+  const locked = remaining > 0
+  const countdown = `${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, "0")}`
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (locked) return
     const result = await dispatch(loginUser({ login, password }))
     if (loginUser.fulfilled.match(result)) {
       toast.success(t("auth.loginSuccess"))
       router.push("/home")
     } else {
-      toast.error(result.payload ?? t("auth.loginError"))
+      toast.error(result.payload?.message ?? t("auth.loginError"))
     }
   }
 
@@ -68,7 +91,7 @@ export default function LoginPage() {
 
         <div className="flex items-center justify-center relative p-6 sm:p-8 lg:p-16 bg-white dark:bg-slate-900">
           <div className="w-full max-w-sm space-y-6 sm:space-y-8">
-              <Image src={Logo} alt="zukkoma logo" width={48} height={48} className="absolute top-4 right-6 w-15 md:w-30 rounded-xl object-cover" />
+              <Image src={Logo} alt="zukkoma logo" width={120} height={120} className="absolute top-4 right-6 w-15 md:w-30 h-auto rounded-xl object-contain" />
             <div className="space-y-2 text-center lg:text-left">
               <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
                 {t("auth.title")}
@@ -122,18 +145,29 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-               
-                className="w-full h-12 bg-[#2D6BFF] hover:bg-[#1E5AE8] text-white font-semibold rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                disabled={loading || locked}
+                className="w-full h-12 bg-[#2D6BFF] hover:bg-[#1E5AE8] text-white font-semibold rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100"
                 style={{ boxShadow: "0 4px 16px rgba(45,107,255,0.3)" }}
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : locked ? (
+                  <>
+                    <Lock className="w-4 h-4" /> {countdown}
+                  </>
                 ) : (
                   <>
                     {t("auth.login")} <ArrowRight className="w-4 h-4" />
                   </>
                 )}
               </Button>
+
+              {locked && (
+                <div className="flex items-center justify-center gap-2 -mt-2 text-sm font-medium text-[#ba1a1a]">
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>{t("auth.lockedFor", { time: countdown })}</span>
+                </div>
+              )}
             </form>
           </div>
         </div>

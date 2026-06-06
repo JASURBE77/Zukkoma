@@ -62,7 +62,17 @@ export default function MemberProfilePage() {
     )
   }
 
-  if (!memberProfile) return null
+  if (!memberProfile) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <AlertCircle className="w-10 h-10 text-slate-300" />
+        <p className="text-slate-500 font-medium">{t("common.noData")}</p>
+        <Button variant="outline" onClick={() => router.back()} className="gap-2 rounded-xl">
+          <ArrowLeft className="w-4 h-4" /> {t("common.back")}
+        </Button>
+      </div>
+    )
+  }
 
   const initials = `${memberProfile.name?.[0] ?? ""}${memberProfile.surname?.[0] ?? ""}`.toUpperCase()
   const wallet = Math.floor(memberProfile.wallet).toLocaleString("uz-UZ")

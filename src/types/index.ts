@@ -3,6 +3,12 @@ export interface AuthStore {
   role: string | null
   loading: boolean
   error: string | null
+  lockedUntil: number | null
+}
+
+export interface LoginError {
+  message: string
+  locked: boolean
 }
 
 export interface Login {

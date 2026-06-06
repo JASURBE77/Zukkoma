@@ -125,28 +125,39 @@ export default function ExamPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Tab switcher */}
-          <div className="flex bg-[#ededf9] dark:bg-slate-800 p-1 rounded-xl">
-            {TABS.map(tab => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
-                  activeTab === tab.key
-                    ? "bg-white dark:bg-slate-900 text-[#2D6BFF] shadow-sm"
-                    : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
-                }`}
-              >
-                {tab.label}
-                {counts[tab.key] > 0 && (
-                  <span className={`ml-1.5 text-[10px] font-black px-1.5 py-0.5 rounded-full ${
-                    activeTab === tab.key ? "bg-[#2D6BFF]/10 text-[#2D6BFF]" : "bg-slate-200 dark:bg-slate-700 text-slate-500"
-                  }`}>
-                    {counts[tab.key]}
-                  </span>
-                )}
-              </button>
-            ))}
+          {/* Tab switcher — profile sahifasidagi segmented control dizayni */}
+          <div className="flex bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/40 dark:border-slate-800 p-1.5 rounded-2xl">
+            {TABS.map(tab => {
+              const isActive = activeTab === tab.key
+              return (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`relative flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all select-none ${
+                    isActive
+                      ? "text-[#2D6BFF] dark:text-blue-400"
+                      : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+                  }`}
+                >
+                  {/* Orqa fondagi silliq siljiydigan animatsiya kapsulasi */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="examTabIndicator"
+                      className="absolute inset-0 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200/30 dark:border-slate-700/50"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-10">{tab.label}</span>
+                  {counts[tab.key] > 0 && (
+                    <span className={`relative z-10 text-[10px] font-black px-1.5 py-0.5 rounded-full ${
+                      isActive ? "bg-[#2D6BFF]/10 text-[#2D6BFF]" : "bg-slate-200 dark:bg-slate-700 text-slate-500"
+                    }`}>
+                      {counts[tab.key]}
+                    </span>
+                  )}
+                </button>
+              )
+            })}
           </div>
 
           {/* Refresh */}

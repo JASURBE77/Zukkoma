@@ -9,6 +9,7 @@ import { CheckCircle2, XCircle, Clock, AlertCircle, CalendarDays } from "lucide-
 import dayjs from "dayjs"
 import "dayjs/locale/uz"
 import { useTranslation } from "react-i18next"
+import { EmptyState } from "@/components/ui/empty-state"
 
 dayjs.locale("uz")
 
@@ -104,8 +105,11 @@ export default function AttendancePage() {
         )}
       </div>
 
+      {/* Empty state — backenddan ma'lumot kelmaganda bo'sh qolmasin */}
+      {(!data || data.attendance.length === 0) && <EmptyState />}
+
       {/* Stats Bento Grid */}
-      {data && (
+      {data && data.attendance.length > 0 && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-[#e1e1ee]/50 dark:border-slate-800 hover:shadow-md transition-shadow group" style={cardShadow}>
             <div className="flex justify-between items-start mb-4">
@@ -154,7 +158,7 @@ export default function AttendancePage() {
       )}
 
       {/* Calendar + List */}
-      {data && (
+      {data && data.attendance.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
           {/* Calendar Widget */}

@@ -18,7 +18,7 @@ import { fetchMe } from "@/store/slice/userSlice"
 import { persistor } from "@/store/store"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import Logo from "../../assets/zukkoma.jpg"
+import Logo from "../../assets/zukkoma.png"
 import Image from "next/image"
 import { useTranslation } from "react-i18next"
 import LanguageSwitcher from "./LanguageSwitcher"
@@ -89,7 +89,7 @@ export default function Header() {
 
         <div className="flex items-center gap-3">
           <Link href="/home" className="flex items-center gap-2 lg:hidden">
-            <Image className="w-9 h-9 rounded-xl object-cover" src={Logo} alt="Zukkoma" />
+            <Image width={36} height={36} className="w-9 h-9 rounded-xl object-contain" src={Logo} alt="Zukkoma" />
             <span
               className="text-lg font-black text-slate-900 dark:text-white tracking-tight"
               style={{ fontFamily: "var(--font-manrope, 'Manrope', sans-serif)" }}

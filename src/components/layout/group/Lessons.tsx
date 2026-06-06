@@ -9,6 +9,7 @@ import { fetchMe } from "@/store/slice/userSlice"
 import { ChevronDown, CheckCircle2, ChevronRight, Lock } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTranslation } from "react-i18next"
+import { EmptyState } from "@/components/ui/empty-state"
 
 export default function Lessons() {
   const dispatch = useDispatch<AppDispatch>()
@@ -52,7 +53,9 @@ export default function Lessons() {
     )
   }
 
-  if (!data) return null
+  if (!data || data.methodologies.length === 0) {
+    return <EmptyState className="m-6" />
+  }
 
   return (
     <div className="p-6 space-y-4">

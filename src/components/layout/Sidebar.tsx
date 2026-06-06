@@ -13,7 +13,7 @@ import {
   Library,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import Logo from "../../assets/zukkoma.jpg"
+import Logo from "../../assets/zukkoma.png"
 import Image from "next/image"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "@/store/store"
@@ -64,8 +64,8 @@ export default function Sidebar() {
       style={{ boxShadow: "2px 0 8px rgba(0,0,0,0.04)" }}
     >
       <div className="mb-8 px-2 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-[#2D6BFF] flex items-center justify-center shrink-0">
-          <Image className=" object-cover" src={Logo} alt="Zukkoma logo" />
+        <div className=" flex items-center justify-center shrink-0">
+          <Image  className="w-20 h-auto rounded-xl object-contain p-1" src={Logo} alt="Zukkoma logo" />
         </div>
         <div>
           <h1
