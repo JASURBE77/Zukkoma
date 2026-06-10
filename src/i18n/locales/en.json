@@ -136,7 +136,20 @@
     "minLength": "Password must be at least 6 characters",
     "otpRequired": "Enter the 4-digit code",
     "otpSentSuccess": "Verification code sent to your email!",
-    "passwordUpdateSuccess": "Password updated successfully!"
+    "passwordUpdateSuccess": "Password updated successfully!",
+    "achievementsList": {
+      "locked": "Locked",
+      "starTitle": "Star",
+      "starHint": "Collect 1000 Zukko stars",
+      "streakTitle": "Streak Master",
+      "streakHint": "Reach a 1000 strike",
+      "readerTitle": "Bookworm",
+      "readerHint": "Buy 5 books",
+      "attendanceTitle": "Attendance",
+      "attendanceHint": "Attend 40 lessons in a row",
+      "diamondTitle": "Diamond",
+      "diamondHint": "Top monthly strike — gift winner"
+    }
   },
   "OfflinePage": {
     "title": "You are offline",

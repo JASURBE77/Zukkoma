@@ -64,7 +64,7 @@ export default function RootLayout({
     <OfflineProvider>
           <Providers>
           {children}
-          <Toaster richColors position="top-right" />
+          <Toaster />
         </Providers>
     </OfflineProvider>
       </body>

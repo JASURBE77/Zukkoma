@@ -279,3 +279,48 @@ export interface AttendanceData {
   attendance: AttendanceItem[]
   summary: AttendanceSummary
 }
+
+// Real-time notification types (socket.io) — backenddagi payloadlarga aniq mos
+export interface StrikeNotification {
+  type: "strike"
+  id: number
+  userId: number
+  studentName: string
+  strike: number
+  message: string
+  date: string
+  createdAt: string
+}
+
+export interface ZukkoStarNotification {
+  type: "zukko_star"
+  id: number
+  userId: number
+  studentName: string
+  amountStars: number
+  message: string
+  createdAt: string
+}
+
+export interface BalanceNotification {
+  type: "balance"
+  id: number
+  userId: number
+  studentName: string
+  amount: number
+  message: string
+  paymentDate: string
+  createdAt: string
+}
+
+// Server -> Client eventlari
+export interface ServerToClientEvents {
+  "notification:new_strike": (data: StrikeNotification) => void
+  "notification:new_zukko_star": (data: ZukkoStarNotification) => void
+  "notification:balance_topup": (data: BalanceNotification) => void
+}
+
+// Client -> Server eventlari
+export interface ClientToServerEvents {
+  join_room: (roomName: string) => void
+}

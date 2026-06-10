@@ -3,10 +3,11 @@
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "@/store/store"
-import { fetchMe, updatePassword, clearPasswordError } from "@/store/slice/userSlice"
+import { fetchMe, fetchStrike, updatePassword, clearPasswordError } from "@/store/slice/userSlice"
+import { fetchLibraryData } from "@/store/slice/librarySlice"
 import {
   Eye, EyeOff, Loader2, ShieldCheck, Phone, UserRound, Users,
-  Star, TrendingUp, Flame, Pencil, Trophy, Lock, BookOpen, Rocket, Gem,
+  Star, TrendingUp, Flame, Pencil, Lock, BookOpen, Gem, CalendarCheck,
   Smartphone, Shield, Award, User, type LucideIcon
 } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -15,17 +16,22 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { motion } from "framer-motion"
 import Devices from "@/components/layout/profile/Devices"
-import { toast } from "sonner"
+import { notify } from "@/lib/notify"
 import { useTranslation } from "react-i18next"
 
 const cardShadow = { boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }
+
+const STAR_GOAL = 1000
+const STREAK_GOAL = 1000
+const BOOKS_GOAL = 5
+const ATTENDANCE_GOAL = 40
 
 type TabKey = "personal" | "security" | "achievements" | "devices"
 
 interface Achievement {
   Icon: LucideIcon
   label: string
-  date: string
+  hint: string
   unlocked: boolean
   iconCls: string
   bgCls: string
@@ -60,9 +66,10 @@ function ProfileSkeleton() {
 
 export default function ProfilePage() {
   const dispatch = useDispatch<AppDispatch>()
-  const { user, loading, error, passwordLoading, passwordError } =
+  const { user, loading, error, passwordLoading, passwordError, strike: fetchedStrike } =
     useSelector((state: RootState) => state.user)
   const homeData = useSelector((state: RootState) => state.home.data)
+  const purchasedBooksCount = useSelector((state: RootState) => state.library.purchasedBookIds.length)
   const { t } = useTranslation()
 
   const [activeTab, setActiveTab] = useState<TabKey>("personal")
@@ -71,15 +78,17 @@ export default function ProfilePage() {
   const [showConfirm, setShowConfirm] = useState(false)
 
   useEffect(() => { dispatch(fetchMe()) }, [dispatch])
-  useEffect(() => { if (passwordError) toast.error(passwordError) }, [passwordError])
+  useEffect(() => { dispatch(fetchLibraryData()) }, [dispatch])
+  useEffect(() => { if (user?.id) dispatch(fetchStrike(user.id)) }, [dispatch, user?.id])
+  useEffect(() => { if (passwordError) notify.error(passwordError) }, [passwordError])
 
   const handlePasswordSave = async () => {
-    if (!passwords.newPassword) return toast.error(t("profile.enterNewPassword"))
-    if (passwords.newPassword.length < 6) return toast.error(t("profile.minLength"))
-    if (passwords.newPassword !== passwords.confirm) return toast.error(t("profile.passwordMismatch"))
+    if (!passwords.newPassword) return notify.error(t("profile.enterNewPassword"))
+    if (passwords.newPassword.length < 6) return notify.error(t("profile.minLength"))
+    if (passwords.newPassword !== passwords.confirm) return notify.error(t("profile.passwordMismatch"))
     const result = await dispatch(updatePassword({ newPassword: passwords.newPassword }))
     if (updatePassword.fulfilled.match(result)) {
-      toast.success(t("profile.passwordUpdateSuccess"))
+      notify.success(t("profile.passwordUpdateSuccess"))
       setPasswords({ newPassword: "", confirm: "" })
       dispatch(clearPasswordError())
     }
@@ -97,7 +106,14 @@ export default function ProfilePage() {
     : 0
 
   const attendancePct = homeData?.stats.attendancePercentage ?? 0
-  const strike = homeData?.profile.strike ?? 0
+  // strike — /strike/:userId dan olinadi; kelmaguncha home ma'lumotidagi qiymatga fallback
+  const strike = fetchedStrike ?? homeData?.profile.strike ?? 0
+
+  // Diamond — admin tomonidan beriladi (backend flagi); flag bo'lmasa qulflangan
+  const isDiamondWinner = Boolean(
+    profileAny?.["diamond"] ?? profileAny?.["isDiamond"] ??
+    profileAny?.["monthWinner"] ?? profileAny?.["award"] ?? false
+  )
 
   // Tablar strukturasi (Ikonkalar qo'shildi va vizual boyitildi)
   const TABS: { key: TabKey; label: string; Icon: LucideIcon }[] = [
@@ -108,12 +124,11 @@ export default function ProfilePage() {
   ]
 
   const ACHIEVEMENTS: Achievement[] = [
-    { Icon: Trophy,   label: "Birinchi qadam", date: "12.01.2024", unlocked: true,         iconCls: "text-blue-700",   bgCls: "bg-blue-50 dark:bg-blue-700/10"   },
-    { Icon: Star,     label: "Yulduz",         date: "25.01.2024", unlocked: zukkoStars > 0, iconCls: "text-amber-600", bgCls: "bg-amber-50 dark:bg-amber-500/10" },
-    { Icon: Flame,    label: "Streak Master",  date: "",           unlocked: strike >= 7,    iconCls: "text-orange-600", bgCls: "bg-orange-50 dark:bg-orange-500/10"},
-    { Icon: BookOpen, label: "Kitobxon",       date: "",           unlocked: false,          iconCls: "text-violet-600", bgCls: "bg-violet-50 dark:bg-violet-500/10"},
-    { Icon: Rocket,   label: "Raketa",         date: "",           unlocked: false,          iconCls: "text-indigo-600", bgCls: "bg-indigo-50 dark:bg-indigo-500/10"},
-    { Icon: Gem,      label: "Diamond",        date: "",           unlocked: false,          iconCls: "text-sky-600",    bgCls: "bg-sky-50 dark:bg-sky-500/10"     },
+    { Icon: Star,         label: t("profile.achievementsList.starTitle"),       hint: t("profile.achievementsList.starHint"),       unlocked: zukkoStars >= STAR_GOAL,           iconCls: "text-amber-600",   bgCls: "bg-amber-50 dark:bg-amber-500/10"     },
+    { Icon: Flame,        label: t("profile.achievementsList.streakTitle"),     hint: t("profile.achievementsList.streakHint"),     unlocked: strike >= STREAK_GOAL,             iconCls: "text-orange-600",  bgCls: "bg-orange-50 dark:bg-orange-500/10"   },
+    { Icon: BookOpen,     label: t("profile.achievementsList.readerTitle"),     hint: t("profile.achievementsList.readerHint"),     unlocked: purchasedBooksCount >= BOOKS_GOAL, iconCls: "text-violet-600",  bgCls: "bg-violet-50 dark:bg-violet-500/10"   },
+    { Icon: CalendarCheck,label: t("profile.achievementsList.attendanceTitle"), hint: t("profile.achievementsList.attendanceHint"), unlocked: strike >= ATTENDANCE_GOAL,         iconCls: "text-emerald-600", bgCls: "bg-emerald-50 dark:bg-emerald-500/10" },
+    { Icon: Gem,          label: t("profile.achievementsList.diamondTitle"),    hint: t("profile.achievementsList.diamondHint"),    unlocked: isDiamondWinner,                   iconCls: "text-sky-600",     bgCls: "bg-sky-50 dark:bg-sky-500/10"         },
   ]
 
   if (loading && !user) return <ProfileSkeleton />
@@ -427,9 +442,8 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* Tab: Achievements */}
         {activeTab === "achievements" && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {ACHIEVEMENTS.map((ach, i) => (
               <motion.div
                 key={i}
@@ -447,9 +461,12 @@ export default function ProfilePage() {
                   }
                 </div>
                 <span className="text-sm font-bold text-slate-900 dark:text-white">{ach.label}</span>
-                <span className="text-[10px] text-slate-400 mt-0.5">
-                  {ach.unlocked && ach.date ? ach.date : ach.unlocked ? "" : "Qulflangan"}
-                </span>
+                <span className="text-[10px] text-slate-400 mt-1 leading-tight">{ach.hint}</span>
+                {!ach.unlocked && (
+                  <span className="text-[10px] font-bold text-slate-400 mt-1.5 flex items-center gap-1">
+                    <Lock className="w-3 h-3" /> {t("profile.achievementsList.locked")}
+                  </span>
+                )}
               </motion.div>
             ))}
           </div>

@@ -6,6 +6,7 @@ import Sidebar from '@/components/layout/Sidebar';
 import NavigationMobile from '@/components/layout/NavigationMobile';
 import ProtectedRoute from '@/guard/ProtectedRoute';
 import PageLoader from '@/components/layout/PageLoader';
+import NotificationListener from '@/components/NotificationListener';
 
 export default function MainLayout({
   children,
@@ -18,8 +19,9 @@ export default function MainLayout({
 
   return (
     <ProtectedRoute>
+      <NotificationListener />
       <PageLoader>
-        <div className="flex min-h-screen">
+        <div className="flex">
           {!isReaderPage && <Sidebar />}
 
           <div className="flex-1 flex flex-col bg-[#F8FAFC] dark:bg-slate-950 min-w-0">

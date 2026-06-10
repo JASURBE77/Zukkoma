@@ -143,7 +143,20 @@
     "minLength": "Parol kamida 6 ta belgi bo'lishi kerak",
     "otpRequired": "4 xonali kodni kiriting",
     "otpSentSuccess": "Tasdiqlash kodi emailingizga yuborildi!",
-    "passwordUpdateSuccess": "Parol muvaffaqiyatli o'zgartirildi!"
+    "passwordUpdateSuccess": "Parol muvaffaqiyatli o'zgartirildi!",
+    "achievementsList": {
+      "locked": "Qulflangan",
+      "starTitle": "Yulduz",
+      "starHint": "1000 Zukko yulduz to'plang",
+      "streakTitle": "Streak Master",
+      "streakHint": "1000 ta strike to'plang",
+      "readerTitle": "Kitobxon",
+      "readerHint": "5 ta kitob sotib oling",
+      "attendanceTitle": "Davomat",
+      "attendanceHint": "Ketma-ket 40 ta darsga keling",
+      "diamondTitle": "Diamond",
+      "diamondHint": "Oylik eng ko'p strike — sovg'a sovrindori"
+    }
   },
   "group": {
     "friends": "Do'stlarim",

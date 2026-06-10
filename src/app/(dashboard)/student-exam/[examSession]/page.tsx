@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter, useParams } from "next/navigation"
-import { toast } from "sonner"
+import { notify } from "@/lib/notify"
 import { ChevronRight, Loader2, Trophy, AlertCircle } from "lucide-react"
 
 import { AppDispatch, RootState } from "@/store/store"
@@ -67,7 +67,7 @@ export default function StudentExamPage() {
     )
 
     if (postAnswer.rejected.match(result)) {
-      toast.error(result.payload ?? t("studentExam.answerError"))
+      notify.error(result.payload ?? t("studentExam.answerError"))
       return
     }
 
@@ -99,7 +99,7 @@ export default function StudentExamPage() {
     const result = await dispatch(finishExam(examSession))
 
     if (finishExam.rejected.match(result)) {
-      toast.error(result.payload ?? t("studentExam.finishError"))
+      notify.error(result.payload ?? t("studentExam.finishError"))
     }
   }
 

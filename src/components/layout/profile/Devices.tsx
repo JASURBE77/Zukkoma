@@ -119,7 +119,7 @@ const DevicesPage = () => {
   }, [])
 
   return (
-    <div className="w-full min-h-screen bg-[#F8FAFC] dark:bg-slate-950 py-6 px-4 sm:px-6 font-sans antialiased text-slate-900 dark:text-slate-100">
+    <div className="w-full  bg-[#F8FAFC] dark:bg-slate-950 py-6 px-4 sm:px-6 font-sans antialiased text-slate-900 dark:text-slate-100">
       <div className="mx-auto space-y-6">
 
         <div className='bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200/50 dark:border-slate-800/60 shadow-sm'>

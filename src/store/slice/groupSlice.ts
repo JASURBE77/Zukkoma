@@ -63,7 +63,13 @@ const initialState: GroupStore = {
 const groupSlice = createSlice({
   name: "group",
   initialState,
-  reducers: {},
+  reducers: {
+    // Socket orqali real-time: bitta a'zoning strike qiymatini yangilaymiz
+    setMemberStrike: (state, action: PayloadAction<{ userId: number; strike: number }>) => {
+      const member = state.members.find((m) => m.id === action.payload.userId)
+      if (member) member.strike = action.payload.strike
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchGroupMembers.pending, (state) => {
@@ -94,4 +100,5 @@ const groupSlice = createSlice({
   }
 })
 
+export const { setMemberStrike } = groupSlice.actions
 export default groupSlice.reducer

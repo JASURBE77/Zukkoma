@@ -12,6 +12,8 @@ interface UserStore {
   updateError: string | null
   passwordLoading: boolean
   passwordError: string | null
+  strike: number | null
+  strikeLoading: boolean
 }
 
 export const fetchMe = createAsyncThunk<User, void, { state: RootState; rejectValue: string }>(
@@ -33,6 +35,21 @@ export const fetchMe = createAsyncThunk<User, void, { state: RootState; rejectVa
       if (loading) return false
       if (user) return false
       return true
+    }
+  }
+)
+
+export const fetchStrike = createAsyncThunk<number, number, { state: RootState; rejectValue: string }>(
+  "user/fetchStrike",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get<{ totalStrikes: number }>("/strike", { params: { userId } })
+      return res.data.totalStrikes ?? 0
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(error.response?.data?.message || "Strike olishda xatolik")
+      }
+      return rejectWithValue("Strike olishda xatolik")
     }
   }
 )
@@ -77,6 +94,8 @@ const initialState: UserStore = {
   updateError: null,
   passwordLoading: false,
   passwordError: null,
+  strike: null,
+  strikeLoading: false,
 }
 
 const userSlice = createSlice({
@@ -88,6 +107,10 @@ const userSlice = createSlice({
     },
     clearPasswordError: (state) => {
       state.passwordError = null
+    },
+    // Socket orqali real-time strike yangilanishi uchun
+    setStrike: (state, action: PayloadAction<number>) => {
+      state.strike = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -129,8 +152,19 @@ const userSlice = createSlice({
         state.passwordLoading = false
         state.passwordError = action.payload ?? "Xatolik yuz berdi"
       })
+
+      .addCase(fetchStrike.pending, (state) => {
+        state.strikeLoading = true
+      })
+      .addCase(fetchStrike.fulfilled, (state, action: PayloadAction<number>) => {
+        state.strikeLoading = false
+        state.strike = action.payload
+      })
+      .addCase(fetchStrike.rejected, (state) => {
+        state.strikeLoading = false
+      })
   }
 })
 
-export const { clearUpdateError, clearPasswordError } = userSlice.actions
+export const { clearUpdateError, clearPasswordError, setStrike } = userSlice.actions
 export default userSlice.reducer

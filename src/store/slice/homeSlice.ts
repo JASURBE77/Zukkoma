@@ -49,7 +49,11 @@ const homeSlice = createSlice({
   reducers: {
     invalidateHome: (state) => {
       state.lastFetched = null
-    }
+    },
+    // Socket orqali real-time: Banner'dagi strike qiymatini yangilaymiz
+    setHomeStrike: (state, action: PayloadAction<number>) => {
+      if (state.data) state.data.profile.strike = action.payload
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -69,5 +73,5 @@ const homeSlice = createSlice({
   }
 })
 
-export const { invalidateHome } = homeSlice.actions
+export const { invalidateHome, setHomeStrike } = homeSlice.actions
 export default homeSlice.reducer

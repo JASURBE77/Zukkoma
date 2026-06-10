@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from "react"
 import { motion } from "framer-motion"
 import { Search, BookOpen, Star, ChevronRight, Loader2, Info } from "lucide-react"
-import { toast } from "sonner"
+import { notify } from "@/lib/notify"
 import { useDispatch, useSelector } from "react-redux"
 import { useTranslation } from "react-i18next"
 import { Input } from "@/components/ui/input"
@@ -133,7 +133,7 @@ export default function LibraryPage() {
     const currentStars = getStarNumber(homeData?.profile)
     if (currentStars != null && currentStars < selectedBook.price) {
       setBuyError(t("library.notEnoughStars"))
-      toast.error(t("library.notEnoughStars"))
+      notify.error(t("library.notEnoughStars"))
       return
     }
 
@@ -151,13 +151,13 @@ export default function LibraryPage() {
       }
       dispatch(invalidateHome())
       dispatch(fetchHomeData())
-      toast.success(t("library.buySuccess"))
+      notify.success(t("library.buySuccess"))
       setSelectedBook(null)
     } else {
       const raw = result.payload ?? ""
       const msg = isBuyErrorAboutStars(raw) ? t("library.notEnoughStars") : raw || t("library.buyFailed")
       setBuyError(msg)
-      toast.error(msg)
+      notify.error(msg)
     }
 
     setBuying(false)

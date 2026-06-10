@@ -151,3 +151,9 @@ h1, h2, h3, h4, h5, h6 {
 .card-shadow:hover {
   box-shadow: var(--shadow-card-hover);
 }
+
+/* ── Toast auto-dismiss progress chizig'i (notify.tsx) ──────── */
+@keyframes toastBar {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}

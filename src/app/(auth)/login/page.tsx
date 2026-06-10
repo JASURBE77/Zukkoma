@@ -13,7 +13,7 @@ import Image from "next/image"
 import BannerText from "../../../assets/text.svg"
 import { loginUser, clearLock } from "@/store/slice/authSlice"
 import { AppDispatch, RootState } from "@/store/store"
-import { toast } from "sonner"
+import { notify } from "@/lib/notify"
 import { useTranslation } from "react-i18next"
 import LanguageSwitcher from "@/components/layout/LanguageSwitcher"
 
@@ -58,10 +58,10 @@ export default function LoginPage() {
     if (locked) return
     const result = await dispatch(loginUser({ login, password }))
     if (loginUser.fulfilled.match(result)) {
-      toast.success(t("auth.loginSuccess"))
+      notify.success(t("auth.loginSuccess"))
       router.push("/home")
     } else {
-      toast.error(result.payload?.message ?? t("auth.loginError"))
+      notify.error(result.payload?.message ?? t("auth.loginError"))
     }
   }
 

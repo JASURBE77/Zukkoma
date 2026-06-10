@@ -143,7 +143,20 @@
     "minLength": "Пароль должен содержать минимум 6 символов",
     "otpRequired": "Введите 4-значный код",
     "otpSentSuccess": "Код подтверждения отправлен на вашу почту!",
-    "passwordUpdateSuccess": "Пароль успешно изменён!"
+    "passwordUpdateSuccess": "Пароль успешно изменён!",
+    "achievementsList": {
+      "locked": "Заблокировано",
+      "starTitle": "Звезда",
+      "starHint": "Накопите 1000 Zukko звёзд",
+      "streakTitle": "Мастер серии",
+      "streakHint": "Наберите 1000 страйков",
+      "readerTitle": "Книголюб",
+      "readerHint": "Купите 5 книг",
+      "attendanceTitle": "Посещаемость",
+      "attendanceHint": "Посетите 40 уроков подряд",
+      "diamondTitle": "Бриллиант",
+      "diamondHint": "Топ страйков за месяц — обладатель приза"
+    }
   },
   "group": {
     "friends": "Мои друзья",

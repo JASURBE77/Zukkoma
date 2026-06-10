@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
+import { notify } from "@/lib/notify"
 import {
   BookOpen, ClipboardList, Link2, Loader2,
   RotateCcw, Trophy, CalendarClock, RefreshCcw,
@@ -54,10 +54,10 @@ export default function ExamPage() {
     const result = await dispatch(startExam(sessionId))
     setStartingId(null)
     if (startExam.fulfilled.match(result)) {
-      toast.success(t("exams.startSuccess"))
+      notify.success(t("exams.startSuccess"))
       router.push(`/student-exam/${result.payload}`)
     } else {
-      toast.error(result.payload ?? t("exams.startError"))
+      notify.error(result.payload ?? t("exams.startError"))
     }
   }
 
@@ -68,11 +68,11 @@ export default function ExamPage() {
     const result = await dispatch(submitPracticeLink({ sessionId, link }))
     setStartingId(null)
     if (submitPracticeLink.fulfilled.match(result)) {
-      toast.success(t("exams.linkSuccess"))
+      notify.success(t("exams.linkSuccess"))
       setPracticeLinks(prev => ({ ...prev, [sessionId]: "" }))
       dispatch(fetchExamSessions())
     } else {
-      toast.error(result.payload ?? t("exams.linkError"))
+      notify.error(result.payload ?? t("exams.linkError"))
     }
   }
 
