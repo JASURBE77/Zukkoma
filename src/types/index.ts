@@ -32,6 +32,7 @@ export interface User {
   completedLessons: number
   pendingLessons: number
   joinDate: string
+  profile?: string | null
   wallet?: number
   star?: number
   stars?: number
@@ -51,6 +52,7 @@ export interface UpdateUserPayload {
   phone_number?: string
   age?: string
   avatar?: string
+  profile?: string
   level?: string
   login?: string
   password?: string

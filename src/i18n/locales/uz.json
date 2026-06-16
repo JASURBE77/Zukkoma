@@ -144,6 +144,11 @@
     "otpRequired": "4 xonali kodni kiriting",
     "otpSentSuccess": "Tasdiqlash kodi emailingizga yuborildi!",
     "passwordUpdateSuccess": "Parol muvaffaqiyatli o'zgartirildi!",
+    "changePhoto": "Rasmni o'zgartirish",
+    "imageTypeError": "Faqat JPG yoki PNG rasm yuklang",
+    "imageSizeError": "Rasm hajmi 5 MB dan oshmasligi kerak",
+    "imageUpdateSuccess": "Profil rasmi yangilandi!",
+    "imageUpdateError": "Rasm yuklashda xatolik",
     "achievementsList": {
       "locked": "Qulflangan",
       "starTitle": "Yulduz",

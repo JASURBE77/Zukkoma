@@ -1,16 +1,16 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "@/store/store"
-import { fetchMe, fetchStrike, updatePassword, clearPasswordError } from "@/store/slice/userSlice"
+import { fetchMe, fetchStrike, updatePassword, clearPasswordError, updateProfileImage } from "@/store/slice/userSlice"
 import { fetchLibraryData } from "@/store/slice/librarySlice"
 import {
   Eye, EyeOff, Loader2, ShieldCheck, Phone, UserRound, Users,
   Star, TrendingUp, Flame, Pencil, Lock, BookOpen, Gem, CalendarCheck,
   Smartphone, Shield, Award, User, type LucideIcon
 } from "lucide-react"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
@@ -66,7 +66,7 @@ function ProfileSkeleton() {
 
 export default function ProfilePage() {
   const dispatch = useDispatch<AppDispatch>()
-  const { user, loading, error, passwordLoading, passwordError, strike: fetchedStrike } =
+  const { user, loading, error, passwordLoading, passwordError, strike: fetchedStrike, imageLoading } =
     useSelector((state: RootState) => state.user)
   const homeData = useSelector((state: RootState) => state.home.data)
   const purchasedBooksCount = useSelector((state: RootState) => state.library.purchasedBookIds.length)
@@ -76,11 +76,30 @@ export default function ProfilePage() {
   const [passwords, setPasswords] = useState({ newPassword: "", confirm: "" })
   const [showNew, setShowNew] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => { dispatch(fetchMe()) }, [dispatch])
   useEffect(() => { dispatch(fetchLibraryData()) }, [dispatch])
   useEffect(() => { if (user?.id) dispatch(fetchStrike(user.id)) }, [dispatch, user?.id])
   useEffect(() => { if (passwordError) notify.error(passwordError) }, [passwordError])
+
+  const handleImagePick = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = "" // bir xil faylni qayta tanlash mumkin bo'lsin
+    if (!file) return
+    if (!["image/jpeg", "image/png"].includes(file.type)) {
+      return notify.error(t("profile.imageTypeError"))
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      return notify.error(t("profile.imageSizeError"))
+    }
+    const result = await dispatch(updateProfileImage(file))
+    if (updateProfileImage.fulfilled.match(result)) {
+      notify.success(t("profile.imageUpdateSuccess"))
+    } else {
+      notify.error((result.payload as string) ?? t("profile.imageUpdateError"))
+    }
+  }
 
   const handlePasswordSave = async () => {
     if (!passwords.newPassword) return notify.error(t("profile.enterNewPassword"))
@@ -153,13 +172,37 @@ export default function ProfilePage() {
         {/* Avatar */}
         <div className="relative shrink-0">
           <Avatar className="w-32 h-32 rounded-2xl shadow-lg">
+            {user?.profile && (
+              <AvatarImage
+                src={`${process.env.NEXT_PUBLIC_API_URL}/file/${user.profile}`}
+                alt={user ? `${user.name} ${user.surname}` : ""}
+                className="rounded-2xl"
+              />
+            )}
             <AvatarFallback className="rounded-2xl text-4xl font-black bg-blue-700 text-white">
               {initials}
             </AvatarFallback>
           </Avatar>
-          <div className="absolute -bottom-2 -right-2 w-9 h-9 bg-blue-700 rounded-xl flex items-center justify-center shadow-lg cursor-pointer hover:bg-blue-800 hover:scale-105 transition-all">
-            <Pencil className="w-4 h-4 text-white" />
-          </div>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png"
+            className="hidden"
+            onChange={handleImagePick}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={imageLoading}
+            aria-label={t("profile.changePhoto")}
+            className="absolute -bottom-2 -right-2 w-9 h-9 bg-blue-700 rounded-xl flex items-center justify-center shadow-lg cursor-pointer hover:bg-blue-800 hover:scale-105 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            {imageLoading
+              ? <Loader2 className="w-4 h-4 text-white animate-spin" />
+              : <Pencil className="w-4 h-4 text-white" />
+            }
+          </button>
         </div>
 
         {/* Info */}

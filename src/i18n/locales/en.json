@@ -137,6 +137,11 @@
     "otpRequired": "Enter the 4-digit code",
     "otpSentSuccess": "Verification code sent to your email!",
     "passwordUpdateSuccess": "Password updated successfully!",
+    "changePhoto": "Change photo",
+    "imageTypeError": "Please upload a JPG or PNG image",
+    "imageSizeError": "Image size must not exceed 5 MB",
+    "imageUpdateSuccess": "Profile photo updated!",
+    "imageUpdateError": "Failed to upload image",
     "achievementsList": {
       "locked": "Locked",
       "starTitle": "Star",

@@ -14,6 +14,8 @@ interface UserStore {
   passwordError: string | null
   strike: number | null
   strikeLoading: boolean
+  imageLoading: boolean
+  imageError: string | null
 }
 
 export const fetchMe = createAsyncThunk<User, void, { state: RootState; rejectValue: string }>(
@@ -72,6 +74,36 @@ export const updateUser = createAsyncThunk<User, UpdateUserPayload, { state: Roo
   }
 )
 
+// Profil rasmi: 1) /file/upload ga yuklaymiz → fayl id, 2) /users/update/:id ga
+// { profile: "<id>" } (string) yuboramiz. Backend /auth/me da profile'ni string id qaytaradi.
+export const updateProfileImage = createAsyncThunk<string, File, { state: RootState; rejectValue: string }>(
+  "user/updateProfileImage",
+  async (file, { getState, rejectWithValue }) => {
+    const userId = getState().user.user?.id
+    if (!userId) return rejectWithValue("Foydalanuvchi topilmadi")
+
+    try {
+      // 1. Faylni yuklash → response'da fayl id keladi
+      const formData = new FormData()
+      formData.append("file", file)
+      const uploadRes = await axiosInstance.post("/file/upload", formData)
+      const fileId =
+        uploadRes.data?.id ?? uploadRes.data?.fileId ?? uploadRes.data?.file?.id
+      if (fileId == null) return rejectWithValue("Fayl yuklanmadi")
+
+      // 2. Foydalanuvchi profilini fayl id (string) bilan yangilash
+      await axiosInstance.put(`/users/update/${userId}`, { profile: String(fileId) })
+
+      return String(fileId)
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(error.response?.data?.message || "Rasm yuklashda xatolik")
+      }
+      return rejectWithValue("Rasm yuklashda xatolik")
+    }
+  }
+)
+
 export const updatePassword = createAsyncThunk<void, { newPassword: string }, { state: RootState; rejectValue: string }>(
   "user/updatePassword",
   async ({ newPassword }, { rejectWithValue }) => {
@@ -96,6 +128,8 @@ const initialState: UserStore = {
   passwordError: null,
   strike: null,
   strikeLoading: false,
+  imageLoading: false,
+  imageError: null,
 }
 
 const userSlice = createSlice({
@@ -107,6 +141,9 @@ const userSlice = createSlice({
     },
     clearPasswordError: (state) => {
       state.passwordError = null
+    },
+    clearImageError: (state) => {
+      state.imageError = null
     },
     // Socket orqali real-time strike yangilanishi uchun
     setStrike: (state, action: PayloadAction<number>) => {
@@ -153,6 +190,19 @@ const userSlice = createSlice({
         state.passwordError = action.payload ?? "Xatolik yuz berdi"
       })
 
+      .addCase(updateProfileImage.pending, (state) => {
+        state.imageLoading = true
+        state.imageError = null
+      })
+      .addCase(updateProfileImage.fulfilled, (state, action: PayloadAction<string>) => {
+        state.imageLoading = false
+        if (state.user) state.user.profile = action.payload
+      })
+      .addCase(updateProfileImage.rejected, (state, action) => {
+        state.imageLoading = false
+        state.imageError = action.payload ?? "Xatolik yuz berdi"
+      })
+
       .addCase(fetchStrike.pending, (state) => {
         state.strikeLoading = true
       })
@@ -166,5 +216,5 @@ const userSlice = createSlice({
   }
 })
 
-export const { clearUpdateError, clearPasswordError, setStrike } = userSlice.actions
+export const { clearUpdateError, clearPasswordError, clearImageError, setStrike } = userSlice.actions
 export default userSlice.reducer

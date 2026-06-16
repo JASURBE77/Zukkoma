@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useSelector, useDispatch } from "react-redux"
 import { RootState, AppDispatch } from "@/store/store"
 import { logout } from "@/store/slice/authSlice"
@@ -138,6 +138,12 @@ export default function Header() {
             <DropdownMenuTrigger asChild>
               <button className="flex items-center gap-2 p-1 pr-2.5 hover:bg-[#f2f3ff] dark:hover:bg-slate-800 rounded-2xl transition-all outline-none group">
                 <Avatar className="h-8 w-8 border-2 border-white dark:border-slate-800 shadow-sm group-hover:border-[#2D6BFF]/30 transition-all">
+                  {user?.profile && (
+                    <AvatarImage
+                      src={`${process.env.NEXT_PUBLIC_API_URL}/file/${user.profile}`}
+                      alt={fullName || "avatar"}
+                    />
+                  )}
                   <AvatarFallback className="bg-gradient-to-br from-[#2D6BFF] to-indigo-600 text-white text-xs font-black">
                     {initials}
                   </AvatarFallback>

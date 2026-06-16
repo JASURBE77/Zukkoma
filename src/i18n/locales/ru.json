@@ -144,6 +144,11 @@
     "otpRequired": "Введите 4-значный код",
     "otpSentSuccess": "Код подтверждения отправлен на вашу почту!",
     "passwordUpdateSuccess": "Пароль успешно изменён!",
+    "changePhoto": "Изменить фото",
+    "imageTypeError": "Загрузите изображение в формате JPG или PNG",
+    "imageSizeError": "Размер изображения не должен превышать 5 МБ",
+    "imageUpdateSuccess": "Фото профиля обновлено!",
+    "imageUpdateError": "Ошибка при загрузке изображения",
     "achievementsList": {
       "locked": "Заблокировано",
       "starTitle": "Звезда",

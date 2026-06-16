@@ -18,6 +18,18 @@ import type {
   BalanceNotification,
 } from "@/types"
 
+// Bildirishnoma kelganda chalinadigan ovoz. Bitta Audio nusxasini qayta ishlatamiz.
+let notificationAudio: HTMLAudioElement | null = null
+function playNotificationSound() {
+  if (typeof window === "undefined") return
+  if (!notificationAudio) {
+    notificationAudio = new Audio("/sounds/im-better.mp3")
+    notificationAudio.volume = 0.5
+  }
+  notificationAudio.currentTime = 0
+  notificationAudio.play().catch(() => {})
+}
+
 /**
  * O'quvchiga socket orqali keladigan bildirishnomalarni tinglaydi.
  * Backend "user_<id>" xonasiga xabar yuboradi, shuning uchun shu xonaga qo'shilamiz.
@@ -38,6 +50,7 @@ export function useNotifications(userId: number | null | undefined) {
     socket.on("connect_error", onConnectError)
 
     const onStrike = (data: StrikeNotification) => {
+      playNotificationSound()
       showStrikeToast(data)
       // Real-time: ekrandagi strike sonini darhol yangilaymiz (refresh shart emas)
       dispatch(setStrike(data.strike))
@@ -45,9 +58,11 @@ export function useNotifications(userId: number | null | undefined) {
       dispatch(setHomeStrike(data.strike))
     }
     const onZukkoStar = (data: ZukkoStarNotification) => {
+      playNotificationSound()
       showZukkoStarToast(data)
     }
     const onBalance = (data: BalanceNotification) => {
+      playNotificationSound()
       showBalanceToast(data)
     }
 
