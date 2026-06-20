@@ -161,9 +161,7 @@ export default function MyGroupPage() {
                       >
                         <div className="relative shrink-0">
                           <Avatar className="w-14 h-14 rounded-xl">
-                            <AvatarFallback className="rounded-xl bg-[#f2f3ff] dark:bg-blue-500/10 text-[#2D6BFF] font-black text-sm">
-                              {initials}
-                            </AvatarFallback>
+                          
                           </Avatar>
                           {hasMedal && (
                             <div className={`absolute -top-2 -left-2 w-7 h-7 ${MEDAL_BG[index]} rounded-lg flex items-center justify-center text-sm shadow-sm`}>

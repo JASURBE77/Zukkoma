@@ -107,32 +107,120 @@ export default function StudentExamPage() {
 
   if (isFinished && score !== null) {
     return (
-      <motion.div
-        className="flex min-h-[60vh] items-center justify-center"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-      >
-        <Card className="w-full max-w-sm text-center">
-          <CardHeader className="items-center pb-2 pt-8">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-100 dark:bg-green-500/10">
-              <Trophy className="h-10 w-10 text-green-600 dark:text-green-400" />
+      <AnimatePresence>
+        <motion.div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+        >
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" />
+
+          {/* Modal */}
+          <motion.div
+            className="relative w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-2xl dark:bg-slate-900"
+            initial={{ opacity: 0, scale: 0.85, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ type: "spring", stiffness: 260, damping: 22 }}
+          >
+            {/* Rangli yuqori band + bezak */}
+            <div className="relative h-32 overflow-hidden bg-gradient-to-br from-[#2D6BFF] via-blue-500 to-cyan-400">
+              <div className="absolute -left-6 -top-8 h-32 w-32 rounded-full bg-white/15 blur-2xl" />
+              <div className="absolute right-8 top-2 h-20 w-20 rounded-full bg-white/20 blur-xl" />
+              {/* Konfetti nuqtalar */}
+              {[
+                { l: "12%", t: "30%", c: "bg-yellow-300", d: 0.1 },
+                { l: "78%", t: "20%", c: "bg-pink-300", d: 0.2 },
+                { l: "30%", t: "65%", c: "bg-emerald-300", d: 0.3 },
+                { l: "88%", t: "55%", c: "bg-white", d: 0.15 },
+                { l: "55%", t: "25%", c: "bg-orange-300", d: 0.25 },
+              ].map((p, i) => (
+                <motion.span
+                  key={i}
+                  className={`absolute h-2 w-2 rounded-sm ${p.c}`}
+                  style={{ left: p.l, top: p.t }}
+                  initial={{ opacity: 0, y: -10, rotate: 0 }}
+                  animate={{ opacity: 1, y: 0, rotate: 180 }}
+                  transition={{ delay: 0.3 + p.d, duration: 0.6, ease: "easeOut" }}
+                />
+              ))}
             </div>
-            <CardTitle className="mt-4 text-3xl font-black text-slate-900 dark:text-white">
-              {score} {t("studentExam.ballSuffix")}
-            </CardTitle>
-            <p className="text-sm text-slate-500">{t("studentExam.finished")}</p>
-          </CardHeader>
-          <CardContent className="pb-8">
-            <Button
-              className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white"
-              onClick={() => router.push("/exams")}
+
+            {/* Trophy badge — bandga ustma-ust */}
+            <motion.div
+              className="absolute left-1/2 top-32 z-10 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-lg ring-8 ring-white dark:bg-slate-900 dark:ring-slate-900"
+              initial={{ scale: 0, rotate: -30 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 15, delay: 0.2 }}
             >
-              {t("studentExam.backToExams")}
-            </Button>
-          </CardContent>
-        </Card>
-      </motion.div>
+              <div className="flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-500/20 dark:to-amber-500/5">
+                <Trophy className="h-9 w-9 text-amber-500" fill="currentColor" />
+              </div>
+            </motion.div>
+
+            {/* Tana */}
+            <div className="px-6 pb-7 pt-14 text-center">
+              <motion.p
+                className="text-lg font-black text-slate-900 dark:text-white"
+                style={{ fontFamily: "var(--font-manrope,'Manrope',sans-serif)" }}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35 }}
+              >
+                {t("studentExam.congrats")} 🎉
+              </motion.p>
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                {t("studentExam.resultHint")}
+              </p>
+
+              {/* Ball */}
+              <motion.div
+                className="mx-auto mt-5 flex flex-col items-center rounded-2xl bg-[#f2f3ff] py-5 dark:bg-blue-500/10"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.45, type: "spring", stiffness: 200 }}
+              >
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#2D6BFF]">
+                  {t("studentExam.scoreLabel")}
+                </span>
+                <span
+                  className="mt-1 text-5xl font-black text-[#2D6BFF]"
+                  style={{ fontFamily: "var(--font-manrope,'Manrope',sans-serif)" }}
+                >
+                  {score}
+                  <span className="ml-1.5 text-lg font-bold text-blue-400">{t("studentExam.ballSuffix")}</span>
+                </span>
+                {totalQuestions > 0 && (
+                  <span className="mt-1 text-xs text-slate-400">
+                    {t("studentExam.totalQuestionsLabel")}: {totalQuestions}
+                  </span>
+                )}
+              </motion.div>
+
+              {/* Tugmalar */}
+              <div className="mt-6 flex flex-col gap-2.5">
+                <Button
+                  className="h-11 w-full gap-2 rounded-xl bg-[#2D6BFF] font-bold text-white hover:bg-[#1E5AE8]"
+                  style={{ boxShadow: "0 4px 12px rgba(45,107,255,0.25)" }}
+                  onClick={() => router.push("/exams")}
+                >
+                  {t("studentExam.backToExams")}
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="h-11 w-full rounded-xl font-semibold text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800"
+                  onClick={() => router.push("/exams/history")}
+                >
+                  {t("studentExam.viewHistory")}
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </AnimatePresence>
     )
   }
 

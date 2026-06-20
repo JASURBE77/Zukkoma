@@ -187,34 +187,57 @@ export default function ExamPage() {
                 {counts.active} {t("exams.statusActive")} · {counts.finished} {t("exams.statusFinished")} · {counts.pending} {t("exams.statusPending")}
               </div>
             </div>
-            <div
-              className="relative h-48 w-full rounded-xl border border-dashed border-[#c3c5d8] dark:border-slate-700 flex items-end px-4 overflow-hidden"
-              style={{ background: "linear-gradient(180deg, rgba(45,107,255,0.06) 0%, rgba(45,107,255,0) 100%)" }}
-            >
-              <svg className="w-full h-32 overflow-visible" viewBox="0 0 100 40" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#2D6BFF" stopOpacity="0.5" />
-                    <stop offset="100%" stopColor="#708cfd" stopOpacity="1" />
-                  </linearGradient>
-                </defs>
-                <path
-                  d={`M0,35 Q${25},${20} ${50},${counts.finished > 0 ? 15 : 30} T${75},${counts.active > 0 ? 10 : 25} T100,${counts.finished > 0 ? 5 : 20}`}
-                  fill="none"
-                  stroke="url(#lineGrad)"
-                  strokeWidth="2"
-                  vectorEffect="non-scaling-stroke"
-                />
-                {[25, 50, 75].map((cx, i) => (
-                  <circle key={i} cx={cx} cy={[20, counts.finished > 0 ? 15 : 30, counts.active > 0 ? 10 : 25][i]} r="2" fill="#2D6BFF" />
-                ))}
-              </svg>
-              <div className="absolute inset-x-0 bottom-2 flex justify-between px-6 text-[10px] text-slate-400 uppercase tracking-wider">
-                {[t("exams.tabPending"), t("exams.tabActive"), t("exams.tabFinished")].map(l => (
-                  <span key={l}>{l}</span>
-                ))}
-              </div>
-            </div>
+            {(() => {
+              const bars = [
+                { key: "pending",  label: t("exams.tabPending"),  value: counts.pending,  color: "#2D6BFF", soft: "rgba(45,107,255,0.12)" },
+                { key: "active",   label: t("exams.tabActive"),   value: counts.active,   color: "#10B981", soft: "rgba(16,185,129,0.12)" },
+                { key: "finished", label: t("exams.tabFinished"), value: counts.finished, color: "#64748B", soft: "rgba(100,116,139,0.12)" },
+              ]
+              const maxVal = Math.max(...bars.map(b => b.value), 1)
+              return (
+                <div className="relative h-48 w-full rounded-xl border border-[#ededf9] dark:border-slate-800 px-6 py-5 overflow-hidden bg-slate-50/40 dark:bg-slate-800/20">
+                  {/* Gorizontal yo'naltiruvchi chiziqlar */}
+                  <div className="absolute inset-x-6 top-5 bottom-12 flex flex-col justify-between pointer-events-none">
+                    {[0, 1, 2, 3].map(i => (
+                      <div key={i} className="border-t border-dashed border-slate-200/70 dark:border-slate-700/50" />
+                    ))}
+                  </div>
+
+                  {/* Ustunlar */}
+                  <div className="relative h-full flex items-stretch justify-around gap-6">
+                    {bars.map((b, i) => {
+                      const pct = Math.max((b.value / maxVal) * 100, b.value > 0 ? 8 : 2)
+                      return (
+                        <div key={b.key} className="flex-1 flex flex-col items-center h-full">
+                          <span className="mb-1.5 text-sm font-black text-slate-700 dark:text-slate-200" style={{ fontFamily: "var(--font-manrope,'Manrope',sans-serif)" }}>
+                            {b.value}
+                          </span>
+                          {/* Bar track */}
+                          <div className="flex-1 w-full flex items-end justify-center min-h-0">
+                            <motion.div
+                              initial={{ height: 0 }}
+                              animate={{ height: `${pct}%` }}
+                              transition={{ duration: 0.6, delay: 0.1 + i * 0.1, ease: "easeOut" }}
+                              className="w-full max-w-[64px] rounded-t-lg"
+                              style={{
+                                background: b.value > 0
+                                  ? `linear-gradient(180deg, ${b.color}, ${b.color}cc)`
+                                  : b.soft,
+                                boxShadow: b.value > 0 ? `0 4px 12px ${b.soft}` : "none",
+                              }}
+                            />
+                          </div>
+                          {/* Yorliq */}
+                          <span className="mt-2 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                            {b.label}
+                          </span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })()}
           </div>
 
           {/* Subject cards (right 4/12) */}

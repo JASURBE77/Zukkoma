@@ -27,6 +27,70 @@ const meshStyle: React.CSSProperties = {
 
 const cardShadow: React.CSSProperties = { boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }
 
+/* ── Banner dekorativ SVG bezagi ─────────────────────────── */
+function BannerDecoration() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl" aria-hidden>
+      {/* Yumshoq nur (aurora) effektlari — kuchaytirilgan */}
+      <div className="absolute -right-16 -bottom-24 w-96 h-96 bg-white/20 rounded-full blur-3xl" />
+      <div className="absolute right-24 -top-12 w-56 h-56 bg-cyan-300/40 rounded-full blur-2xl" />
+      <div className="absolute -left-12 top-1/2 w-48 h-48 bg-indigo-400/30 rounded-full blur-3xl" />
+
+      {/* Diagonal yorug'lik chizig'i */}
+      <div
+        className="absolute -inset-y-10 right-1/4 w-40 rotate-12"
+        style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent)" }}
+      />
+
+      {/* Nuqtali to'r naqshi — yuqori-o'ng (ko'rinadiganroq) */}
+      <svg className="absolute right-0 top-0 h-full w-2/3 text-white/[0.28]" preserveAspectRatio="xMaxYMin slice">
+        <defs>
+          <pattern id="zk-dots" width="20" height="20" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="2" fill="currentColor" />
+          </pattern>
+          <linearGradient id="zk-fade" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="white" stopOpacity="0" />
+            <stop offset="100%" stopColor="white" stopOpacity="1" />
+          </linearGradient>
+          <mask id="zk-mask">
+            <rect width="100%" height="100%" fill="url(#zk-fade)" />
+          </mask>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#zk-dots)" mask="url(#zk-mask)" />
+      </svg>
+
+      {/* Katta konsentrik halqalar — o'ng burchak */}
+      <svg className="absolute -right-10 -top-10 w-72 h-72 text-white/30" viewBox="0 0 200 200" fill="none">
+        <circle cx="100" cy="100" r="90" stroke="currentColor" strokeWidth="1.5" opacity="0.5" />
+        <circle cx="100" cy="100" r="64" stroke="currentColor" strokeWidth="1.5" opacity="0.7" />
+        <circle cx="100" cy="100" r="38" stroke="currentColor" strokeWidth="1.5" />
+      </svg>
+
+      {/* Suzuvchi geometrik shakllar — to'liq ko'rinadigan */}
+      <svg
+        className="absolute right-4 sm:right-10 top-1/2 -translate-y-1/2 w-52 h-52 sm:w-64 sm:h-64 text-white hidden sm:block"
+        viewBox="0 0 200 200" fill="none"
+      >
+        {/* Katta halqa */}
+        <circle cx="130" cy="60" r="46" stroke="currentColor" strokeWidth="3" opacity="0.8" />
+        {/* Ichki to'la doira */}
+        <circle cx="130" cy="60" r="22" fill="currentColor" opacity="0.35" />
+        {/* Burchakli kvadrat */}
+        <rect x="36" y="106" width="40" height="40" rx="10" stroke="currentColor" strokeWidth="3" transform="rotate(18 56 126)" opacity="0.8" />
+        {/* Uchburchak */}
+        <path d="M158 150 L184 192 L132 192 Z" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" opacity="0.7" />
+        {/* Plus belgilari */}
+        <path d="M48 44 V72 M34 58 H62" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" opacity="0.9" />
+        <path d="M186 110 V128 M177 119 H195" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.85" />
+        {/* Kichik to'la doiralar */}
+        <circle cx="184" cy="36" r="5" fill="currentColor" opacity="0.95" />
+        <circle cx="92" cy="168" r="4.5" fill="currentColor" opacity="0.85" />
+        <circle cx="40" cy="60" r="3.5" fill="currentColor" opacity="0.8" />
+      </svg>
+    </div>
+  )
+}
+
 /* ── Skeleton ──────────────────────────────────────────────── */
 function Sk({ className }: { className?: string }) {
   return <div className={`bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse ${className ?? ""}`} />
@@ -100,6 +164,9 @@ const Banner = () => {
         className="relative overflow-hidden rounded-3xl p-8 sm:p-10 text-white"
         style={meshStyle}
       >
+        {/* ── Dekorativ SVG bezak ──────────────────────────── */}
+        <BannerDecoration />
+
         <div className="relative z-10">
           <p className="text-white/70 text-sm font-medium mb-1">{t("home.greeting")}</p>
           <h2
@@ -127,8 +194,6 @@ const Banner = () => {
             </Link>
           </div>
         </div>
-        <div className="absolute -right-12 -bottom-20 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute right-16 top-0 w-40 h-40 bg-blue-300/20 rounded-full blur-2xl pointer-events-none" />
         {data && (data.profile.strike ?? 0) > 0 && (
           <div className="absolute top-5 right-5 flex items-center gap-1.5 bg-white/20 backdrop-blur-sm border border-white/30 px-3 py-1.5 rounded-full">
             <Image src={FireIcon} alt="" className="w-4 h-4" />
